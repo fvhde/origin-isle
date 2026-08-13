@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -43,6 +44,8 @@ fun CastTab(context: Context, prefs: SharedPreferences, onRedoSetup: () -> Unit)
     var castOn by remember { mutableStateOf(prefs.getBoolean("cast_notifications", false)) }
     var mediaOn by remember { mutableStateOf(prefs.getBoolean("cast_media_sessions", false)) }
     var includeMessages by remember { mutableStateOf(prefs.getBoolean("cast_include_messages", false)) }
+    var ignoreSilent by remember { mutableStateOf(prefs.getBoolean("cast_ignore_silent", true)) }
+    var autoDismissSec by remember { mutableStateOf(prefs.getInt("cast_auto_dismiss_seconds", 0)) }
     val listenerText = remember { listenerStatusText(context) }
     val batteryText = remember { batteryStatusText(context) }
     val accessibilityText = remember { accessibilityStatusText(context) }
@@ -115,11 +118,41 @@ fun CastTab(context: Context, prefs: SharedPreferences, onRedoSetup: () -> Unit)
                         "Off = only live cards (downloads, navigation, calls, progress). On= ALL",
                         style = MaterialTheme.typography.bodySmall,
                     )
+                    ToggleRow("Ignore silent notifications", ignoreSilent) {
+                        ignoreSilent = it; prefs.edit().putBoolean("cast_ignore_silent", it).apply()
+                    }
+                    Text(
+                        "On = muted/silent notifications are ignored and won't appear on the island.",
+                        style = MaterialTheme.typography.bodySmall,
+                    )
                     ToggleRow("Cast media sessions", mediaOn) {
                         mediaOn = it; prefs.edit().putBoolean("cast_media_sessions", it).apply()
                     }
                     Text(
                         "Pick which apps are allowed in the Apps tab.",
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                    HorizontalDivider(Modifier.padding(vertical = 4.dp))
+                    Text("Auto-dismiss island capsule", fontWeight = FontWeight.Medium)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        val options = listOf(0 to "Never", 5 to "5s", 10 to "10s", 15 to "15s", 30 to "30s")
+                        options.forEach { (sec, label) ->
+                            FilterChip(
+                                selected = autoDismissSec == sec,
+                                onClick = {
+                                    autoDismissSec = sec
+                                    prefs.edit().putInt("cast_auto_dismiss_seconds", sec).apply()
+                                },
+                                label = { Text(label, style = MaterialTheme.typography.labelSmall) },
+                            )
+                        }
+                    }
+                    Text(
+                        "Clears the island capsule after specified duration without touching your actual notification.",
                         style = MaterialTheme.typography.bodySmall,
                     )
                 }

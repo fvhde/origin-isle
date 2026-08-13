@@ -79,9 +79,16 @@ object GenericCard {
         // so the next turn is visible without expanding the card.
         val finalChip = if (isMaps) text.ifBlank { chip } else style?.chip ?: chip
 
+        val isNav = isMaps || n.category == NotificationCompat.CATEGORY_NAVIGATION ||
+            sbn.packageName == "com.autonavi.minimap" || sbn.packageName == "com.baidu.BaiduMap" ||
+            sbn.packageName == "com.waze"
+        val isLive = isCall || isNav || hasProgress || (showChrono && n.`when` > 0)
+
         val intent = Intent(context, PlaygroundService::class.java).apply {
             action = PlaygroundService.ACTION_START
             putExtra("id", id)
+            putExtra("is_ongoing", isLive)
+            putExtra("oi_auto_dismissible", !isLive)
             putExtra("oi_scene", "NAVIGATION")
             putExtra("title", title)
             // vivo silently REJECTS a SuperX post with empty content text — falling back to a plain

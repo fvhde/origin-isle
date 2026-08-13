@@ -93,6 +93,8 @@ object SportsCard {
         val intent = Intent(context, PlaygroundService::class.java).apply {
             action = PlaygroundService.ACTION_START
             putExtra("id", id)
+            putExtra("is_ongoing", true)
+            putExtra("oi_auto_dismissible", false)
             putExtra("oi_scene", "NAVIGATION") // any granted scene works as the carrier
             putExtra("oi_template", OriginIslandConstants.TEMPLATE_TEXT_SYMMETRY) // 3
             putExtra("oi_right_template", OriginIslandConstants.TEMPLATE_RIGHT_ISLAND_TEXT_ICON) // 4

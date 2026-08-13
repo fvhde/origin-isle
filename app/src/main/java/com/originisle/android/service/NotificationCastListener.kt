@@ -1,6 +1,7 @@
 package com.originisle.android.service
 
 import android.app.Notification
+import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Intent
 import android.content.SharedPreferences
@@ -11,6 +12,8 @@ import android.media.session.MediaSessionManager
 import android.os.Handler
 import android.os.Looper
 import android.service.notification.NotificationListenerService
+import android.service.notification.NotificationListenerService.Ranking
+import android.service.notification.NotificationListenerService.RankingMap
 import android.service.notification.StatusBarNotification
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -215,7 +218,28 @@ class NotificationCastListener : NotificationListenerService() {
         }
     }
 
+    /**
+     * Check if a notification is silent (low/min importance, ambient, or no sound/alert).
+     * Alerting (non-silent) notifications have importance >= IMPORTANCE_DEFAULT.
+     */
+    private fun isSilent(sbn: StatusBarNotification, rankingMap: RankingMap? = null): Boolean {
+        val ranking = Ranking()
+        val map = rankingMap ?: currentRanking
+        if (map != null && map.getRanking(sbn.key, ranking)) {
+            val importance = ranking.importance
+            if (importance != NotificationManager.IMPORTANCE_UNSPECIFIED) {
+                return importance < NotificationManager.IMPORTANCE_DEFAULT
+            }
+            return ranking.isAmbient
+        }
+        return false
+    }
+
     override fun onNotificationPosted(sbn: StatusBarNotification) {
+        onNotificationPosted(sbn, null)
+    }
+
+    override fun onNotificationPosted(sbn: StatusBarNotification, rankingMap: RankingMap?) {
         if (sbn.packageName == packageName) return
         // Skip framework/system notifications (USB-debug banner, system UI, etc.) — noise on the island.
         if (sbn.packageName in SYSTEM_PKGS) return
@@ -253,6 +277,12 @@ class NotificationCastListener : NotificationListenerService() {
         }
         if (!castNotifs) { log(sbn, "skipped — media only, notifications off", false); return }
 
+        // Skip silent notifications if enabled — only alerting / non-silent notifications belong on the island.
+        val ignoreSilent = prefs.getBoolean("cast_ignore_silent", true)
+        if (ignoreSilent && isSilent(sbn, rankingMap)) {
+            log(sbn, "skipped — silent notification", false); return
+        }
+
         // Score apps: if the notification parses as a match, post a football card with crests.
         // If it doesn't (Google also posts news/weather/etc.), fall through to the normal path.
         if (sbn.packageName in SCORE_APPS && handleScore(sbn)) { log(sbn, "cast — live score", true); return }
@@ -262,19 +292,37 @@ class NotificationCastListener : NotificationListenerService() {
         // no progress bar, so it would otherwise be dropped.
         detectPayment(sbn)?.let { castPayment(sbn, it); log(sbn, "cast — payment", true); return }
 
-        // Only "live" notifications belong on the island: ongoing (downloads, navigation, calls),
-        // call notifications, or anything with a progress bar. Plain chat messages (e.g. WhatsApp
-        // texts) are skipped unless the user opts them in — so "WhatsApp call yes, messages no".
+        // Only "live" notifications belong on the island: navigation, calls, chronometers,
+        // or progress bars. Plain chat messages (e.g. WhatsApp texts) are skipped unless the user
+        // opts them in. Static background services (VPNs, foreground service daemons) are skipped.
         val includeMessages = prefs.getBoolean("cast_include_messages", false)
         val isOngoing = (n.flags and Notification.FLAG_ONGOING_EVENT) != 0
         val hasProgress = extras.getInt(NotificationCompat.EXTRA_PROGRESS_MAX, 0) > 0
-        if (!includeMessages && !isOngoing && !isCall && !hasProgress) {
+        val showChrono = extras.getBoolean(NotificationCompat.EXTRA_SHOW_CHRONOMETER, false)
+        val isNav = n.category == NotificationCompat.CATEGORY_NAVIGATION ||
+            sbn.packageName == "com.google.android.apps.maps" ||
+            sbn.packageName == "com.autonavi.minimap" ||
+            sbn.packageName == "com.baidu.BaiduMap" ||
+            sbn.packageName == "com.waze"
+        val isLiveOngoing = isCall || isNav || hasProgress || (showChrono && n.`when` > 0)
+        val isService = n.category == Notification.CATEGORY_SERVICE ||
+            n.category == Notification.CATEGORY_SYSTEM ||
+            n.category == Notification.CATEGORY_STATUS
+
+        // Skip static background services that are not active live activities
+        if (isService && !isLiveOngoing) {
+            log(sbn, "skipped — background service", false); return
+        }
+
+        if (!includeMessages && !isOngoing && !isLiveOngoing) {
             log(sbn, "skipped — plain message (not a live card)", false); return
         }
 
         val kind = when {
             isCall -> "call"
+            isNav -> "navigation"
             hasProgress -> "progress"
+            showChrono -> "timer"
             isOngoing -> "ongoing"
             else -> "message"
         }
