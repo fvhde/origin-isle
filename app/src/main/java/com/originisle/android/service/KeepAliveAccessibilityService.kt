@@ -1,8 +1,6 @@
 package com.originisle.android.service
 
 import android.accessibilityservice.AccessibilityService
-import android.content.ComponentName
-import android.service.notification.NotificationListenerService
 import android.view.accessibility.AccessibilityEvent
 import com.originisle.android.island.OriginIslandBuilder
 
@@ -21,11 +19,9 @@ class KeepAliveAccessibilityService : AccessibilityService() {
 
     override fun onServiceConnected() {
         super.onServiceConnected()
-        runCatching {
-            NotificationListenerService.requestRebind(
-                ComponentName(this, NotificationCastListener::class.java),
-            )
-        }
+        // Fires when the system (re)starts our process — exactly when the listener needs recovering
+        // after a swipe-away kill, where a plain requestRebind is a no-op (see [forceRebind]).
+        runCatching { NotificationCastListener.forceRebind(this) }
         runCatching { OriginIslandBuilder.grantScenes(this) }
     }
 

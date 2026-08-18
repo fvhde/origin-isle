@@ -1,9 +1,7 @@
 package com.originisle.android
 
-import android.content.ComponentName
 import android.content.Context
 import android.os.Bundle
-import android.service.notification.NotificationListenerService
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
@@ -46,15 +44,20 @@ class MainActivity : ComponentActivity() {
         intent?.getIntExtra("autofire_sample", -1)?.takeIf { it >= 0 }?.let {
             IslandSamples.all.getOrNull(it)?.post(this)
         }
+        setContent { OriginIsleTheme { Screen() } }
+    }
+
+    /**
+     * Heal a killed listener on every foregrounding, not just a cold start — resuming an
+     * already-running task would otherwise skip the recovery. Cheap: [forceRebind] no-ops while the
+     * listener is connected.
+     */
+    override fun onResume() {
+        super.onResume()
         if (getSharedPreferences(PREFS_NAME, MODE_PRIVATE).getBoolean("cast_notifications", false)) {
             PlaygroundService.keepAlive(this)
-            runCatching {
-                NotificationListenerService.requestRebind(
-                    ComponentName(this, NotificationCastListener::class.java),
-                )
-            }
+            NotificationCastListener.forceRebind(this)
         }
-        setContent { OriginIsleTheme { Screen() } }
     }
 }
 

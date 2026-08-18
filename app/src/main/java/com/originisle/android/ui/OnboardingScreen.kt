@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import android.provider.Settings
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -22,51 +21,40 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 
 /**
  * First-run gate: walks through every authorization the app needs before letting the user into the
  * main tabs. Only notification access is mandatory to continue; the rest are strongly recommended
  * (battery, keep-alive, auto-start) and can be granted later from the Cast tab's "Redo setup" button.
- * Every row re-checks its status when the user returns from Settings (via [Lifecycle.Event.ON_RESUME]).
+ *
+ * The startup row matters more than "recommended" suggests: with "Associated startup" off, nothing
+ * brings casting back after a swipe-away — not START_STICKY, not the restart alarm, not the
+ * accessibility service — and only a reboot recovers.
  */
 @Composable
 fun OnboardingScreen(context: Context, prefs: SharedPreferences, onDone: () -> Unit) {
-    val activity = LocalContext.current as? ComponentActivity
-    var tick by remember { mutableIntStateOf(0) }
-    DisposableEffect(activity) {
-        if (activity == null) return@DisposableEffect onDispose { }
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) tick++
-        }
-        activity.lifecycle.addObserver(observer)
-        onDispose { activity.lifecycle.removeObserver(observer) }
-    }
+    val tick = rememberResumeTick()
 
     val notifPermission = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission(),
-    ) { tick++ }
+    ) { tick.intValue++ }
 
-    val notifGranted = remember(tick) { isListenerEnabled(context) }
-    val postGranted = remember(tick) {
+    val notifGranted = remember(tick.intValue) { isListenerEnabled(context) }
+    val postGranted = remember(tick.intValue) {
         Build.VERSION.SDK_INT < 33 ||
             androidx.core.content.ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) ==
             android.content.pm.PackageManager.PERMISSION_GRANTED
     }
-    val batteryOk = remember(tick) { isBatteryUnrestricted(context) }
-    val accessOk = remember(tick) { isAccessibilityEnabled(context) }
+    val batteryOk = remember(tick.intValue) { isBatteryUnrestricted(context) }
+    val accessOk = remember(tick.intValue) { isAccessibilityEnabled(context) }
     var autoStartAck by remember {
         mutableStateOf(prefs.getBoolean("onboarding_autostart_ack", false))
     }
@@ -107,8 +95,9 @@ fun OnboardingScreen(context: Context, prefs: SharedPreferences, onDone: () -> U
             }
             item {
                 OnboardingRow(
-                    title = "Keep-alive (no status-bar icon)",
-                    description = "Runs in the background invisibly.",
+                    title = "Keep-alive",
+                    description = "Reconnects casting when OriginOS restarts the app, instead of " +
+                        "waiting for you to open it.",
                     granted = accessOk,
                     mandatory = false,
                 ) { context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)) }
@@ -123,14 +112,18 @@ fun OnboardingScreen(context: Context, prefs: SharedPreferences, onDone: () -> U
             }
             item {
                 OnboardingRow(
-                    title = "OriginOS auto-start",
-                    description = "vivo can't be checked automatically.",
+                    title = "Autostart + Associated startup",
+                    description = "Turn BOTH on. Without them, closing the app from recents kills " +
+                        "casting until you reboot.",
                     granted = autoStartAck,
                     mandatory = false,
                 ) {
-                    openAutoStartSettings(context)
-                    autoStartAck = true
-                    prefs.edit().putBoolean("onboarding_autostart_ack", true).apply()
+                    // Only ack if a screen actually opened — a ✓ the user never saw is worse than
+                    // no ✓ for the one setting that decides whether casting survives a swipe-away.
+                    if (openAutoStartSettings(context)) {
+                        autoStartAck = true
+                        prefs.edit().putBoolean("onboarding_autostart_ack", true).apply()
+                    }
                 }
             }
             item {

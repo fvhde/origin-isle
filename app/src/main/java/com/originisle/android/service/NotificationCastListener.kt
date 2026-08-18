@@ -3,8 +3,10 @@ package com.originisle.android.service
 import android.app.Notification
 import android.app.NotificationManager
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.graphics.drawable.Icon
 import android.media.session.MediaController
 import android.media.session.MediaSession
@@ -16,6 +18,7 @@ import android.service.notification.NotificationListenerService.Ranking
 import android.service.notification.StatusBarNotification
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.originisle.android.cards.GenericCard
 import com.originisle.android.cards.MediaCard
 import com.originisle.android.cards.NavigationCard
@@ -43,6 +46,9 @@ import java.util.concurrent.ConcurrentHashMap
  */
 class NotificationCastListener : NotificationListenerService() {
 
+    /** Outcome of [forceRebind], so callers can tell the user something truthful. */
+    enum class RebindResult { REBINDING, ALREADY_CONNECTED, NO_ACCESS, FAILED }
+
     companion object {
         /** The bound listener instance, or null if the service isn't connected. */
         @Volatile
@@ -54,8 +60,91 @@ class NotificationCastListener : NotificationListenerService() {
         @Volatile
         var lastEventAt: Long = 0L
 
+        /**
+         * Force the system to re-bind this listener after the process was killed (OriginOS kills it
+         * on swipe-away), and report whether a rebind could even be attempted.
+         *
+         * [NotificationListenerService.requestRebind] alone is NOT enough — the whole reason the
+         * Reconnect button did nothing. It early-returns unless the component was explicitly
+         * snoozed by [requestUnbind], and a process kill never snoozes it, so the system still
+         * believes we're bound. Toggling the component's enabled state instead fires
+         * ACTION_PACKAGE_CHANGED, which makes NotificationManagerService rebind every
+         * approved-but-unbound listener. The grant lives in Settings.Secure keyed by component and
+         * survives the toggle; DONT_KILL_APP keeps our own process up across it.
+         */
+        fun forceRebind(context: Context): RebindResult {
+            val component = ComponentName(context.applicationContext, NotificationCastListener::class.java)
+            if (!NotificationManagerCompat.getEnabledListenerPackages(context)
+                    .contains(context.packageName)
+            ) {
+                return RebindResult.NO_ACCESS
+            }
+            if (instance != null) return RebindResult.ALREADY_CONNECTED
+            // The rebind is asynchronous (it waits on a package broadcast), so a burst of callers —
+            // onResume firing repeatedly while the listener is still down — must not keep tearing
+            // down a binding that is already on its way up.
+            val now = System.currentTimeMillis()
+            if (now - lastRebindAt < REBIND_THROTTLE_MS) return RebindResult.REBINDING
+
+            // Separate runCatching per step: the re-enable must be attempted even if the disable
+            // threw. See [ensureEnabled] for why being left disabled is unrecoverable.
+            val pm = context.applicationContext.packageManager
+            val disabled = runCatching {
+                pm.setComponentEnabledSetting(
+                    component,
+                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                    PackageManager.DONT_KILL_APP,
+                )
+            }.isSuccess
+            val enabled = runCatching {
+                pm.setComponentEnabledSetting(
+                    component,
+                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                    PackageManager.DONT_KILL_APP,
+                )
+            }.isSuccess
+            // Only arm the throttle once the toggle actually landed, so a failure doesn't leave the
+            // next 10s of taps reporting "rebinding" when nothing is.
+            if (!disabled || !enabled) return RebindResult.FAILED
+            lastRebindAt = now
+            // After the toggle the component IS considered unbound, so this call is no longer a
+            // no-op and can shortcut the wait for the package broadcast to land.
+            runCatching { requestRebind(component) }
+            return RebindResult.REBINDING
+        }
+
+        /**
+         * Undo a [forceRebind] that only got halfway — the process can die between its two calls,
+         * and DONT_KILL_APP only stops PackageManager from killing us, not OriginOS. A component
+         * left DISABLED persists across reboots and never binds again, while the grant it's checked
+         * against lives in Settings.Secure and still reads as granted, so the UI would show a
+         * healthy listener forever. Called on every process start.
+         */
+        fun ensureEnabled(context: Context) {
+            val pm = context.applicationContext.packageManager
+            val component = ComponentName(context.applicationContext, NotificationCastListener::class.java)
+            runCatching {
+                if (pm.getComponentEnabledSetting(component) ==
+                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+                ) {
+                    Log.w(TAG, "listener component was left disabled by a partial rebind — re-enabling")
+                    pm.setComponentEnabledSetting(
+                        component,
+                        PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                        PackageManager.DONT_KILL_APP,
+                    )
+                }
+            }
+        }
+
         private const val PREFS = "experimental_prefs"
         private const val TAG = "NotificationCast"
+
+        /** Minimum gap between component toggles in [forceRebind]. */
+        private const val REBIND_THROTTLE_MS = 10_000L
+
+        @Volatile
+        private var lastRebindAt = 0L
 
         /** Framework/system packages whose notifications are noise on the island. */
         private val SYSTEM_PKGS = setOf(
@@ -207,6 +296,9 @@ class NotificationCastListener : NotificationListenerService() {
         if (instance === this) instance = null
         connectedAt = 0L
         pollHandler.removeCallbacks(pollRunnable)
+        // A system-initiated unbind DOES snooze the component, so unlike the process-kill case a
+        // plain requestRebind works here (see [forceRebind]). Self-heals transient disconnects.
+        runCatching { requestRebind(ComponentName(this, NotificationCastListener::class.java)) }
     }
 
     /**

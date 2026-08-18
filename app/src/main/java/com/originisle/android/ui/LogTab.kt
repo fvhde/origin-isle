@@ -122,13 +122,18 @@ fun LogTab(context: Context) {
 }
 
 private fun reconnectListener(context: Context) {
-    runCatching {
-        android.service.notification.NotificationListenerService.requestRebind(
-            android.content.ComponentName(context, NotificationCastListener::class.java),
-        )
-    }
     PlaygroundService.keepAlive(context)
-    android.widget.Toast.makeText(context, "Rebinding listener…", android.widget.Toast.LENGTH_SHORT).show()
+    val message = when (NotificationCastListener.forceRebind(context)) {
+        NotificationCastListener.RebindResult.REBINDING ->
+            "Rebinding listener… give it a few seconds."
+        NotificationCastListener.RebindResult.ALREADY_CONNECTED ->
+            "Listener is already connected."
+        NotificationCastListener.RebindResult.NO_ACCESS ->
+            "Notification access isn't granted — turn it on in Settings first."
+        NotificationCastListener.RebindResult.FAILED ->
+            "Couldn't rebind. Reboot, or toggle notification access off and on."
+    }
+    android.widget.Toast.makeText(context, message, android.widget.Toast.LENGTH_LONG).show()
 }
 
 private fun clockText(ts: Long): String =

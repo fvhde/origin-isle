@@ -27,6 +27,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,16 +51,26 @@ fun CastTab(context: Context, prefs: SharedPreferences, onRedoSetup: () -> Unit)
     var ignoreSilent by remember { mutableStateOf(prefs.getBoolean("cast_ignore_silent", true)) }
     var lockscreenLiveCard by remember { mutableStateOf(prefs.getBoolean("cast_lockscreen_live_card", false)) }
     var autoDismissSec by remember { mutableStateOf(prefs.getInt("cast_auto_dismiss_seconds", 0)) }
-    val listenerText = remember { listenerStatusText(context) }
-    val batteryText = remember { batteryStatusText(context) }
-    val accessibilityText = remember { accessibilityStatusText(context) }
+    val tick = rememberResumeTick()
+    val listenerText = remember(tick.intValue) { listenerStatusText(context) }
+    val batteryText = remember(tick.intValue) { batteryStatusText(context) }
+    val accessibilityText = remember(tick.intValue) { accessibilityStatusText(context) }
+    // Neither vivo toggle is readable, so all we can track is whether the user has been sent to that
+    // screen — the same ack flag the onboarding row writes.
+    var autoStartAck by remember { mutableStateOf(prefs.getBoolean("onboarding_autostart_ack", false)) }
+    val autoStartText = autoStartStatusText(autoStartAck)
 
     // Setup only needs attention again if something actually broke (OriginOS revoking notification
     // access or re-restricting battery is a known failure mode) — otherwise it stays collapsed to a
     // one-line status so it's not the first thing in the way on every open.
-    val listenerOk = remember { isListenerEnabled(context) }
-    val batteryOk = remember { isBatteryUnrestricted(context) }
+    val listenerOk = remember(tick.intValue) { isListenerEnabled(context) }
+    val batteryOk = remember(tick.intValue) { isBatteryUnrestricted(context) }
     var setupExpanded by remember { mutableStateOf(!listenerOk || !batteryOk) }
+    // Re-open on resume when something has broken since, or the card stays collapsed over a status
+    // line saying access is gone. Only ever expands — collapsing stays the user's call.
+    LaunchedEffect(listenerOk, batteryOk) {
+        if (!listenerOk || !batteryOk) setupExpanded = true
+    }
     var samplesExpanded by remember { mutableStateOf(false) }
     var updateStatus by remember { mutableStateOf<String?>(null) }
     val coroutineScope = rememberCoroutineScope()
@@ -162,14 +173,23 @@ fun CastTab(context: Context, prefs: SharedPreferences, onRedoSetup: () -> Unit)
                                 "with NO status-bar icon. It reads nothing.",
                             style = MaterialTheme.typography.bodySmall,
                         )
+                        OutlinedButton(
+                            onClick = {
+                                if (openAutoStartSettings(context)) {
+                                    autoStartAck = true
+                                    prefs.edit().putBoolean("onboarding_autostart_ack", true).apply()
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                        ) { Text("Autostart + Associated startup") }
+                        Text(
+                            "Turn BOTH on, or closing the app from recents kills casting until you reboot.",
+                            style = MaterialTheme.typography.bodySmall,
+                        )
                         Text(listenerText, style = MaterialTheme.typography.bodySmall)
                         Text(batteryText, style = MaterialTheme.typography.bodySmall)
                         Text(accessibilityText, style = MaterialTheme.typography.bodySmall)
-                        Text(
-                            "OriginOS also has a separate \"Auto-start\" allow-list in Settings → Battery. " +
-                                "Enable Origin Isle there too, or the caster is killed when the screen is off.",
-                            style = MaterialTheme.typography.bodySmall,
-                        )
+                        Text(autoStartText, style = MaterialTheme.typography.bodySmall)
                         OutlinedButton(onClick = onRedoSetup, modifier = Modifier.fillMaxWidth()) {
                             Text("Redo first-run setup")
                         }
@@ -270,15 +290,13 @@ private fun recastAll(context: Context) {
     PlaygroundService.keepAlive(context)
     val listener = NotificationCastListener.instance
     if (listener == null) {
-        runCatching {
-            android.service.notification.NotificationListenerService.requestRebind(
-                android.content.ComponentName(context, NotificationCastListener::class.java),
-            )
+        val message = when (NotificationCastListener.forceRebind(context)) {
+            NotificationCastListener.RebindResult.NO_ACCESS ->
+                "Notification access isn't granted — turn it on in Settings, then tap again."
+            else ->
+                "Listener not connected — reconnecting now. Give it a few seconds, then tap again."
         }
-        android.widget.Toast.makeText(
-            context, "Listener not connected yet — grant notification access, reboot app, then tap again.",
-            android.widget.Toast.LENGTH_LONG,
-        ).show()
+        android.widget.Toast.makeText(context, message, android.widget.Toast.LENGTH_LONG).show()
         return
     }
     val count = listener.recastAll()

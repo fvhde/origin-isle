@@ -1,24 +1,22 @@
 package com.originisle.android.island
 
+import android.app.AlarmManager
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.Icon
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
-import android.provider.Settings
 import android.util.Log
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import com.originisle.android.R
 import com.originisle.android.service.IconCache
-import com.originisle.android.service.KeepAliveAccessibilityService
 import com.originisle.android.ui.PREFS_NAME
 import java.util.concurrent.ConcurrentHashMap
 
@@ -56,6 +54,9 @@ class PlaygroundService : Service() {
 
         const val ORIGIN_CHANNEL_ID = "originisle_island_hi"
         const val FGS_ID = 9999
+
+        /** PendingIntent request code for the [onTaskRemoved] restart alarm. */
+        private const val RESTART_REQUEST = 7001
     }
 
     private lateinit var notificationManager: NotificationManager
@@ -82,6 +83,14 @@ class PlaygroundService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        // A null intent is a START_STICKY relaunch and ACTION_KEEPALIVE is the alarm/UI anchor
+        // request: both only mean "stay up", which is pointless once casting is off. Explicit card
+        // actions still work with it off, so the sample buttons are unaffected.
+        if ((intent == null || intent.action == ACTION_KEEPALIVE) && !isCastingEnabled()) {
+            cancelRestartAlarm()
+            stopSelf()
+            return START_NOT_STICKY
+        }
         ensureForeground()
         try {
             when (intent?.action) {
@@ -97,18 +106,59 @@ class PlaygroundService : Service() {
         return START_STICKY
     }
 
+    /**
+     * START_STICKY alone didn't bring the service back on OriginOS, so also leave an alarm behind
+     * that restarts it a second later. The alarm survives because a swipe is a plain process kill,
+     * not a force-stop (which would cancel it, and which nothing can escape).
+     */
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+        // With casting off there is nothing to come back for, and arming the alarm would revive the
+        // service a second after the user swiped it away — for good, since nothing else stops it.
+        if (!isCastingEnabled()) {
+            cancelRestartAlarm()
+            stopSelf()
+            return
+        }
+        runCatching { ensureForeground() }
+        runCatching {
+            restartAlarmIntent(PendingIntent.FLAG_UPDATE_CURRENT)?.let { restart ->
+                getSystemService(AlarmManager::class.java)?.set(
+                    AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1000L, restart,
+                )
+            }
+        }
+    }
+
+    /** Matches the listener's own gate — either card source keeps the service worth running. */
+    private fun isCastingEnabled(): Boolean = getSharedPreferences(PREFS_NAME, 0).let {
+        it.getBoolean("cast_notifications", false) || it.getBoolean("cast_media_sessions", false)
+    }
+
+    /** [flags] picks between arming (FLAG_UPDATE_CURRENT) and looking one up (FLAG_NO_CREATE). */
+    private fun restartAlarmIntent(flags: Int): PendingIntent? = PendingIntent.getForegroundService(
+        this,
+        RESTART_REQUEST,
+        Intent(this, PlaygroundService::class.java).setAction(ACTION_KEEPALIVE),
+        flags or PendingIntent.FLAG_IMMUTABLE,
+    )
+
+    private fun cancelRestartAlarm() {
+        runCatching {
+            restartAlarmIntent(PendingIntent.FLAG_NO_CREATE)?.let {
+                getSystemService(AlarmManager::class.java)?.cancel(it)
+                it.cancel()
+            }
+        }
+    }
+
     private fun ensureForeground() {
         if (isForegroundActive) return
-        // If the keep-alive AccessibilityService is enabled, it anchors the process for us — so we
-        // DON'T start a foreground service, and skipping it removes the status-bar icon that OriginOS
-        // force-shows for any FGS.
-        //
-        // IMPORTANT: we only SKIP starting the FGS here; we must NEVER tear down an already-running
-        // FGS the instant accessibility connects. Doing that left the process with no anchor for a
-        // moment, OriginOS killed it, and the kill disconnected (disabled) the accessibility service.
-        // So the FGS just isn't (re)started once accessibility is on — the icon clears on the next
-        // process start, and the process always keeps an anchor.
-        if (isKeepAliveAccessibilityEnabled()) return
+        // Starts UNCONDITIONALLY. This used to be skipped when the keep-alive AccessibilityService
+        // was enabled, assuming it anchored the process — but a swipe-away kill makes
+        // AccessibilityManagerService mark the service CRASHED and never rebind it, so it stayed
+        // "enabled" while completely dead and nothing restarted us until a reboot. The status-bar
+        // icon that skip was avoiding is handled instead by CHANNEL_ID being IMPORTANCE_NONE.
         createNotificationChannel(CHANNEL_ID)
         val n = NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Origin Isle")
@@ -122,12 +172,17 @@ class PlaygroundService : Service() {
             .setSilent(true)
             .setOngoing(true)
             .build()
-        try {
+        // Both calls can throw: the onTaskRemoved alarm starts this service from the background, and
+        // that is only allowed while the app holds the battery-optimisation exemption (which
+        // onboarding lets the user skip).
+        isForegroundActive = runCatching {
             startForeground(FGS_ID, n, android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
-        } catch (_: Exception) {
+        }.recoverCatching {
             startForeground(FGS_ID, n)
-        }
-        isForegroundActive = true
+        }.isSuccess
+        // Catching isn't enough to survive it: that alarm uses startForegroundService(), so the
+        // system kills us anyway unless we either go foreground or stop. Stop cleanly instead.
+        if (!isForegroundActive) stopSelf()
     }
 
     // --- posting -----------------------------------------------------------------
@@ -416,6 +471,8 @@ class PlaygroundService : Service() {
     }
 
     private fun stopEverything() {
+        // An explicit stop must not be undone by an alarm a previous swipe left armed.
+        cancelRestartAlarm()
         autoDismissTasks.values.forEach { mainHandler.removeCallbacks(it) }
         autoDismissTasks.clear()
         val hadScenes = originScenes.isNotEmpty()
@@ -431,19 +488,13 @@ class PlaygroundService : Service() {
                 notificationManager.cancel(OriginIslandConstants.SUPERX_TAG, it)
                 notificationManager.cancel(it)
             }
+            // Clear the flag with the teardown, or a start arriving before we're destroyed sees a
+            // stale "already foreground" and skips ensureForeground(), leaving the process unanchored.
+            isForegroundActive = false
             stopForeground(STOP_FOREGROUND_REMOVE)
             stopSelf()
         }
         if (hadScenes) mainHandler.postDelayed({ finish() }, 350L) else finish()
-    }
-
-    /** True when the user has enabled the keep-alive AccessibilityService (no FGS icon needed then). */
-    private fun isKeepAliveAccessibilityEnabled(): Boolean {
-        val flat = Settings.Secure.getString(
-            contentResolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,
-        ) ?: return false
-        val target = ComponentName(this, KeepAliveAccessibilityService::class.java)
-        return flat.split(':').any { ComponentName.unflattenFromString(it) == target }
     }
 
     private fun createNotificationChannel(channelId: String) {

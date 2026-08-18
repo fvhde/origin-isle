@@ -30,9 +30,14 @@
 
         <!-- Posts / updates / ends OriginIsland SuperX cards. Special-use FGS so it can
              keep re-posting a live card (e.g. a ticking football score). -->
+        <!-- stopWithTask=false + START_STICKY get casting back after a swipe-away: OriginOS kills
+             the process, so recovery comes from the system restarting this service, which rebinds
+             the listener with it. Gated on vivo's "Associated startup" — with that off nothing
+             recovers until a reboot, which is why onboarding pushes it. -->
         <service
             android:name=".island.PlaygroundService"
-            android:foregroundServiceType="specialUse">
+            android:foregroundServiceType="specialUse"
+            android:stopWithTask="false">
             <property
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="OriginIsland live update service" />
