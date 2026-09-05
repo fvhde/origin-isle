@@ -243,6 +243,19 @@ class NotificationCastListener : NotificationListenerService() {
      */
     private val lastScorePostTime = ConcurrentHashMap<String, Long>()
 
+    /**
+     * Last [StatusBarNotification.getPostTime] actually cast, per notification key — for one-shot
+     * "message"/payment casts only (see the two call sites). OriginOS (verified on vivo) redelivers
+     * onNotificationPosted for an app's OTHER already-cast notifications whenever any one of that
+     * app's notifications changes — WhatsApp and Instagram threads, and wallet payment apps, all
+     * exhibit this: a brand new message elsewhere recasts every older, untouched thread's card back
+     * onto the island. A genuine update always carries a fresh postTime from the source app's own
+     * notify() call, so gating on postTime being unchanged catches only the redelivery, never real
+     * content. Ongoing/call/progress cards don't use this — their own ticking/polling paths
+     * deliberately re-cast with an unchanged postTime (see [pollRunnable]).
+     */
+    private val lastCastPostTime = ConcurrentHashMap<String, Long>()
+
     private val pollRunnable = object : Runnable {
         override fun run() {
             try {
@@ -330,6 +343,10 @@ class NotificationCastListener : NotificationListenerService() {
     fun recastAll(): Int {
         val notifs = activeNotifications ?: return 0
         notifs.forEach { sbn ->
+            // Force it past the [lastCastPostTime] redelivery guard: this is a deliberate replay, not
+            // a redelivery, and it's the one way to bring back a message/payment card the user
+            // dismissed from the island while its source notification is still on the device.
+            lastCastPostTime.remove(sbn.key)
             if (sbn.packageName != packageName) runCatching { onNotificationPosted(sbn) }
         }
         return notifs.size
@@ -396,7 +413,12 @@ class NotificationCastListener : NotificationListenerService() {
         // Payments (Wallet, Revolut, PayPal, banks, …) -> Apple-Pay-style success card. This runs
         // BEFORE the "plain message" filter below, because a payment receipt isn't ongoing and has
         // no progress bar, so it would otherwise be dropped.
-        detectPayment(sbn)?.let { castPayment(sbn, it); log(sbn, "cast — payment", true); return }
+        detectPayment(sbn)?.let {
+            if (lastCastPostTime.put(sbn.key, sbn.postTime) == sbn.postTime) {
+                log(sbn, "skipped — duplicate delivery, unchanged", false); return
+            }
+            castPayment(sbn, it); log(sbn, "cast — payment", true); return
+        }
 
         val isOngoing = (n.flags and Notification.FLAG_ONGOING_EVENT) != 0
         val hasProgress = extras.getInt(NotificationCompat.EXTRA_PROGRESS_MAX, 0) > 0
@@ -428,6 +450,9 @@ class NotificationCastListener : NotificationListenerService() {
             hasProgress -> "progress"
             isOngoing -> "ongoing"
             else -> "message"
+        }
+        if (kind == "message" && lastCastPostTime.put(sbn.key, sbn.postTime) == sbn.postTime) {
+            log(sbn, "skipped — duplicate delivery, unchanged", false); return
         }
         log(sbn, "cast — $kind", true)
         GenericCard.post(applicationContext, sbn, isLive)
@@ -581,6 +606,7 @@ class NotificationCastListener : NotificationListenerService() {
         lastEventAt = System.currentTimeMillis()
         lastOutcome.remove(sbn.key)
         lastScorePostTime.remove(sbn.key)
+        lastCastPostTime.remove(sbn.key)
 
         // Score cards are keyed by team names (matchCastId), not by this notification's own identity
         // (see handleScore) — cancelling by IconCache.castIdFor(sbn) here would target the wrong id and
