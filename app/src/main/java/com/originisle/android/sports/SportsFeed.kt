@@ -1,5 +1,6 @@
 package com.originisle.android.sports
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
@@ -30,6 +31,62 @@ object SportsFeed {
     private const val SEARCH = "https://www.thesportsdb.com/api/v1/json/3/searchteams.php?t="
     private const val CREST_PX = 96
     private val crestCache = ConcurrentHashMap<String, Bitmap>()
+
+    private data class ClubEntry(val badge: String, val league: String)
+
+    /**
+     * Bundled `assets/club_crests.json`: top-two-division clubs across England, Spain, Germany,
+     * Italy, France, Portugal, the Netherlands, Belgium, Scotland, Turkey and Saudi Arabia, each
+     * verified LIVE against `searchteams.php` (exact idTeam/badge, filtered by sport AND country -
+     * never a bare name-string match) during the build that generated this file. Checked BEFORE
+     * any live search: for a known club this skips the rate-limited API entirely, and it can't
+     * return a wrong-sport/wrong-country/reserve-team crest the way a fuzzy live search can.
+     * Populated once via [init]; empty (falls through to live search for everything) until then.
+     */
+    @Volatile private var clubTable: Map<String, ClubEntry> = emptyMap()
+
+    /** Loads [clubTable] from the bundled asset. Call once, e.g. from Application.onCreate(). */
+    fun init(context: Context) {
+        if (clubTable.isNotEmpty()) return
+        try {
+            val json = context.applicationContext.assets.open("club_crests.json")
+                .bufferedReader().use { it.readText() }
+            val obj = JSONObject(json)
+            val map = HashMap<String, ClubEntry>(obj.length())
+            val keys = obj.keys()
+            while (keys.hasNext()) {
+                val key = keys.next()
+                val v = obj.getJSONObject(key)
+                map[key] = ClubEntry(v.getString("badge"), v.optString("league"))
+            }
+            clubTable = map
+        } catch (e: Exception) {
+            Log.w("SportsFeed", "failed to load club_crests.json: ${e.message}")
+        }
+    }
+
+    /** [clubTable] lookup tolerant of hyphen/space and "&"/"and" variants ("Al-Nassr" vs "Al Nassr",
+     * "Brighton & Hove Albion" vs the table's "Brighton and Hove Albion"). */
+    private fun lookupClub(query: String): ClubEntry? {
+        val key = query.trim().lowercase()
+        return clubTable[key]
+            ?: clubTable[key.replace('-', ' ')]
+            ?: clubTable[key.replace(' ', '-')]
+            ?: clubTable[key.replace("&", "and")]
+    }
+
+    /**
+     * Codes that name TWO different real clubs depending on context, so unlike [ALIASES] they can't
+     * be force-mapped to one - that's exactly what made "fcb" -> "Barcelona" wrong for Bayern
+     * Munich. Resolved using the match's competition text (already passed in for other
+     * disambiguation) instead: whichever hint appears in it wins. Checked before [ALIASES].
+     */
+    private val CONTEXTUAL_ALIASES = mapOf(
+        "fcb" to listOf(
+            "bundesliga" to "Bayern Munich", "germany" to "Bayern Munich",
+            "la liga" to "Barcelona", "spain" to "Barcelona",
+        ),
+    )
 
     /**
      * Short forms, nicknames and codes a score app might show instead of a club's full name, mapped
@@ -64,7 +121,7 @@ object SportsFeed {
         "stoke" to "Stoke City", "boro" to "Middlesbrough", "coventry" to "Coventry City", "hull" to "Hull City",
         // Spain
         "real madrid" to "Real Madrid", "madrid" to "Real Madrid", "rmcf" to "Real Madrid",
-        "barca" to "Barcelona", "barça" to "Barcelona", "fcb" to "Barcelona",
+        "barca" to "Barcelona", "barça" to "Barcelona",
         "atletico" to "Atletico Madrid", "atlético" to "Atletico Madrid", "atleti" to "Atletico Madrid",
         "atm" to "Atletico Madrid", "real sociedad" to "Real Sociedad", "la real" to "Real Sociedad",
         "athletic bilbao" to "Athletic Bilbao", "athletic club" to "Athletic Bilbao", "bilbao" to "Athletic Bilbao",
@@ -127,7 +184,7 @@ object SportsFeed {
         "French Ligue 1", "UEFA Champions League", "UEFA Europa League", "English League Championship",
         "Portuguese Primeira Liga", "Dutch Eredivisie", "Scottish Premiership", "Turkish Super Lig",
         "German 2. Bundesliga", "Spanish La Liga 2", "Belgian Pro League", "Belgian First Division A",
-        "Saudi Pro League",
+        "Saudi-Arabian Pro League",
     )
 
     /** Icons for a match: home badge, away badge, and a composited centre image (nulls if missing). */
@@ -144,7 +201,14 @@ object SportsFeed {
         if (key.isEmpty()) return@withContext null
         crestCache[key]?.let { return@withContext it }
         try {
-            val query = ALIASES[key] ?: team
+            val comp = competition.trim().lowercase()
+            val contextual = CONTEXTUAL_ALIASES[key]?.firstOrNull { (hint, _) -> comp.contains(hint) }?.second
+            val query = contextual ?: ALIASES[key] ?: team
+
+            (lookupClub(team) ?: lookupClub(query))?.let { entry ->
+                val raw = URL(entry.badge).openStream().use { BitmapFactory.decodeStream(it) } ?: return@withContext null
+                return@withContext Bitmap.createScaledBitmap(raw, CREST_PX, CREST_PX, true).also { crestCache[key] = it }
+            }
             var teams = fetchTeams(query)
             if (teams == null || teams.length() == 0) {
                 val normalized = normalizeForSearch(query)
@@ -153,7 +217,6 @@ object SportsFeed {
                 }
             }
             if (teams == null || teams.length() == 0) return@withContext null
-            val comp = competition.trim().lowercase()
             var chosen: JSONObject? = null
             var chosenIsMajorLeague = false
             for (i in 0 until teams.length()) {
@@ -175,7 +238,11 @@ object SportsFeed {
                     chosenIsMajorLeague = true
                 }
             }
-            val badge = (chosen ?: teams.optJSONObject(0))?.optString("strBadge")
+            // No `?: teams.optJSONObject(0)` fallback here: chosen is only ever set from a
+            // Soccer-sport result above, so falling back to an unfiltered index-0 would silently
+            // hand back a wrong-sport team's badge (e.g. a Basketball or Netball entry) whenever
+            // the search returns no Soccer results at all - return null (no crest) instead.
+            val badge = chosen?.optString("strBadge")
             if (badge.isNullOrBlank()) return@withContext null
             val raw = URL(badge).openStream().use { BitmapFactory.decodeStream(it) } ?: return@withContext null
             Bitmap.createScaledBitmap(raw, CREST_PX, CREST_PX, true).also { crestCache[key] = it }

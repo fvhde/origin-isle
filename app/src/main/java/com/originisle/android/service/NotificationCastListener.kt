@@ -408,7 +408,16 @@ class NotificationCastListener : NotificationListenerService() {
 
         // Score apps: if the notification parses as a match, post a football card with crests.
         // If it doesn't (Google also posts news/weather/etc.), fall through to the normal path.
-        if (sbn.packageName in SCORE_APPS && handleScore(sbn)) { log(sbn, "cast — live score", true); return }
+        if (sbn.packageName in SCORE_APPS) {
+            // A post-match "recap"/"highlights" notification isn't a live update - it's often sent
+            // well after full time, sometimes repeatedly, and re-parsing its "<team> <score> -
+            // <score> <team>" line as a match just pops the card back up for a game that's already
+            // over. Drop it before handleScore ever sees it, unconditionally (not just when the
+            // generic message-cast setting is off), so it displays nothing rather than falling
+            // through to a plain-message card.
+            if (isRecapOrHighlights(sbn)) { log(sbn, "skipped — recap/highlights, not live", false); return }
+            if (handleScore(sbn)) { log(sbn, "cast — live score", true); return }
+        }
 
         // Payments (Wallet, Revolut, PayPal, banks, …) -> Apple-Pay-style success card. This runs
         // BEFORE the "plain message" filter below, because a payment receipt isn't ongoing and has
@@ -512,6 +521,16 @@ class NotificationCastListener : NotificationListenerService() {
         super.onDestroy()
         if (instance === this) instance = null
         scope.cancel()
+    }
+
+    /** Whether [sbn] (from a [SCORE_APPS] package) is a post-match recap/highlights notification. */
+    private fun isRecapOrHighlights(sbn: StatusBarNotification): Boolean {
+        val extras = sbn.notification.extras
+        val hay = listOf(
+            NotificationCompat.EXTRA_TITLE, NotificationCompat.EXTRA_TEXT,
+            NotificationCompat.EXTRA_BIG_TEXT, NotificationCompat.EXTRA_SUB_TEXT,
+        ).joinToString(" ") { extras.getCharSequence(it)?.toString().orEmpty() }.lowercase()
+        return hay.contains("recap") || hay.contains("highlight")
     }
 
     /**

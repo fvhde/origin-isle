@@ -1,0 +1,2746 @@
+{
+  "manchester city": {
+    "idTeam": "133613",
+    "team": "Manchester City",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/vwpvry1467462651.png",
+    "league": "English Premier League",
+    "country": "England"
+  },
+  "arsenal": {
+    "idTeam": "133604",
+    "team": "Arsenal",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/uyhbfe1612467038.png",
+    "league": "English Premier League",
+    "country": "England"
+  },
+  "hull city": {
+    "idTeam": "133617",
+    "team": "Hull City",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/fbqqda1601726113.png",
+    "league": "English Premier League",
+    "country": "England"
+  },
+  "chelsea": {
+    "idTeam": "133610",
+    "team": "Chelsea",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/pbf4ul1782638263.png",
+    "league": "English Premier League",
+    "country": "England"
+  },
+  "brentford": {
+    "idTeam": "134355",
+    "team": "Brentford",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/grv1aw1546453779.png",
+    "league": "English Premier League",
+    "country": "England"
+  },
+  "liverpool": {
+    "idTeam": "133602",
+    "team": "Liverpool",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/kfaher1737969724.png",
+    "league": "English Premier League",
+    "country": "England"
+  },
+  "newcastle united": {
+    "idTeam": "134777",
+    "team": "Newcastle United",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/lhwuiz1621593302.png",
+    "league": "English Premier League",
+    "country": "England"
+  },
+  "everton": {
+    "idTeam": "133615",
+    "team": "Everton",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/eqayrf1523184794.png",
+    "league": "English Premier League",
+    "country": "England"
+  },
+  "leeds united": {
+    "idTeam": "133635",
+    "team": "Leeds United",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/jcgrml1756649030.png",
+    "league": "English Premier League",
+    "country": "England"
+  },
+  "brighton and hove albion": {
+    "idTeam": "133619",
+    "team": "Brighton and Hove Albion",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/ywypts1448810904.png",
+    "league": "English Premier League",
+    "country": "England"
+  },
+  "manchester united": {
+    "idTeam": "133612",
+    "team": "Manchester United",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/xzqdr11517660252.png",
+    "league": "English Premier League",
+    "country": "England"
+  },
+  "sunderland": {
+    "idTeam": "133603",
+    "team": "Sunderland",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/tprtus1448813498.png",
+    "league": "English Premier League",
+    "country": "England"
+  },
+  "crystal palace": {
+    "idTeam": "133632",
+    "team": "Crystal Palace",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/ia6i3m1656014992.png",
+    "league": "English Premier League",
+    "country": "England"
+  },
+  "ipswich town": {
+    "idTeam": "133622",
+    "team": "Ipswich Town",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/mdj1ey1634670785.png",
+    "league": "English Premier League",
+    "country": "England"
+  },
+  "bournemouth": {
+    "idTeam": "134301",
+    "team": "Bournemouth",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/y08nak1534071116.png",
+    "league": "English Premier League",
+    "country": "England"
+  },
+  "aston villa": {
+    "idTeam": "133601",
+    "team": "Aston Villa",
+    "badge": "https://www.thesportsdb.com/images/media/team/badge/uwzw561787679026.png",
+    "league": "English Premier League",
+    "country": "England"
+  },
+  "tottenham hotspur": {
+    "idTeam": "133616",
+    "team": "Tottenham Hotspur",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/dfyfhl1604094109.png",
+    "league": "English Premier League",
+    "country": "England"
+  },
+  "fulham": {
+    "idTeam": "133600",
+    "team": "Fulham",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/xwwvyt1448811086.png",
+    "league": "English Premier League",
+    "country": "England"
+  },
+  "coventry city": {
+    "idTeam": "133625",
+    "team": "Coventry City",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/uxyqys1424033798.png",
+    "league": "English Premier League",
+    "country": "England"
+  },
+  "middlesbrough": {
+    "idTeam": "133628",
+    "team": "Middlesbrough",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/advjg71780068902.png",
+    "league": "English League Championship",
+    "country": "England"
+  },
+  "queens park rangers": {
+    "idTeam": "133605",
+    "team": "Queens Park Rangers",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/l4qscx1601721022.png",
+    "league": "English League Championship",
+    "country": "England"
+  },
+  "bristol city": {
+    "idTeam": "133621",
+    "team": "Bristol City",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/0ejxwz1601721013.png",
+    "league": "English League Championship",
+    "country": "England"
+  },
+  "west bromwich albion": {
+    "idTeam": "133611",
+    "team": "West Bromwich Albion",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/rsvuxw1448813527.png",
+    "league": "English League Championship",
+    "country": "England"
+  },
+  "charlton athletic": {
+    "idTeam": "133851",
+    "team": "Charlton Athletic",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/o08wvi1635872307.png",
+    "league": "English League Championship",
+    "country": "England"
+  },
+  "millwall": {
+    "idTeam": "133634",
+    "team": "Millwall",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/5p1z5k1537208888.png",
+    "league": "English League Championship",
+    "country": "England"
+  },
+  "west ham united": {
+    "idTeam": "133636",
+    "team": "West Ham United",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/yutyxs1467459956.png",
+    "league": "English League Championship",
+    "country": "England"
+  },
+  "wolverhampton wanderers": {
+    "idTeam": "133599",
+    "team": "Wolverhampton Wanderers",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/u9qr031621593327.png",
+    "league": "English League Championship",
+    "country": "England"
+  },
+  "birmingham city": {
+    "idTeam": "133597",
+    "team": "Birmingham City",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/wufs551672950865.png",
+    "league": "English League Championship",
+    "country": "England"
+  },
+  "norwich city": {
+    "idTeam": "133608",
+    "team": "Norwich City",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/pabczm1679951464.png",
+    "league": "English League Championship",
+    "country": "England"
+  },
+  "stoke city": {
+    "idTeam": "133609",
+    "team": "Stoke City",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/lz89v21781718914.png",
+    "league": "English League Championship",
+    "country": "England"
+  },
+  "portsmouth": {
+    "idTeam": "133629",
+    "team": "Portsmouth",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/j13pfe1601726274.png",
+    "league": "English League Championship",
+    "country": "England"
+  },
+  "sheffield united": {
+    "idTeam": "133811",
+    "team": "Sheffield United",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/w7f8pj1672950689.png",
+    "league": "English League Championship",
+    "country": "England"
+  },
+  "blackburn rovers": {
+    "idTeam": "133598",
+    "team": "Blackburn Rovers",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/rvryut1448810814.png",
+    "league": "English League Championship",
+    "country": "England"
+  },
+  "lincoln city": {
+    "idTeam": "135900",
+    "team": "Lincoln City",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/x46tji1719860130.png",
+    "league": "English League Championship",
+    "country": "England"
+  },
+  "watford": {
+    "idTeam": "133624",
+    "team": "Watford",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/rsuswy1448813519.png",
+    "league": "English League Championship",
+    "country": "England"
+  },
+  "southampton": {
+    "idTeam": "134778",
+    "team": "Southampton",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/ggqtd01621593274.png",
+    "league": "English League Championship",
+    "country": "England"
+  },
+  "derby county": {
+    "idTeam": "133627",
+    "team": "Derby County",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/jioo4z1557155744.png",
+    "league": "English League Championship",
+    "country": "England"
+  },
+  "bolton wanderers": {
+    "idTeam": "133606",
+    "team": "Bolton Wanderers",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/yvxxrv1448808301.png",
+    "league": "English League Championship",
+    "country": "England"
+  },
+  "preston north end": {
+    "idTeam": "133809",
+    "team": "Preston North End",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/wqtwvw1448811512.png",
+    "league": "English League Championship",
+    "country": "England"
+  },
+  "burnley": {
+    "idTeam": "133623",
+    "team": "Burnley",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/ql7nl31686893820.png",
+    "league": "English League Championship",
+    "country": "England"
+  },
+  "swansea city": {
+    "idTeam": "133614",
+    "team": "Swansea City",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/474rco1686920744.png",
+    "league": "English League Championship",
+    "country": "Wales"
+  },
+  "wrexham": {
+    "idTeam": "134775",
+    "team": "Wrexham",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/ezpymt1675092551.png",
+    "league": "English League Championship",
+    "country": "Wales"
+  },
+  "cardiff city": {
+    "idTeam": "133637",
+    "team": "Cardiff City",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/xtytpt1448808285.png",
+    "league": "English League Championship",
+    "country": "Wales"
+  },
+  "athletic bilbao": {
+    "idTeam": "133727",
+    "team": "Athletic Bilbao",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/68w7fe1639408210.png",
+    "league": "Spanish La Liga",
+    "country": "Spain"
+  },
+  "atlético madrid": {
+    "idTeam": "133729",
+    "team": "Atlético Madrid",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/0ulh3q1719984315.png",
+    "league": "Spanish La Liga",
+    "country": "Spain"
+  },
+  "barcelona": {
+    "idTeam": "133739",
+    "team": "Barcelona",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/wq9sir1639406443.png",
+    "league": "Spanish La Liga",
+    "country": "Spain"
+  },
+  "celta vigo": {
+    "idTeam": "133937",
+    "team": "Celta Vigo",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/xfjtku1690436219.png",
+    "league": "Spanish La Liga",
+    "country": "Spain"
+  },
+  "elche": {
+    "idTeam": "134384",
+    "team": "Elche",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/e4vaw51655594332.png",
+    "league": "Spanish La Liga",
+    "country": "Spain"
+  },
+  "espanyol": {
+    "idTeam": "133734",
+    "team": "Espanyol",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/867nzz1681703222.png",
+    "league": "Spanish La Liga",
+    "country": "Spain"
+  },
+  "getafe": {
+    "idTeam": "133731",
+    "team": "Getafe",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/eyh2891655594452.png",
+    "league": "Spanish La Liga",
+    "country": "Spain"
+  },
+  "levante": {
+    "idTeam": "133732",
+    "team": "Levante",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/xwtxsx1473503739.png",
+    "league": "Spanish La Liga",
+    "country": "Spain"
+  },
+  "málaga": {
+    "idTeam": "133736",
+    "team": "Málaga",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/upqyvr1473502952.png",
+    "league": "Spanish La Liga",
+    "country": "Spain"
+  },
+  "osasuna": {
+    "idTeam": "133730",
+    "team": "Osasuna",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/rvspvt1473502960.png",
+    "league": "Spanish La Liga",
+    "country": "Spain"
+  },
+  "racing de santander": {
+    "idTeam": "133726",
+    "team": "Racing de Santander",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/97kkiq1536575158.png",
+    "league": "Spanish La Liga",
+    "country": "Spain"
+  },
+  "rayo vallecano": {
+    "idTeam": "133728",
+    "team": "Rayo Vallecano",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/nzhu941655595465.png",
+    "league": "Spanish La Liga",
+    "country": "Spain"
+  },
+  "real betis": {
+    "idTeam": "133722",
+    "team": "Real Betis",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/2oqulv1663245386.png",
+    "league": "Spanish La Liga",
+    "country": "Spain"
+  },
+  "real madrid": {
+    "idTeam": "133738",
+    "team": "Real Madrid",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/vwvwrw1473502969.png",
+    "league": "Spanish La Liga",
+    "country": "Spain"
+  },
+  "real sociedad": {
+    "idTeam": "133724",
+    "team": "Real Sociedad",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/vptvpr1473502986.png",
+    "league": "Spanish La Liga",
+    "country": "Spain"
+  },
+  "sevilla": {
+    "idTeam": "133735",
+    "team": "Sevilla",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/vpsqqx1473502977.png",
+    "league": "Spanish La Liga",
+    "country": "Spain"
+  },
+  "valencia": {
+    "idTeam": "133725",
+    "team": "Valencia",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/dm8l6o1655594864.png",
+    "league": "Spanish La Liga",
+    "country": "Spain"
+  },
+  "villarreal": {
+    "idTeam": "133740",
+    "team": "Villarreal",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/vrypqy1473503073.png",
+    "league": "Spanish La Liga",
+    "country": "Spain"
+  },
+  "castellón": {
+    "idTeam": "138286",
+    "team": "Castellón",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/ywibjw1733456820.png",
+    "league": "Spanish La Liga 2",
+    "country": "Spain"
+  },
+  "eibar": {
+    "idTeam": "134626",
+    "team": "Eibar",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/hccive1680933599.png",
+    "league": "Spanish La Liga 2",
+    "country": "Spain"
+  },
+  "leganés": {
+    "idTeam": "134701",
+    "team": "Leganés",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/tm0adr1616443898.png",
+    "league": "Spanish La Liga 2",
+    "country": "Spain"
+  },
+  "girona": {
+    "idTeam": "134700",
+    "team": "Girona",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/kfu7zu1659897499.png",
+    "league": "Spanish La Liga 2",
+    "country": "Spain"
+  },
+  "celta fortuna": {
+    "idTeam": "137826",
+    "team": "Celta Fortuna",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/t22qex1690436192.png",
+    "league": "Spanish La Liga 2",
+    "country": "Spain"
+  },
+  "mallorca": {
+    "idTeam": "133733",
+    "team": "Mallorca",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/ssptsx1473503730.png",
+    "league": "Spanish La Liga 2",
+    "country": "Spain"
+  },
+  "tenerife": {
+    "idTeam": "133840",
+    "team": "Tenerife",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/utuqys1420503958.png",
+    "league": "Spanish La Liga 2",
+    "country": "Spain"
+  },
+  "las palmas": {
+    "idTeam": "134259",
+    "team": "Las Palmas",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/mmhyb11616443601.png",
+    "league": "Spanish La Liga 2",
+    "country": "Spain"
+  },
+  "almería": {
+    "idTeam": "133817",
+    "team": "Almería",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/yswsww1473503818.png",
+    "league": "Spanish La Liga 2",
+    "country": "Spain"
+  },
+  "sabadell": {
+    "idTeam": "134704",
+    "team": "Sabadell",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/21mapu1690094066.png",
+    "league": "Spanish La Liga 2",
+    "country": "Spain"
+  },
+  "burgos": {
+    "idTeam": "138161",
+    "team": "Burgos",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/79h3ul1708150894.png",
+    "league": "Spanish La Liga 2",
+    "country": "Spain"
+  },
+  "real sociedad b": {
+    "idTeam": "138160",
+    "team": "Real Sociedad B",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/hliq4n1579632023.png",
+    "league": "Spanish La Liga 2",
+    "country": "Spain"
+  },
+  "cádiz": {
+    "idTeam": "134222",
+    "team": "Cádiz",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/e2phzp1639408503.png",
+    "league": "Spanish La Liga 2",
+    "country": "Spain"
+  },
+  "córdoba": {
+    "idTeam": "134627",
+    "team": "Córdoba",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/ttyyvy1473503827.png",
+    "league": "Spanish La Liga 2",
+    "country": "Spain"
+  },
+  "eldense": {
+    "idTeam": "144246",
+    "team": "Eldense",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/asdjgc1733549950.png",
+    "league": "Spanish La Liga 2",
+    "country": "Spain"
+  },
+  "albacete": {
+    "idTeam": "134232",
+    "team": "Albacete",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/17oqja1616436316.png",
+    "league": "Spanish La Liga 2",
+    "country": "Spain"
+  },
+  "ceuta": {
+    "idTeam": "144243",
+    "team": "Ceuta",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/ja7sl51677475273.png",
+    "league": "Spanish La Liga 2",
+    "country": "Spain"
+  },
+  "deportivo alavés": {
+    "idTeam": "134221",
+    "team": "Deportivo Alavés",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/mfn99h1734673842.png",
+    "league": "Spanish La Liga",
+    "country": "Spain"
+  },
+  "granada": {
+    "idTeam": "133721",
+    "team": "Granada",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/f9iss11677472689.png",
+    "league": "Spanish La Liga 2",
+    "country": "Spain"
+  },
+  "sporting de gijón": {
+    "idTeam": "133723",
+    "team": "Sporting de Gijón",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/xxrtqx1473503054.png",
+    "league": "Spanish La Liga 2",
+    "country": "Spain"
+  },
+  "real oviedo": {
+    "idTeam": "135455",
+    "team": "Real Oviedo",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/yuwqus1447590681.png",
+    "league": "Spanish La Liga 2",
+    "country": "Spain"
+  },
+  "real valladolid": {
+    "idTeam": "133841",
+    "team": "Real Valladolid",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/bnhu8b1719983736.png",
+    "league": "Spanish La Liga 2",
+    "country": "Spain"
+  },
+  "fc andorra": {
+    "idTeam": "138280",
+    "team": "FC Andorra",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/eyaka21639481902.png",
+    "league": "Spanish La Liga 2",
+    "country": "Andorra"
+  },
+  "augsburg": {
+    "idTeam": "133652",
+    "team": "Augsburg",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/xqyyvq1473453233.png",
+    "league": "German Bundesliga",
+    "country": "Germany"
+  },
+  "union berlin": {
+    "idTeam": "134690",
+    "team": "Union Berlin",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/q0o5001599679795.png",
+    "league": "German Bundesliga",
+    "country": "Germany"
+  },
+  "werder bremen": {
+    "idTeam": "133662",
+    "team": "Werder Bremen",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/tkvqan1716960454.png",
+    "league": "German Bundesliga",
+    "country": "Germany"
+  },
+  "borussia dortmund": {
+    "idTeam": "133650",
+    "team": "Borussia Dortmund",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/tqo8ge1716960353.png",
+    "league": "German Bundesliga",
+    "country": "Germany"
+  },
+  "elversberg": {
+    "idTeam": "138411",
+    "team": "Elversberg",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/z079go1677573926.png",
+    "league": "German Bundesliga",
+    "country": "Germany"
+  },
+  "eintracht frankfurt": {
+    "idTeam": "133814",
+    "team": "Eintracht Frankfurt",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/rurwpy1473453269.png",
+    "league": "German Bundesliga",
+    "country": "Germany"
+  },
+  "freiburg": {
+    "idTeam": "133653",
+    "team": "Freiburg",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/urwtup1473453288.png",
+    "league": "German Bundesliga",
+    "country": "Germany"
+  },
+  "hoffenheim": {
+    "idTeam": "133657",
+    "team": "Hoffenheim",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/9hwvb21621593919.png",
+    "league": "German Bundesliga",
+    "country": "Germany"
+  },
+  "köln": {
+    "idTeam": "133654",
+    "team": "Köln",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/2j1sc91566049407.png",
+    "league": "German Bundesliga",
+    "country": "Germany"
+  },
+  "rb leipzig": {
+    "idTeam": "134695",
+    "team": "RB Leipzig",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/zjgapo1594244951.png",
+    "league": "German Bundesliga",
+    "country": "Germany"
+  },
+  "bayer leverkusen": {
+    "idTeam": "133666",
+    "team": "Bayer Leverkusen",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/3x9k851726760113.png",
+    "league": "German Bundesliga",
+    "country": "Germany"
+  },
+  "borussia mönchengladbach": {
+    "idTeam": "134779",
+    "team": "Borussia Mönchengladbach",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/sysurw1473453380.png",
+    "league": "German Bundesliga",
+    "country": "Germany"
+  },
+  "bayern munich": {
+    "idTeam": "133664",
+    "team": "Bayern Munich",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/01ogkh1716960412.png",
+    "league": "German Bundesliga",
+    "country": "Germany"
+  },
+  "paderborn": {
+    "idTeam": "134551",
+    "team": "Paderborn",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/kddvva1566048058.png",
+    "league": "German Bundesliga",
+    "country": "Germany"
+  },
+  "schalke 04": {
+    "idTeam": "133661",
+    "team": "Schalke 04",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/hnci291621593978.png",
+    "league": "German Bundesliga",
+    "country": "Germany"
+  },
+  "stuttgart": {
+    "idTeam": "133660",
+    "team": "Stuttgart",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/yppyux1473454085.png",
+    "league": "German Bundesliga",
+    "country": "Germany"
+  },
+  "hertha": {
+    "idTeam": "133658",
+    "team": "Hertha",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/8okmtm1621593943.png",
+    "league": "German 2. Bundesliga",
+    "country": "Germany"
+  },
+  "arminia bielefeld": {
+    "idTeam": "133852",
+    "team": "Arminia Bielefeld",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/xrrwpx1447591964.png",
+    "league": "German 2. Bundesliga",
+    "country": "Germany"
+  },
+  "bochum": {
+    "idTeam": "133839",
+    "team": "Bochum",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/kag3jy1599821108.png",
+    "league": "German 2. Bundesliga",
+    "country": "Germany"
+  },
+  "eintracht braunschweig": {
+    "idTeam": "134302",
+    "team": "Eintracht Braunschweig",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/lrrq0z1599820707.png",
+    "league": "German 2. Bundesliga",
+    "country": "Germany"
+  },
+  "energie cottbus": {
+    "idTeam": "133853",
+    "team": "Energie Cottbus",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/8ks84j1750352338.png",
+    "league": "German 2. Bundesliga",
+    "country": "Germany"
+  },
+  "darmstadt": {
+    "idTeam": "134693",
+    "team": "Darmstadt",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/5f3dyd1608236981.png",
+    "league": "German 2. Bundesliga",
+    "country": "Germany"
+  },
+  "dynamo dresden": {
+    "idTeam": "135655",
+    "team": "Dynamo Dresden",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/0vfmdu1783231141.png",
+    "league": "German 2. Bundesliga",
+    "country": "Germany"
+  },
+  "greuther fürth": {
+    "idTeam": "134099",
+    "team": "Greuther Fürth",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/87n1901608237004.png",
+    "league": "German 2. Bundesliga",
+    "country": "Germany"
+  },
+  "hannover 96": {
+    "idTeam": "133656",
+    "team": "Hannover 96",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/tqpqqv1473454148.png",
+    "league": "German 2. Bundesliga",
+    "country": "Germany"
+  },
+  "heidenheim": {
+    "idTeam": "134696",
+    "team": "Heidenheim",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/lbj7g01608236988.png",
+    "league": "German 2. Bundesliga",
+    "country": "Germany"
+  },
+  "kaiserslautern": {
+    "idTeam": "133663",
+    "team": "Kaiserslautern",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/jghax31740165513.png",
+    "league": "German 2. Bundesliga",
+    "country": "Germany"
+  },
+  "karlsruhe": {
+    "idTeam": "135293",
+    "team": "Karlsruhe",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/l784ls1696006504.png",
+    "league": "German 2. Bundesliga",
+    "country": "Germany"
+  },
+  "holstein kiel": {
+    "idTeam": "136027",
+    "team": "Holstein Kiel",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/1fpmgs1514394524.png",
+    "league": "German 2. Bundesliga",
+    "country": "Germany"
+  },
+  "magdeburg": {
+    "idTeam": "136194",
+    "team": "Magdeburg",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/f2fuxs1532856216.png",
+    "league": "German 2. Bundesliga",
+    "country": "Germany"
+  },
+  "nürnberg": {
+    "idTeam": "133659",
+    "team": "Nürnberg",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/wtj8rd1659904028.png",
+    "league": "German 2. Bundesliga",
+    "country": "Germany"
+  },
+  "osnabrück": {
+    "idTeam": "137115",
+    "team": "Osnabrück",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/tjs2611565193747.png",
+    "league": "German 2. Bundesliga",
+    "country": "Germany"
+  },
+  "wolfsburg": {
+    "idTeam": "133655",
+    "team": "Wolfsburg",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/ci9trv1778399557.png",
+    "league": "German 2. Bundesliga",
+    "country": "Germany"
+  },
+  "hamburg": {
+    "idTeam": "133651",
+    "team": "Hamburg",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/tvtppt1473453296.png",
+    "league": "German Bundesliga",
+    "country": "Germany"
+  },
+  "mainz": {
+    "idTeam": "133665",
+    "team": "Mainz",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/fhm9v51552134916.png",
+    "league": "German Bundesliga",
+    "country": "Germany"
+  },
+  "st pauli": {
+    "idTeam": "133813",
+    "team": "St Pauli",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/5qupxa1608237013.png",
+    "league": "German 2. Bundesliga",
+    "country": "Germany"
+  },
+  "roma": {
+    "idTeam": "133682",
+    "team": "Roma",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/jwro2s1760820674.png",
+    "league": "Italian Serie A",
+    "country": "Italy"
+  },
+  "inter milan": {
+    "idTeam": "133681",
+    "team": "Inter Milan",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/ryhu6d1617113103.png",
+    "league": "Italian Serie A",
+    "country": "Italy"
+  },
+  "como": {
+    "idTeam": "134243",
+    "team": "Como",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/02x81t1627405841.png",
+    "league": "Italian Serie A",
+    "country": "Italy"
+  },
+  "ac milan": {
+    "idTeam": "133667",
+    "team": "AC Milan",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/wvspur1448806617.png",
+    "league": "Italian Serie A",
+    "country": "Italy"
+  },
+  "juventus": {
+    "idTeam": "133676",
+    "team": "Juventus",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/uxf0gr1742983727.png",
+    "league": "Italian Serie A",
+    "country": "Italy"
+  },
+  "frosinone": {
+    "idTeam": "133818",
+    "team": "Frosinone",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/a7xa151603170120.png",
+    "league": "Italian Serie A",
+    "country": "Italy"
+  },
+  "lazio": {
+    "idTeam": "133668",
+    "team": "Lazio",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/rwqyvs1448806608.png",
+    "league": "Italian Serie A",
+    "country": "Italy"
+  },
+  "atalanta": {
+    "idTeam": "134782",
+    "team": "Atalanta",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/qix5ku1780561327.png",
+    "league": "Italian Serie A",
+    "country": "Italy"
+  },
+  "cagliari": {
+    "idTeam": "134783",
+    "team": "Cagliari",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/wvsvxt1447534471.png",
+    "league": "Italian Serie A",
+    "country": "Italy"
+  },
+  "udinese": {
+    "idTeam": "133679",
+    "team": "Udinese",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/vwvstr1448806811.png",
+    "league": "Italian Serie A",
+    "country": "Italy"
+  },
+  "sassuolo": {
+    "idTeam": "133701",
+    "team": "Sassuolo",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/xystvp1448806138.png",
+    "league": "Italian Serie A",
+    "country": "Italy"
+  },
+  "napoli": {
+    "idTeam": "133670",
+    "team": "Napoli",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/l8qyxv1742982541.png",
+    "league": "Italian Serie A",
+    "country": "Italy"
+  },
+  "torino": {
+    "idTeam": "133687",
+    "team": "Torino",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/xxprty1448806802.png",
+    "league": "Italian Serie A",
+    "country": "Italy"
+  },
+  "lecce": {
+    "idTeam": "133678",
+    "team": "Lecce",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/j4vznr1567365249.png",
+    "league": "Italian Serie A",
+    "country": "Italy"
+  },
+  "bologna": {
+    "idTeam": "134781",
+    "team": "Bologna",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/2qi1u31655592366.png",
+    "league": "Italian Serie A",
+    "country": "Italy"
+  },
+  "parma": {
+    "idTeam": "135728",
+    "team": "Parma",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/6yiaxs1627406063.png",
+    "league": "Italian Serie A",
+    "country": "Italy"
+  },
+  "monza": {
+    "idTeam": "134270",
+    "team": "Monza",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/bxearg1603170113.png",
+    "league": "Italian Serie A",
+    "country": "Italy"
+  },
+  "venezia": {
+    "idTeam": "134234",
+    "team": "Venezia",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/vbiget1781026964.png",
+    "league": "Italian Serie A",
+    "country": "Italy"
+  },
+  "genoa": {
+    "idTeam": "133675",
+    "team": "Genoa",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/52s8dn1655553600.png",
+    "league": "Italian Serie A",
+    "country": "Italy"
+  },
+  "fiorentina": {
+    "idTeam": "133674",
+    "team": "Fiorentina",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/hc8nhu1656098030.png",
+    "league": "Italian Serie A",
+    "country": "Italy"
+  },
+  "mantova": {
+    "idTeam": "133845",
+    "team": "Mantova",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/6mz7tb1648579351.png",
+    "league": "Italian Serie B",
+    "country": "Italy"
+  },
+  "südtirol": {
+    "idTeam": "134654",
+    "team": "Südtirol",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/8fico41579725098.png",
+    "league": "Italian Serie B",
+    "country": "Italy"
+  },
+  "ascoli": {
+    "idTeam": "133686",
+    "team": "Ascoli",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/mi2bsf1579708272.png",
+    "league": "Italian Serie B",
+    "country": "Italy"
+  },
+  "avellino": {
+    "idTeam": "133858",
+    "team": "Avellino",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/swsu5p1579724964.png",
+    "league": "Italian Serie B",
+    "country": "Italy"
+  },
+  "pisa": {
+    "idTeam": "133859",
+    "team": "Pisa",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/2eso9w1579708309.png",
+    "league": "Italian Serie B",
+    "country": "Italy"
+  },
+  "modena": {
+    "idTeam": "133700",
+    "team": "Modena",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/93n2wm1656015823.png",
+    "league": "Italian Serie B",
+    "country": "Italy"
+  },
+  "palermo": {
+    "idTeam": "138166",
+    "team": "Palermo",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/zi1tb01579708939.png",
+    "league": "Italian Serie B",
+    "country": "Italy"
+  },
+  "empoli": {
+    "idTeam": "133695",
+    "team": "Empoli",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/c1ie6b1622561483.png",
+    "league": "Italian Serie B",
+    "country": "Italy"
+  },
+  "cesena": {
+    "idTeam": "133669",
+    "team": "Cesena",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/9l00zr1677256723.png",
+    "league": "Italian Serie B",
+    "country": "Italy"
+  },
+  "hellas verona": {
+    "idTeam": "134784",
+    "team": "Hellas Verona",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/p6camf1593457737.png",
+    "league": "Italian Serie B",
+    "country": "Italy"
+  },
+  "vicenza": {
+    "idTeam": "137255",
+    "team": "Vicenza",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/fj8twm1569164066.png",
+    "league": "Italian Serie B",
+    "country": "Italy"
+  },
+  "cremonese": {
+    "idTeam": "134224",
+    "team": "Cremonese",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/6ng2vy1579708291.png",
+    "league": "Italian Serie B",
+    "country": "Italy"
+  },
+  "arezzo": {
+    "idTeam": "134212",
+    "team": "Arezzo",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/sb6qgh1579724928.png",
+    "league": "Italian Serie B",
+    "country": "Italy"
+  },
+  "sampdoria": {
+    "idTeam": "133683",
+    "team": "Sampdoria",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/pr6co21655592769.png",
+    "league": "Italian Serie B",
+    "country": "Italy"
+  },
+  "virtus entella": {
+    "idTeam": "134633",
+    "team": "Virtus Entella",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/c7yb5u1693457662.png",
+    "league": "Italian Serie B",
+    "country": "Italy"
+  },
+  "benevento": {
+    "idTeam": "134688",
+    "team": "Benevento",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/rvwtpt1426870819.png",
+    "league": "Italian Serie B",
+    "country": "Italy"
+  },
+  "carrarese": {
+    "idTeam": "134666",
+    "team": "Carrarese",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/njh6tl1651779724.png",
+    "league": "Italian Serie B",
+    "country": "Italy"
+  },
+  "juve stabia": {
+    "idTeam": "133696",
+    "team": "Juve Stabia",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/aojsvb1677257282.png",
+    "league": "Italian Serie B",
+    "country": "Italy"
+  },
+  "catanzaro": {
+    "idTeam": "134223",
+    "team": "Catanzaro",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/byrc5e1691995858.png",
+    "league": "Italian Serie B",
+    "country": "Italy"
+  },
+  "padova": {
+    "idTeam": "135950",
+    "team": "Padova",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/hklo0i1579724992.png",
+    "league": "Italian Serie B",
+    "country": "Italy"
+  },
+  "angers": {
+    "idTeam": "134709",
+    "team": "Angers",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/ix6q4w1678808069.png",
+    "league": "French Ligue 1",
+    "country": "France"
+  },
+  "auxerre": {
+    "idTeam": "134788",
+    "team": "Auxerre",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/lzdtbf1658753355.png",
+    "league": "French Ligue 1",
+    "country": "France"
+  },
+  "brest": {
+    "idTeam": "133704",
+    "team": "Brest",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/z69be41598797026.png",
+    "league": "French Ligue 1",
+    "country": "France"
+  },
+  "le havre": {
+    "idTeam": "133862",
+    "team": "Le Havre",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/aikowk1546475003.png",
+    "league": "French Ligue 1",
+    "country": "France"
+  },
+  "le mans": {
+    "idTeam": "133848",
+    "team": "Le Mans",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/wjhziv1700145026.png",
+    "league": "French Ligue 1",
+    "country": "France"
+  },
+  "lens": {
+    "idTeam": "133822",
+    "team": "Lens",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/3pxoum1598797195.png",
+    "league": "French Ligue 1",
+    "country": "France"
+  },
+  "lorient": {
+    "idTeam": "133715",
+    "team": "Lorient",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/sxsttw1473504748.png",
+    "league": "French Ligue 1",
+    "country": "France"
+  },
+  "lyon": {
+    "idTeam": "133713",
+    "team": "Lyon",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/blk9771656932845.png",
+    "league": "French Ligue 1",
+    "country": "France"
+  },
+  "marseille": {
+    "idTeam": "133707",
+    "team": "Marseille",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/c6bazh1779212287.png",
+    "league": "French Ligue 1",
+    "country": "France"
+  },
+  "nice": {
+    "idTeam": "133712",
+    "team": "Nice",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/msy7ly1621593859.png",
+    "league": "French Ligue 1",
+    "country": "France"
+  },
+  "paris fc": {
+    "idTeam": "135465",
+    "team": "Paris FC",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/yuvtsy1447594254.png",
+    "league": "French Ligue 1",
+    "country": "France"
+  },
+  "rennes": {
+    "idTeam": "133719",
+    "team": "Rennes",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/ypturx1473504818.png",
+    "league": "French Ligue 1",
+    "country": "France"
+  },
+  "strasbourg": {
+    "idTeam": "133882",
+    "team": "Strasbourg",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/b8k77w1766625501.png",
+    "league": "French Ligue 1",
+    "country": "France"
+  },
+  "toulouse": {
+    "idTeam": "133703",
+    "team": "Toulouse",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/17eqox1688449282.png",
+    "league": "French Ligue 1",
+    "country": "France"
+  },
+  "troyes": {
+    "idTeam": "134789",
+    "team": "Troyes",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/sl5kzg1766617559.png",
+    "league": "French Ligue 1",
+    "country": "France"
+  },
+  "saint-étienne": {
+    "idTeam": "133717",
+    "team": "Saint-Étienne",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/m4ej831656423694.png",
+    "league": "French Ligue 2",
+    "country": "France"
+  },
+  "annecy": {
+    "idTeam": "139928",
+    "team": "Annecy",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/h6981f1655120883.png",
+    "league": "French Ligue 2",
+    "country": "France"
+  },
+  "metz": {
+    "idTeam": "133883",
+    "team": "Metz",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/1iuew61688452857.png",
+    "league": "French Ligue 2",
+    "country": "France"
+  },
+  "montpellier": {
+    "idTeam": "133709",
+    "team": "Montpellier",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/8wn9x31750879448.png",
+    "league": "French Ligue 2",
+    "country": "France"
+  },
+  "red star": {
+    "idTeam": "135467",
+    "team": "Red Star",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/so4unb1658758422.png",
+    "league": "French Ligue 2",
+    "country": "France"
+  },
+  "nancy lorraine": {
+    "idTeam": "133710",
+    "team": "Nancy Lorraine",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/ve39pj1547899643.png",
+    "league": "French Ligue 2",
+    "country": "France"
+  },
+  "rodez": {
+    "idTeam": "137652",
+    "team": "Rodez",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/e8rjka1576848094.png",
+    "league": "French Ligue 2",
+    "country": "France"
+  },
+  "sochaux": {
+    "idTeam": "133708",
+    "team": "Sochaux",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/ymsdjh1766618296.png",
+    "league": "French Ligue 2",
+    "country": "France"
+  },
+  "dunkerque": {
+    "idTeam": "138821",
+    "team": "Dunkerque",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/3s4ne51750879372.png",
+    "league": "French Ligue 2",
+    "country": "France"
+  },
+  "guingamp": {
+    "idTeam": "134244",
+    "team": "Guingamp",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/5iihrp1590259631.png",
+    "league": "French Ligue 2",
+    "country": "France"
+  },
+  "boulogne": {
+    "idTeam": "133849",
+    "team": "Boulogne",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/c7p39l1754278109.png",
+    "league": "French Ligue 2",
+    "country": "France"
+  },
+  "clermont foot": {
+    "idTeam": "134713",
+    "team": "Clermont Foot",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/wrytst1426871249.png",
+    "league": "French Ligue 2",
+    "country": "France"
+  },
+  "grenoble": {
+    "idTeam": "133847",
+    "team": "Grenoble",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/x2hcpg1488227785.png",
+    "league": "French Ligue 2",
+    "country": "France"
+  },
+  "laval": {
+    "idTeam": "134708",
+    "team": "Laval",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/s6g8y81580152463.png",
+    "league": "French Ligue 2",
+    "country": "France"
+  },
+  "dijon": {
+    "idTeam": "133718",
+    "team": "Dijon",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/viin5f1547898121.png",
+    "league": "French Ligue 2",
+    "country": "France"
+  },
+  "nantes": {
+    "idTeam": "133861",
+    "team": "Nantes",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/mla9x61678808018.png",
+    "league": "French Ligue 2",
+    "country": "France"
+  },
+  "lille": {
+    "idTeam": "133711",
+    "team": "Lille",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/2giize1534005340.png",
+    "league": "French Ligue 1",
+    "country": "France"
+  },
+  "paris saint-germain": {
+    "idTeam": "133714",
+    "team": "Paris Saint-Germain",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/rwqrrq1473504808.png",
+    "league": "French Ligue 1",
+    "country": "France"
+  },
+  "stade de reims": {
+    "idTeam": "133934",
+    "team": "Stade de Reims",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/xcrw1b1592925946.png",
+    "league": "French Ligue 2",
+    "country": "France"
+  },
+  "pau": {
+    "idTeam": "138309",
+    "team": "Pau",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/g1p2l71653308318.png",
+    "league": "French Ligue 2",
+    "country": "France"
+  },
+  "monaco": {
+    "idTeam": "133823",
+    "team": "Monaco",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/exjf5l1678808044.png",
+    "league": "French Ligue 1",
+    "country": "Monaco"
+  },
+  "porto": {
+    "idTeam": "134114",
+    "team": "Porto",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/xu47rb1628855600.png",
+    "league": "Portuguese Primeira Liga",
+    "country": "Portugal"
+  },
+  "sporting cp": {
+    "idTeam": "135708",
+    "team": "Sporting CP",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/5hiuk71783137875.png",
+    "league": "Portuguese Primeira Liga",
+    "country": "Portugal"
+  },
+  "santa clara": {
+    "idTeam": "136192",
+    "team": "Santa Clara",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/7337a61724860742.png",
+    "league": "Portuguese Primeira Liga",
+    "country": "Portugal"
+  },
+  "benfica": {
+    "idTeam": "134108",
+    "team": "Benfica",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/hj4kyc1781152436.png",
+    "league": "Portuguese Primeira Liga",
+    "country": "Portugal"
+  },
+  "arouca": {
+    "idTeam": "134387",
+    "team": "Arouca",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/vgbzjq1628853833.png",
+    "league": "Portuguese Primeira Liga",
+    "country": "Portugal"
+  },
+  "braga": {
+    "idTeam": "134098",
+    "team": "Braga",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/skbiwo1785775946.png",
+    "league": "Portuguese Primeira Liga",
+    "country": "Portugal"
+  },
+  "gil vicente": {
+    "idTeam": "134113",
+    "team": "Gil Vicente",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/88bsg41626201503.png",
+    "league": "Portuguese Primeira Liga",
+    "country": "Portugal"
+  },
+  "marítimo": {
+    "idTeam": "134023",
+    "team": "Marítimo",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/xlr0tw1656336618.png",
+    "league": "Portuguese Primeira Liga",
+    "country": "Portugal"
+  },
+  "estrela amadora": {
+    "idTeam": "140008",
+    "team": "Estrela Amadora",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/2tx5621626095555.png",
+    "league": "Portuguese Primeira Liga",
+    "country": "Portugal"
+  },
+  "académico de viseu": {
+    "idTeam": "138856",
+    "team": "Académico de Viseu",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/l9okbc1593020122.png",
+    "league": "Portuguese Primeira Liga",
+    "country": "Portugal"
+  },
+  "vitória de guimarães": {
+    "idTeam": "134115",
+    "team": "Vitória de Guimarães",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/af52z61628855707.png",
+    "league": "Portuguese Primeira Liga",
+    "country": "Portugal"
+  },
+  "moreirense": {
+    "idTeam": "134112",
+    "team": "Moreirense",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/yrquxu1471878153.png",
+    "league": "Portuguese Primeira Liga",
+    "country": "Portugal"
+  },
+  "famalicao": {
+    "idTeam": "136854",
+    "team": "Famalicao",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/a3f4er1563653256.png",
+    "league": "Portuguese Primeira Liga",
+    "country": "Portugal"
+  },
+  "rio ave": {
+    "idTeam": "134107",
+    "team": "Rio Ave",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/ngbklq1628851239.png",
+    "league": "Portuguese Primeira Liga",
+    "country": "Portugal"
+  },
+  "alverca": {
+    "idTeam": "143704",
+    "team": "Alverca",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/6ljryf1691990098.png",
+    "league": "Portuguese Primeira Liga",
+    "country": "Portugal"
+  },
+  "estoril praia": {
+    "idTeam": "134106",
+    "team": "Estoril Praia",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/lq9h8m1628854051.png",
+    "league": "Portuguese Primeira Liga",
+    "country": "Portugal"
+  },
+  "casa pia": {
+    "idTeam": "138864",
+    "team": "Casa Pia",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/d8ugsc1678717133.png",
+    "league": "Portuguese Primeira Liga",
+    "country": "Portugal"
+  },
+  "sporting cp b": {
+    "idTeam": "143719",
+    "team": "Sporting CP B",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/tipn5b1783138299.png",
+    "league": "Portuguese LigaPro",
+    "country": "Portugal"
+  },
+  "penafiel": {
+    "idTeam": "134587",
+    "team": "Penafiel",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/91hl741593020134.png",
+    "league": "Portuguese LigaPro",
+    "country": "Portugal"
+  },
+  "lusitânia lourosa": {
+    "idTeam": "143711",
+    "team": "Lusitânia Lourosa",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/rrvwzm1724861650.png",
+    "league": "Portuguese LigaPro",
+    "country": "Portugal"
+  },
+  "vizela": {
+    "idTeam": "140097",
+    "team": "Vizela",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/06nfn81596477982.png",
+    "league": "Portuguese LigaPro",
+    "country": "Portugal"
+  },
+  "união de leiria": {
+    "idTeam": "140355",
+    "team": "União de Leiria",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/bd9ohv1719887142.png",
+    "league": "Portuguese LigaPro",
+    "country": "Portugal"
+  },
+  "leixões": {
+    "idTeam": "138858",
+    "team": "Leixões",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/6le5bu1580389318.png",
+    "league": "Portuguese LigaPro",
+    "country": "Portugal"
+  },
+  "farense": {
+    "idTeam": "138853",
+    "team": "Farense",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/0a09qc1690493592.png",
+    "league": "Portuguese LigaPro",
+    "country": "Portugal"
+  },
+  "portimonense": {
+    "idTeam": "136031",
+    "team": "Portimonense",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/9ccun71593020108.png",
+    "league": "Portuguese LigaPro",
+    "country": "Portugal"
+  },
+  "benfica b": {
+    "idTeam": "138860",
+    "team": "Benfica B",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/21yfn41785775787.png",
+    "league": "Portuguese LigaPro",
+    "country": "Portugal"
+  },
+  "felgueiras": {
+    "idTeam": "143710",
+    "team": "Felgueiras",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/yt6cw41720545499.png",
+    "league": "Portuguese LigaPro",
+    "country": "Portugal"
+  },
+  "tondela": {
+    "idTeam": "135502",
+    "team": "Tondela",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/o7nqff1628856081.png",
+    "league": "Portuguese LigaPro",
+    "country": "Portugal"
+  },
+  "avs": {
+    "idTeam": "147479",
+    "team": "AVS",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/xp8oqb1688676544.png",
+    "league": "Portuguese LigaPro",
+    "country": "Portugal"
+  },
+  "torreense": {
+    "idTeam": "143720",
+    "team": "Torreense",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/byn6c21659694982.png",
+    "league": "Portuguese LigaPro",
+    "country": "Portugal"
+  },
+  "amarante": {
+    "idTeam": "149021",
+    "team": "Amarante",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/oo1lqi1720941451.png",
+    "league": "Portuguese LigaPro",
+    "country": "Portugal"
+  },
+  "porto b": {
+    "idTeam": "138861",
+    "team": "Porto B",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/86rrtg1628850959.png",
+    "league": "Portuguese LigaPro",
+    "country": "Portugal"
+  },
+  "chaves": {
+    "idTeam": "135674",
+    "team": "Chaves",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/0e88hj1628850708.png",
+    "league": "Portuguese LigaPro",
+    "country": "Portugal"
+  },
+  "feirense": {
+    "idTeam": "135675",
+    "team": "Feirense",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/4b27rw1628851130.png",
+    "league": "Portuguese LigaPro",
+    "country": "Portugal"
+  },
+  "académica de coimbra": {
+    "idTeam": "134118",
+    "team": "Académica de Coimbra",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/mwdq0z1593020085.png",
+    "league": "Portuguese LigaPro",
+    "country": "Portugal"
+  },
+  "nacional de madeira": {
+    "idTeam": "134109",
+    "team": "Nacional de Madeira",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/1ln5fe1628850538.png",
+    "league": "Portuguese Primeira Liga",
+    "country": "Portugal"
+  },
+  "psv eindhoven": {
+    "idTeam": "133768",
+    "team": "PSV Eindhoven",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/xfsz6i1721297428.png",
+    "league": "Dutch Eredivisie",
+    "country": "The Netherlands"
+  },
+  "feyenoord": {
+    "idTeam": "133758",
+    "team": "Feyenoord",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/uturtx1473534803.png",
+    "league": "Dutch Eredivisie",
+    "country": "The Netherlands"
+  },
+  "fortuna sittard": {
+    "idTeam": "134264",
+    "team": "Fortuna Sittard",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/aqr7it1685596947.png",
+    "league": "Dutch Eredivisie",
+    "country": "The Netherlands"
+  },
+  "excelsior": {
+    "idTeam": "133757",
+    "team": "Excelsior",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/bmbn9v1625172555.png",
+    "league": "Dutch Eredivisie",
+    "country": "The Netherlands"
+  },
+  "ajax": {
+    "idTeam": "133772",
+    "team": "Ajax",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/zg9tii1755495289.png",
+    "league": "Dutch Eredivisie",
+    "country": "The Netherlands"
+  },
+  "twente": {
+    "idTeam": "133774",
+    "team": "Twente",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/rsrxrt1473534783.png",
+    "league": "Dutch Eredivisie",
+    "country": "The Netherlands"
+  },
+  "go ahead eagles": {
+    "idTeam": "134304",
+    "team": "Go Ahead Eagles",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/3hq2cy1685597026.png",
+    "league": "Dutch Eredivisie",
+    "country": "The Netherlands"
+  },
+  "groningen": {
+    "idTeam": "133762",
+    "team": "Groningen",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/f36qnp1666107447.png",
+    "league": "Dutch Eredivisie",
+    "country": "The Netherlands"
+  },
+  "sparta rotterdam": {
+    "idTeam": "133866",
+    "team": "Sparta Rotterdam",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/upluv31586362224.png",
+    "league": "Dutch Eredivisie",
+    "country": "The Netherlands"
+  },
+  "heerenveen": {
+    "idTeam": "133759",
+    "team": "Heerenveen",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/surtsx1473534841.png",
+    "league": "Dutch Eredivisie",
+    "country": "The Netherlands"
+  },
+  "telstar": {
+    "idTeam": "138004",
+    "team": "Telstar",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/xg1ss31579463659.png",
+    "league": "Dutch Eredivisie",
+    "country": "The Netherlands"
+  },
+  "pec zwolle": {
+    "idTeam": "133936",
+    "team": "PEC Zwolle",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/qpvqwy1473534822.png",
+    "league": "Dutch Eredivisie",
+    "country": "The Netherlands"
+  },
+  "utrecht": {
+    "idTeam": "133764",
+    "team": "Utrecht",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/yuhha71625167104.png",
+    "league": "Dutch Eredivisie",
+    "country": "The Netherlands"
+  },
+  "ado den haag": {
+    "idTeam": "133769",
+    "team": "ADO Den Haag",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/vpvtqt1473534732.png",
+    "league": "Dutch Eredivisie",
+    "country": "The Netherlands"
+  },
+  "cambuur": {
+    "idTeam": "134303",
+    "team": "Cambuur",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/b3rap31579463652.png",
+    "league": "Dutch Eredivisie",
+    "country": "The Netherlands"
+  },
+  "heracles almelo": {
+    "idTeam": "133766",
+    "team": "Heracles Almelo",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/vyyvss1473534851.png",
+    "league": "Dutch Eerste Divisie",
+    "country": "The Netherlands"
+  },
+  "mvv maastricht": {
+    "idTeam": "138003",
+    "team": "MVV Maastricht",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/05guqs1579211725.png",
+    "league": "Dutch Eerste Divisie",
+    "country": "The Netherlands"
+  },
+  "fc emmen": {
+    "idTeam": "136191",
+    "team": "FC Emmen",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/knwhs41532855745.png",
+    "league": "Dutch Eerste Divisie",
+    "country": "The Netherlands"
+  },
+  "almere city": {
+    "idTeam": "137996",
+    "team": "Almere City",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/qhxtg31579206207.png",
+    "league": "Dutch Eerste Divisie",
+    "country": "The Netherlands"
+  },
+  "vitesse": {
+    "idTeam": "133770",
+    "team": "Vitesse",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/wrptxp1473534864.png",
+    "league": "Dutch Eerste Divisie",
+    "country": "The Netherlands"
+  },
+  "vvv-venlo": {
+    "idTeam": "136030",
+    "team": "VVV-Venlo",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/ii0fu01566053253.png",
+    "league": "Dutch Eerste Divisie",
+    "country": "The Netherlands"
+  },
+  "jong az": {
+    "idTeam": "138000",
+    "team": "Jong AZ",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/jtfvp31579206794.png",
+    "league": "Dutch Eerste Divisie",
+    "country": "The Netherlands"
+  },
+  "jong psv": {
+    "idTeam": "138001",
+    "team": "Jong PSV",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/awhmfi1579211462.png",
+    "league": "Dutch Eerste Divisie",
+    "country": "The Netherlands"
+  },
+  "rkc waalwijk": {
+    "idTeam": "133765",
+    "team": "RKC Waalwijk",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/11v54c1659096848.png",
+    "league": "Dutch Eerste Divisie",
+    "country": "The Netherlands"
+  },
+  "nac breda": {
+    "idTeam": "133773",
+    "team": "NAC Breda",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/ute4en1544965805.png",
+    "league": "Dutch Eerste Divisie",
+    "country": "The Netherlands"
+  },
+  "jong ajax": {
+    "idTeam": "137999",
+    "team": "Jong Ajax",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/vkxft71755495327.png",
+    "league": "Dutch Eerste Divisie",
+    "country": "The Netherlands"
+  },
+  "volendam": {
+    "idTeam": "133867",
+    "team": "Volendam",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/rdouic1625167940.png",
+    "league": "Dutch Eerste Divisie",
+    "country": "The Netherlands"
+  },
+  "helmond sport": {
+    "idTeam": "137998",
+    "team": "Helmond Sport",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/vo3i5i1781216719.png",
+    "league": "Dutch Eerste Divisie",
+    "country": "The Netherlands"
+  },
+  "den bosch": {
+    "idTeam": "134236",
+    "team": "Den Bosch",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/3ftbir1489836926.png",
+    "league": "Dutch Eerste Divisie",
+    "country": "The Netherlands"
+  },
+  "dordrecht": {
+    "idTeam": "134550",
+    "team": "Dordrecht",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/2kfuzk1579463622.png",
+    "league": "Dutch Eerste Divisie",
+    "country": "The Netherlands"
+  },
+  "fc eindhoven": {
+    "idTeam": "137997",
+    "team": "FC Eindhoven",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/fulsp11656015568.png",
+    "league": "Dutch Eerste Divisie",
+    "country": "The Netherlands"
+  },
+  "top oss": {
+    "idTeam": "138005",
+    "team": "TOP Oss",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/g7g95q1579463666.png",
+    "league": "Dutch Eerste Divisie",
+    "country": "The Netherlands"
+  },
+  "de graafschap": {
+    "idTeam": "133771",
+    "team": "De Graafschap",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/36habq1718289995.png",
+    "league": "Dutch Eerste Divisie",
+    "country": "The Netherlands"
+  },
+  "jong utrecht": {
+    "idTeam": "138002",
+    "team": "Jong Utrecht",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/lmhej21625167088.png",
+    "league": "Dutch Eerste Divisie",
+    "country": "The Netherlands"
+  },
+  "az alkmaar": {
+    "idTeam": "133767",
+    "team": "AZ Alkmaar",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/wtqwvv1473534757.png",
+    "league": "Dutch Eredivisie",
+    "country": "The Netherlands"
+  },
+  "nec nijmegen": {
+    "idTeam": "133760",
+    "team": "NEC Nijmegen",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/t5qjle1701019868.png",
+    "league": "Dutch Eredivisie",
+    "country": "The Netherlands"
+  },
+  "willem ii": {
+    "idTeam": "133827",
+    "team": "Willem II",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/ushlnc1666107465.png",
+    "league": "Dutch Eredivisie",
+    "country": "The Netherlands"
+  },
+  "roda jc": {
+    "idTeam": "133761",
+    "team": "Roda JC",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/nmlzx31601664391.png",
+    "league": "Dutch Eerste Divisie",
+    "country": "The Netherlands"
+  },
+  "gent": {
+    "idTeam": "133781",
+    "team": "Gent",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/48e27o1750703124.png",
+    "league": "Belgian Pro League",
+    "country": "Belgium"
+  },
+  "club brugge": {
+    "idTeam": "133789",
+    "team": "Club Brugge",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/mz8y0q1771129880.png",
+    "league": "Belgian Pro League",
+    "country": "Belgium"
+  },
+  "charleroi": {
+    "idTeam": "133826",
+    "team": "Charleroi",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/cwf1zk1771129608.png",
+    "league": "Belgian Pro League",
+    "country": "Belgium"
+  },
+  "zulte waregem": {
+    "idTeam": "133786",
+    "team": "Zulte Waregem",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/6mdsut1695740517.png",
+    "league": "Belgian Pro League",
+    "country": "Belgium"
+  },
+  "standard liège": {
+    "idTeam": "133778",
+    "team": "Standard Liège",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/0ynlvb1771130035.png",
+    "league": "Belgian Pro League",
+    "country": "Belgium"
+  },
+  "genk": {
+    "idTeam": "133779",
+    "team": "Genk",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/tp06te1534875918.png",
+    "league": "Belgian Pro League",
+    "country": "Belgium"
+  },
+  "sint-truiden": {
+    "idTeam": "135461",
+    "team": "Sint-Truiden",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/qww8ap1534620441.png",
+    "league": "Belgian Pro League",
+    "country": "Belgium"
+  },
+  "lommel": {
+    "idTeam": "138143",
+    "team": "Lommel",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/gj2c1v1658141968.png",
+    "league": "Belgian Pro League",
+    "country": "Belgium"
+  },
+  "antwerp": {
+    "idTeam": "134245",
+    "team": "Antwerp",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/gawwcf1691182178.png",
+    "league": "Belgian Pro League",
+    "country": "Belgium"
+  },
+  "anderlecht": {
+    "idTeam": "133776",
+    "team": "Anderlecht",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/auindn1771129464.png",
+    "league": "Belgian Pro League",
+    "country": "Belgium"
+  },
+  "beveren": {
+    "idTeam": "133941",
+    "team": "Beveren",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/w40kf11657733729.png",
+    "league": "Belgian Pro League",
+    "country": "Belgium"
+  },
+  "westerlo": {
+    "idTeam": "133790",
+    "team": "Westerlo",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/xrxtrq1447620014.png",
+    "league": "Belgian Pro League",
+    "country": "Belgium"
+  },
+  "cercle brugge": {
+    "idTeam": "133782",
+    "team": "Cercle Brugge",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/0v6uv41656017321.png",
+    "league": "Belgian Pro League",
+    "country": "Belgium"
+  },
+  "mechelen": {
+    "idTeam": "133787",
+    "team": "Mechelen",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/sxsxpt1447618693.png",
+    "league": "Belgian Pro League",
+    "country": "Belgium"
+  },
+  "kortrijk": {
+    "idTeam": "133783",
+    "team": "Kortrijk",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/ssvvtu1447618084.png",
+    "league": "Belgian Pro League",
+    "country": "Belgium"
+  },
+  "beerschot": {
+    "idTeam": "138142",
+    "team": "Beerschot",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/2dahay1595605631.png",
+    "league": "Belgian Challenger Pro League",
+    "country": "Belgium"
+  },
+  "francs borains": {
+    "idTeam": "147429",
+    "team": "Francs Borains",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/22btbw1687871590.png",
+    "league": "Belgian Challenger Pro League",
+    "country": "Belgium"
+  },
+  "dender": {
+    "idTeam": "133863",
+    "team": "Dender",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/r4ihc61654884430.png",
+    "league": "Belgian Challenger Pro League",
+    "country": "Belgium"
+  },
+  "eupen": {
+    "idTeam": "133825",
+    "team": "Eupen",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/tyvrty1464539199.png",
+    "league": "Belgian Challenger Pro League",
+    "country": "Belgium"
+  },
+  "virton": {
+    "idTeam": "138140",
+    "team": "Virton",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/xd1nz81579614352.png",
+    "league": "Belgian Challenger Pro League",
+    "country": "Belgium"
+  },
+  "jong genk": {
+    "idTeam": "146375",
+    "team": "Jong Genk",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/lan0qu1655569364.png",
+    "league": "Belgian First Division B",
+    "country": "Belgium"
+  },
+  "club nxt": {
+    "idTeam": "140110",
+    "team": "Club NXT",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/3284wh1687872002.png",
+    "league": "Belgian Challenger Pro League",
+    "country": "Belgium"
+  },
+  "lokeren": {
+    "idTeam": "133785",
+    "team": "Lokeren",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/ucnjho1782107350.png",
+    "league": "Belgian Challenger Pro League",
+    "country": "Belgium"
+  },
+  "lierse": {
+    "idTeam": "140109",
+    "team": "Lierse",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/snsyuk1597005625.png",
+    "league": "Belgian Challenger Pro League",
+    "country": "Belgium"
+  },
+  "rfc liège": {
+    "idTeam": "143872",
+    "team": "RFC Liège",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/o4tofi1687871593.png",
+    "league": "Belgian Challenger Pro League",
+    "country": "Belgium"
+  },
+  "jong gent": {
+    "idTeam": "152466",
+    "team": "Jong Gent",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/pl7p8t1750703100.png",
+    "league": "Belgian First Division B",
+    "country": "Belgium"
+  },
+  "patro eisden": {
+    "idTeam": "147430",
+    "team": "Patro Eisden",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/rfwwc11687871596.png",
+    "league": "Belgian Challenger Pro League",
+    "country": "Belgium"
+  },
+  "rsca futures": {
+    "idTeam": "146374",
+    "team": "RSCA Futures",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/hque4l1782021344.png",
+    "league": "Belgian First Division B",
+    "country": "Belgium"
+  },
+  "seraing": {
+    "idTeam": "140081",
+    "team": "Seraing",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/1okggx1595605041.png",
+    "league": "Belgian Challenger Pro League",
+    "country": "Belgium"
+  },
+  "union saint-gilloise": {
+    "idTeam": "138141",
+    "team": "Union Saint-Gilloise",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/ljszp41654601742.png",
+    "league": "Belgian Pro League",
+    "country": "Belgium"
+  },
+  "raal la louvière": {
+    "idTeam": "148488",
+    "team": "RAAL La Louvière",
+    "badge": "https://www.thesportsdb.com/images/media/team/badge/n64osu1787378903.png",
+    "league": "Belgian Pro League",
+    "country": "Belgium"
+  },
+  "celtic": {
+    "idTeam": "133647",
+    "team": "Celtic",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/3uv1641758780002.png",
+    "league": "Scottish Premier League",
+    "country": "Scotland"
+  },
+  "heart of midlothian": {
+    "idTeam": "133643",
+    "team": "Heart of Midlothian",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/twqvyt1447597939.png",
+    "league": "Scottish Premier League",
+    "country": "Scotland"
+  },
+  "st mirren": {
+    "idTeam": "133649",
+    "team": "St Mirren",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/xvtuvv1447604452.png",
+    "league": "Scottish Premier League",
+    "country": "Scotland"
+  },
+  "rangers": {
+    "idTeam": "133642",
+    "team": "Rangers",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/ti24j61614290048.png",
+    "league": "Scottish Premier League",
+    "country": "Scotland"
+  },
+  "motherwell": {
+    "idTeam": "133640",
+    "team": "Motherwell",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/3e1dtj1785820999.png",
+    "league": "Scottish Premier League",
+    "country": "Scotland"
+  },
+  "dundee": {
+    "idTeam": "133942",
+    "team": "Dundee",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/tlei9x1750743461.png",
+    "league": "Scottish Premier League",
+    "country": "Scotland"
+  },
+  "st johnstone": {
+    "idTeam": "133639",
+    "team": "St Johnstone",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/j7o7cc1781888845.png",
+    "league": "Scottish Premier League",
+    "country": "Scotland"
+  },
+  "hibernian": {
+    "idTeam": "133646",
+    "team": "Hibernian",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/qjys3z1684928969.png",
+    "league": "Scottish Premier League",
+    "country": "Scotland"
+  },
+  "dundee united": {
+    "idTeam": "133644",
+    "team": "Dundee United",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/orfh821655722356.png",
+    "league": "Scottish Premier League",
+    "country": "Scotland"
+  },
+  "aberdeen": {
+    "idTeam": "133638",
+    "team": "Aberdeen",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/f9s6vg1781155578.png",
+    "league": "Scottish Premier League",
+    "country": "Scotland"
+  },
+  "falkirk": {
+    "idTeam": "133838",
+    "team": "Falkirk",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/w37ucy1685023169.png",
+    "league": "Scottish Premier League",
+    "country": "Scotland"
+  },
+  "kilmarnock": {
+    "idTeam": "133645",
+    "team": "Kilmarnock",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/ihxzq71785820059.png",
+    "league": "Scottish Premier League",
+    "country": "Scotland"
+  },
+  "stenhousemuir": {
+    "idTeam": "134467",
+    "team": "Stenhousemuir",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/bdejub1714843344.png",
+    "league": "Scottish Championship",
+    "country": "Scotland"
+  },
+  "partick thistle": {
+    "idTeam": "134134",
+    "team": "Partick Thistle",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/j801au1705640268.png",
+    "league": "Scottish Championship",
+    "country": "Scotland"
+  },
+  "raith rovers": {
+    "idTeam": "134793",
+    "team": "Raith Rovers",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/bk6m0t1627844294.png",
+    "league": "Scottish Championship",
+    "country": "Scotland"
+  },
+  "arbroath": {
+    "idTeam": "134251",
+    "team": "Arbroath",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/dw18ig1750743416.png",
+    "league": "Scottish Championship",
+    "country": "Scotland"
+  },
+  "livingston": {
+    "idTeam": "134133",
+    "team": "Livingston",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/1o38ll1749203191.png",
+    "league": "Scottish Championship",
+    "country": "Scotland"
+  },
+  "dunfermline athletic": {
+    "idTeam": "133648",
+    "team": "Dunfermline Athletic",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/uuvrvr1473539630.png",
+    "league": "Scottish Championship",
+    "country": "Scotland"
+  },
+  "ayr united": {
+    "idTeam": "134135",
+    "team": "Ayr United",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/y0v21n1627844501.png",
+    "league": "Scottish Championship",
+    "country": "Scotland"
+  },
+  "queen's park": {
+    "idTeam": "138105",
+    "team": "Queen's Park",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/lf1cb41750743489.png",
+    "league": "Scottish Championship",
+    "country": "Scotland"
+  },
+  "inverness caledonian thistle": {
+    "idTeam": "133641",
+    "team": "Inverness Caledonian Thistle",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/swuwuv1447598127.png",
+    "league": "Scottish Championship",
+    "country": "Scotland"
+  },
+  "greenock morton": {
+    "idTeam": "134132",
+    "team": "Greenock Morton",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/uvrsxw1447599507.png",
+    "league": "Scottish Championship",
+    "country": "Scotland"
+  },
+  "galatasaray": {
+    "idTeam": "133804",
+    "team": "Galatasaray",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/io7jk21767941298.png",
+    "league": "Turkish Super Lig",
+    "country": "Turkey"
+  },
+  "beşiktaş": {
+    "idTeam": "133794",
+    "team": "Beşiktaş",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/svo05k1776827439.png",
+    "league": "Turkish Super Lig",
+    "country": "Turkey"
+  },
+  "kocaelispor": {
+    "idTeam": "133870",
+    "team": "Kocaelispor",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/f6erki1626445224.png",
+    "league": "Turkish Super Lig",
+    "country": "Turkey"
+  },
+  "trabzonspor": {
+    "idTeam": "133796",
+    "team": "Trabzonspor",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/96s34o1776827629.png",
+    "league": "Turkish Super Lig",
+    "country": "Turkey"
+  },
+  "amed": {
+    "idTeam": "138959",
+    "team": "Amed",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/4fqdgh1783788571.png",
+    "league": "Turkish Super Lig",
+    "country": "Turkey"
+  },
+  "gençlerbirliği": {
+    "idTeam": "133798",
+    "team": "Gençlerbirliği",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/5hnd1c1639569938.png",
+    "league": "Turkish Super Lig",
+    "country": "Turkey"
+  },
+  "fenerbahçe": {
+    "idTeam": "133807",
+    "team": "Fenerbahçe",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/twxxvs1448199691.png",
+    "league": "Turkish Super Lig",
+    "country": "Turkey"
+  },
+  "kasımpaşa": {
+    "idTeam": "133834",
+    "team": "Kasımpaşa",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/uryxtp1448203236.png",
+    "league": "Turkish Super Lig",
+    "country": "Turkey"
+  },
+  "rizespor": {
+    "idTeam": "133885",
+    "team": "Rizespor",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/t7senr1657195719.png",
+    "league": "Turkish Super Lig",
+    "country": "Turkey"
+  },
+  "i̇stanbul başakşehir": {
+    "idTeam": "134589",
+    "team": "İstanbul Başakşehir",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/895mqt1685993958.png",
+    "league": "Turkish Super Lig",
+    "country": "Turkey"
+  },
+  "alanyaspor": {
+    "idTeam": "135676",
+    "team": "Alanyaspor",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/9fr3071601667898.png",
+    "league": "Turkish Super Lig",
+    "country": "Turkey"
+  },
+  "gaziantep": {
+    "idTeam": "138092",
+    "team": "Gaziantep",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/54j6ik1579458093.png",
+    "league": "Turkish Super Lig",
+    "country": "Turkey"
+  },
+  "samsunspor": {
+    "idTeam": "133797",
+    "team": "Samsunspor",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/vz05y71679456608.png",
+    "league": "Turkish Super Lig",
+    "country": "Turkey"
+  },
+  "çorum": {
+    "idTeam": "138951",
+    "team": "Çorum",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/ivoq4l1679510278.png",
+    "league": "Turkish Super Lig",
+    "country": "Turkey"
+  },
+  "erzurumspor": {
+    "idTeam": "134272",
+    "team": "Erzurumspor",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/7sepx01783701613.png",
+    "league": "Turkish Super Lig",
+    "country": "Turkey"
+  },
+  "eyüpspor": {
+    "idTeam": "138977",
+    "team": "Eyüpspor",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/7fb0ub1626445710.png",
+    "league": "Turkish Super Lig",
+    "country": "Turkey"
+  },
+  "göztepe": {
+    "idTeam": "135891",
+    "team": "Göztepe",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/9jwk7o1513952059.png",
+    "league": "Turkish Super Lig",
+    "country": "Turkey"
+  },
+  "konyaspor": {
+    "idTeam": "133835",
+    "team": "Konyaspor",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/rxwptr1448203413.png",
+    "league": "Turkish Super Lig",
+    "country": "Turkey"
+  },
+  "batman petrolspor": {
+    "idTeam": "146459",
+    "team": "Batman Petrolspor",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/pvcs2h1726287143.png",
+    "league": "Turkish 1 Lig",
+    "country": "Turkey"
+  },
+  "kayserispor": {
+    "idTeam": "133802",
+    "team": "Kayserispor",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/bvskgi1601668985.png",
+    "league": "Turkish 1 Lig",
+    "country": "Turkey"
+  },
+  "bursaspor": {
+    "idTeam": "133801",
+    "team": "Bursaspor",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/uyptpr1448199354.png",
+    "league": "Turkish 1 Lig",
+    "country": "Turkey"
+  },
+  "mardin 1969": {
+    "idTeam": "149636",
+    "team": "Mardin 1969",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/rhlqp21731084514.png",
+    "league": "Turkish 1 Lig",
+    "country": "Turkey"
+  },
+  "manisa": {
+    "idTeam": "138955",
+    "team": "Manisa",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/6vmq2x1626445480.png",
+    "league": "Turkish 1 Lig",
+    "country": "Turkey"
+  },
+  "sarıyer": {
+    "idTeam": "138958",
+    "team": "Sarıyer",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/3w7n0a1580903845.png",
+    "league": "Turkish 1 Lig",
+    "country": "Turkey"
+  },
+  "fatih karagümrük": {
+    "idTeam": "138983",
+    "team": "Fatih Karagümrük",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/bfb84y1580847945.png",
+    "league": "Turkish 1 Lig",
+    "country": "Turkey"
+  },
+  "bandırmaspor": {
+    "idTeam": "138970",
+    "team": "Bandırmaspor",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/e4ynam1580904361.png",
+    "league": "Turkish 1 Lig",
+    "country": "Turkey"
+  },
+  "iğdır": {
+    "idTeam": "147638",
+    "team": "Iğdır",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/cj9ztt1690541191.png",
+    "league": "Turkish 1 Lig",
+    "country": "Turkey"
+  },
+  "ankara keçiörengücü": {
+    "idTeam": "138941",
+    "team": "Ankara Keçiörengücü",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/u0saif1679456415.png",
+    "league": "Turkish 1 Lig",
+    "country": "Turkey"
+  },
+  "muğlaspor": {
+    "idTeam": "149661",
+    "team": "Muğlaspor",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/n7bx7v1731093031.png",
+    "league": "Turkish 1 Lig",
+    "country": "Turkey"
+  },
+  "pendikspor": {
+    "idTeam": "138957",
+    "team": "Pendikspor",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/3j0z7m1580851323.png",
+    "league": "Turkish 1 Lig",
+    "country": "Turkey"
+  },
+  "vanspor": {
+    "idTeam": "138969",
+    "team": "Vanspor",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/imwcrs1679510336.png",
+    "league": "Turkish 1 Lig",
+    "country": "Turkey"
+  },
+  "ümraniyespor": {
+    "idTeam": "138935",
+    "team": "Ümraniyespor",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/wpi9qz1580847576.png",
+    "league": "Turkish 1 Lig",
+    "country": "Turkey"
+  },
+  "esenler erokspor": {
+    "idTeam": "146461",
+    "team": "Esenler Erokspor",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/107ke31657455566.png",
+    "league": "Turkish 1 Lig",
+    "country": "Turkey"
+  },
+  "bodrum": {
+    "idTeam": "138974",
+    "team": "Bodrum",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/2njed61657195683.png",
+    "league": "Turkish 1 Lig",
+    "country": "Turkey"
+  },
+  "antalyaspor": {
+    "idTeam": "133799",
+    "team": "Antalyaspor",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/vqoral1601669436.png",
+    "league": "Turkish 1 Lig",
+    "country": "Turkey"
+  },
+  "sivasspor": {
+    "idTeam": "133806",
+    "team": "Sivasspor",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/pnhe5i1681161798.png",
+    "league": "Turkish 1 Lig",
+    "country": "Turkey"
+  },
+  "i̇stanbulspor": {
+    "idTeam": "134238",
+    "team": "İstanbulspor",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/d46tgg1714571615.png",
+    "league": "Turkish 1 Lig",
+    "country": "Turkey"
+  },
+  "boluspor": {
+    "idTeam": "138939",
+    "team": "Boluspor",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/5uv4ni1657195692.png",
+    "league": "Turkish 1 Lig",
+    "country": "Turkey"
+  },
+  "abha": {
+    "idTeam": "137855",
+    "team": "Abha",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/e00pwe1677530619.png",
+    "league": "Saudi-Arabian Pro League",
+    "country": "Saudi Arabia"
+  },
+  "al-diriyah": {
+    "idTeam": "152917",
+    "team": "Al-Diriyah",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/0m7ub31782452735.png",
+    "league": "Saudi-Arabian Pro League",
+    "country": "Saudi Arabia"
+  },
+  "al-ettifaq": {
+    "idTeam": "136017",
+    "team": "Al-Ettifaq",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/m272h51694761970.png",
+    "league": "Saudi-Arabian Pro League",
+    "country": "Saudi Arabia"
+  },
+  "al-faisaly": {
+    "idTeam": "136021",
+    "team": "Al-Faisaly",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/a81pz21646835057.png",
+    "league": "Saudi-Arabian Pro League",
+    "country": "Saudi Arabia"
+  },
+  "al-fateh": {
+    "idTeam": "136011",
+    "team": "Al-Fateh",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/a5cjf41662659789.png",
+    "league": "Saudi-Arabian Pro League",
+    "country": "Saudi Arabia"
+  },
+  "al-fayha": {
+    "idTeam": "136014",
+    "team": "Al-Fayha",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/jl3spp1677530565.png",
+    "league": "Saudi-Arabian Pro League",
+    "country": "Saudi Arabia"
+  },
+  "al-hazem": {
+    "idTeam": "136200",
+    "team": "Al-Hazem",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/3uy27p1635871755.png",
+    "league": "Saudi-Arabian Pro League",
+    "country": "Saudi Arabia"
+  },
+  "al-khaleej": {
+    "idTeam": "139080",
+    "team": "Al-Khaleej",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/mvf6ga1755192630.png",
+    "league": "Saudi-Arabian Pro League",
+    "country": "Saudi Arabia"
+  },
+  "al-kholood": {
+    "idTeam": "149112",
+    "team": "Al-Kholood",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/vv44v01755192851.png",
+    "league": "Saudi-Arabian Pro League",
+    "country": "Saudi Arabia"
+  },
+  "al-nassr": {
+    "idTeam": "136022",
+    "team": "Al-Nassr",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/84yvqi1748524565.png",
+    "league": "Saudi-Arabian Pro League",
+    "country": "Saudi Arabia"
+  },
+  "al-qadsiah": {
+    "idTeam": "136015",
+    "team": "Al-Qadsiah",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/ok63wb1719134839.png",
+    "league": "Saudi-Arabian Pro League",
+    "country": "Saudi Arabia"
+  },
+  "al-riyadh": {
+    "idTeam": "147445",
+    "team": "Al-Riyadh",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/i4o0zy1755193321.png",
+    "league": "Saudi-Arabian Pro League",
+    "country": "Saudi Arabia"
+  },
+  "al-taawoun": {
+    "idTeam": "136012",
+    "team": "Al-Taawoun",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/rlsmp91646835052.png",
+    "league": "Saudi-Arabian Pro League",
+    "country": "Saudi Arabia"
+  },
+  "neom": {
+    "idTeam": "150637",
+    "team": "Neom",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/4luwe11737685220.png",
+    "league": "Saudi-Arabian Pro League",
+    "country": "Saudi Arabia"
+  },
+  "al-ula": {
+    "idTeam": "152473",
+    "team": "Al-Ula",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/9px2xb1755453358.png",
+    "league": "Saudi First Division League",
+    "country": "Saudi Arabia"
+  },
+  "al-orobah": {
+    "idTeam": "149111",
+    "team": "Al-Orobah",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/y1rnl91721742609.png",
+    "league": "Saudi First Division League",
+    "country": "Saudi Arabia"
+  },
+  "al-jabalain": {
+    "idTeam": "150091",
+    "team": "Al-Jabalain",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/onv6m81733372509.png",
+    "league": "Saudi First Division League",
+    "country": "Saudi Arabia"
+  },
+  "al-raed": {
+    "idTeam": "136016",
+    "team": "Al-Raed",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/9vkdcc1677530862.png",
+    "league": "Saudi First Division League",
+    "country": "Saudi Arabia"
+  },
+  "al-zulfi": {
+    "idTeam": "150643",
+    "team": "Al-Zulfi",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/zg8k731737689709.png",
+    "league": "Saudi First Division League",
+    "country": "Saudi Arabia"
+  },
+  "al-wehda": {
+    "idTeam": "136199",
+    "team": "Al-Wehda",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/j4nvuy1677530944.png",
+    "league": "Saudi First Division League",
+    "country": "Saudi Arabia"
+  },
+  "al-bukiryah": {
+    "idTeam": "150640",
+    "team": "Al-Bukiryah",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/ifq6301737687657.png",
+    "league": "Saudi First Division League",
+    "country": "Saudi Arabia"
+  },
+  "jeddah club": {
+    "idTeam": "150641",
+    "team": "Jeddah Club",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/x20iu71737688665.png",
+    "league": "Saudi First Division League",
+    "country": "Saudi Arabia"
+  },
+  "al-adalah": {
+    "idTeam": "137854",
+    "team": "Al-Adalah",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/ugjap61737684503.png",
+    "league": "Saudi First Division League",
+    "country": "Saudi Arabia"
+  },
+  "al-jandal": {
+    "idTeam": "150644",
+    "team": "Al-Jandal",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/vhlr7b1737690044.png",
+    "league": "Saudi First Division League",
+    "country": "Saudi Arabia"
+  },
+  "al-batin": {
+    "idTeam": "136019",
+    "team": "Al-Batin",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/eiho9j1755454369.png",
+    "league": "_No League Soccer",
+    "country": "Saudi Arabia"
+  },
+  "al-jubail": {
+    "idTeam": "150645",
+    "team": "Al-Jubail",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/7b4ird1737690523.png",
+    "league": "_No League Soccer",
+    "country": "Saudi Arabia"
+  },
+  "al-hilal": {
+    "idTeam": "136013",
+    "team": "Al-Hilal",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/w0b80d1661656916.png",
+    "league": "Saudi-Arabian Pro League",
+    "country": "Saudi Arabia"
+  },
+  "al-ittihad": {
+    "idTeam": "136018",
+    "team": "Al-Ittihad",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/8n1t1j1755192418.png",
+    "league": "Saudi-Arabian Pro League",
+    "country": "Saudi Arabia"
+  },
+  "al-ahli": {
+    "idTeam": "137721",
+    "team": "Al-Ahli",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/1bbtgb1755192301.png",
+    "league": "Saudi-Arabian Pro League",
+    "country": "Saudi Arabia"
+  },
+  "al-tai": {
+    "idTeam": "143173",
+    "team": "Al-Tai",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/1cluxn1694761982.png",
+    "league": "Saudi First Division League",
+    "country": "Saudi Arabia"
+  },
+  "al-anwar": {
+    "idTeam": "152918",
+    "team": "Al-Anwar",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/npw6c41755453653.png",
+    "league": "Saudi First Division League",
+    "country": "Saudi Arabia"
+  }
+}

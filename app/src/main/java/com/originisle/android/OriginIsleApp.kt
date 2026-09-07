@@ -4,11 +4,13 @@ import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
 import com.originisle.android.island.OriginIslandBuilder
 import com.originisle.android.service.NotificationCastListener
+import com.originisle.android.sports.SportsFeed
 
 class OriginIsleApp : Application() {
     override fun onCreate() {
         super.onCreate()
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        SportsFeed.init(this)
         OriginIslandBuilder.grantScenes(this)
         // Every process start, not just the UI's: a service restart is the likeliest way back in
         // after the kill that could have left the component half-toggled.
