@@ -363,7 +363,10 @@ class NotificationCastListener : NotificationListenerService() {
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
-        if (sbn.packageName == packageName) return
+        if (sbn.packageName == packageName) {
+            cleanUpRejectedSuperX(sbn)
+            return
+        }
         // Skip framework/system notifications (USB-debug banner, system UI, etc.) — noise on the island.
         if (sbn.packageName in SYSTEM_PKGS) return
         // A group summary ("3 new messages") stays active alongside the individual notifications it
@@ -524,6 +527,25 @@ class NotificationCastListener : NotificationListenerService() {
     }
 
     /** Whether [sbn] (from a [SCORE_APPS] package) is a post-match recap/highlights notification. */
+    /**
+     * vivo's OriginOS validates every SuperX card we post (e.g. it can only stack so many live
+     * cards on the island at once — confirmed live via `dumpsys notification` while several Play
+     * Store downloads were casting concurrently). When it rejects one, it doesn't drop it — it
+     * rewrites our own notification in place: the [OriginIslandConstants.SUPERX_TAG] tag is
+     * stripped to null, every `notification.superx.*` bundle we built is gone, and the OS stamps
+     * its own "SUPERX_VALUE"="false" marker on what's left, then shows THAT as a plain, visible
+     * shade notification. Left alone, a card the island couldn't take shows up as a stray
+     * notification instead of nothing. Since this is our own repost of our own failed card, cancel
+     * it outright the moment it appears — a rejected island should show nothing, not a plain copy.
+     */
+    private fun cleanUpRejectedSuperX(sbn: StatusBarNotification) {
+        if (sbn.tag != null) return // still tagged VIVO_SUPERX_TAG -> a real island, leave it alone
+        if (sbn.notification.channelId != PlaygroundService.ORIGIN_CHANNEL_ID) return
+        if (sbn.notification.extras.get("SUPERX_VALUE")?.toString() != "false") return
+        Log.w(TAG, "vivo rejected a SuperX card (id=${sbn.id}) — cancelling its shade fallback")
+        getSystemService(NotificationManager::class.java)?.cancel(sbn.id)
+    }
+
     private fun isRecapOrHighlights(sbn: StatusBarNotification): Boolean {
         val extras = sbn.notification.extras
         val hay = listOf(
