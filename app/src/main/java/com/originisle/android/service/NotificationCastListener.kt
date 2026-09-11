@@ -552,7 +552,7 @@ class NotificationCastListener : NotificationListenerService() {
             NotificationCompat.EXTRA_TITLE, NotificationCompat.EXTRA_TEXT,
             NotificationCompat.EXTRA_BIG_TEXT, NotificationCompat.EXTRA_SUB_TEXT,
         ).joinToString(" ") { extras.getCharSequence(it)?.toString().orEmpty() }.lowercase()
-        return hay.contains("recap") || hay.contains("highlight")
+        return hay.contains("recap") || hay.contains("highlight") || hay.contains("position")
     }
 
     /**

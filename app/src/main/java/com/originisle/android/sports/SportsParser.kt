@@ -53,7 +53,7 @@ object SportsParser {
         // often just "<team> <score> - <score> <team> · <past date>". Check this FIRST: a recap's score
         // line has no apostrophe-suffixed digits, but treating it as FT here (before the general
         // wording checks) is the reliable signal, not an absence-of-minute-marker guess.
-        if (l0.contains("recap") || l0.contains("highlights")) return "FT"
+        if (l0.contains("recap") || l0.contains("highlights") || l0.contains("position")) return "FT"
         // Extra-time form ("90+2'") first, or the same "drops the 90+" bug as MINUTE above.
         Regex("""(?:\d{1,3}\+\d{1,2}|\d{1,3})\s*['’]""").find(s)
             ?.let { return it.value.replace("’", "'").replace(" ", "") }
