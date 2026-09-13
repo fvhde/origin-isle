@@ -9,6 +9,9 @@ your everyday apps — including European and international ones — show up the
 
 This is a hobby project, not an official vivo/iQOO/OriginOS product.
 
+## Credit
+Credit to https://github.com/theVakhovskeIsTaken and https://github.com/theVakhovskeIsTaken/CunnyPlayground for the documentation
+
 ## Screenshots
 
 | Cast tab                               | Apps tab (allow/deny list)             | Log tab                                  |
