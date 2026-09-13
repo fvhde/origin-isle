@@ -131,7 +131,7 @@ object IslandSamples {
                 putExtra("oi_scene", "NAVIGATION")
                 putExtra("oi_template", OriginIslandConstants.TEMPLATE_BUTTONS)
                 putExtra("oi_right_template", OriginIslandConstants.TEMPLATE_RIGHT_ISLAND_ICON_TEXT)
-                putExtra("title", "Alex Vakhovske")
+                putExtra("title", "Caller")
                 putExtra("text", "WhatsApp voice call")
                 putExtra("oi_left_content", "Alex")
                 putExtra("oi_right_content", "calling")
