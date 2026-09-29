@@ -17,7 +17,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.originisle.android.service.KeepAliveAccessibilityService
 
-/** Shared permission/status checks used by both [OnboardingScreen] and the Cast tab. */
+/** Shared permission/status checks used by both [OnboardingScreen] and [PermissionsSheet]. */
 
 /**
  * A counter that bumps on every ON_RESUME. None of these permissions can be observed, so use
@@ -55,30 +55,6 @@ fun isBatteryUnrestricted(context: Context): Boolean {
     return pm?.isIgnoringBatteryOptimizations(context.packageName) == true
 }
 
-fun listenerStatusText(context: Context): String =
-    if (isListenerEnabled(context)) "Notification access: granted ✓" else "Notification access: NOT granted"
-
-// Not about the status-bar icon any more: the foreground service now always starts (its icon is
-// hidden by the IMPORTANCE_NONE channel instead), so what this service still buys is the rebind it
-// fires from onServiceConnected whenever OriginOS restarts the process.
-fun accessibilityStatusText(context: Context): String =
-    if (isAccessibilityEnabled(context)) {
-        "Keep-alive: on ✓ (reconnects casting after a kill)"
-    } else {
-        "Keep-alive: off (slower to recover after a kill)"
-    }
-
-fun batteryStatusText(context: Context): String =
-    if (isBatteryUnrestricted(context)) "Battery: unrestricted ✓" else "Battery: restricted (tap above)"
-
-/** [acknowledged] only records that the user was sent to the screen, never that the toggles are on. */
-fun autoStartStatusText(acknowledged: Boolean): String =
-    if (acknowledged) {
-        "Associated startup: opened ✓ (can't be verified — check it's still on)"
-    } else {
-        "Associated startup: not confirmed (tap above)"
-    }
-
 fun requestIgnoreBattery(context: Context) {
     if (isBatteryUnrestricted(context)) return
     runCatching {
@@ -105,7 +81,7 @@ fun requestIgnoreBattery(context: Context) {
  *
  * Returns whether anything was launched. Only [Settings.ACTION_APPLICATION_DETAILS_SETTINGS] is
  * guaranteed to exist, so false means the device has no reachable screen at all — but true is not
- * proof the user saw the right one, hence the hedged wording in [autoStartStatusText].
+ * proof the user saw the right one, hence the hedged wording in [PermissionsSheet].
  */
 fun openAutoStartSettings(context: Context): Boolean {
     val targets = listOf(

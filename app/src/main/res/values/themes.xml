@@ -6,5 +6,7 @@
          DayNight) — the app stays dark regardless of the system's light/dark setting. -->
     <style name="Theme.OriginIsle" parent="Theme.Material3.Dark.NoActionBar">
         <item name="android:statusBarColor">@android:color/transparent</item>
+        <!-- Matches the Compose background, so launch shows no lighter flash. -->
+        <item name="android:windowBackground">@color/window_background</item>
     </style>
 </resources>

@@ -19,7 +19,10 @@ import com.originisle.android.island.PlaygroundService
 object IslandSamples {
 
     val all: List<OriginSample> = listOf(
-        OriginSample("⚽ Football score", "Scoreboard · ARS 1 – 1 MAN · 65' (generic badges)") { ctx ->
+        OriginSample(
+            "Football score", "Scoreboard · ARS 1 – 1 MAN · 65' (generic badges)",
+            IslandPreview(R.drawable.ic_soccer, "", IslandPreview.Right.Score(1, 1)),
+        ) { ctx ->
             // Sample uses a generic ball on both sides instead of fetching real crests.
             val ball = Icon.createWithResource(ctx, R.drawable.ic_soccer)
             SportsCard.post(
@@ -27,7 +30,10 @@ object IslandSamples {
                 homeLogo = ball, awayLogo = ball,
             )
         },
-        OriginSample("App download", "Progress card + island ring · 75%") { ctx ->
+        OriginSample(
+            "App download", "Progress card + island ring · 75%",
+            IslandPreview(R.drawable.ic_alert, "Downloading", IslandPreview.Right.Progress(0.75f)),
+        ) { ctx ->
             start(ctx, 40001) {
                 putExtra("oi_scene", "NAVIGATION")
                 putExtra("oi_template", OriginIslandConstants.TEMPLATE_PROGRESS_VISUAL)
@@ -42,14 +48,20 @@ object IslandSamples {
                 putExtra("icon_res", R.drawable.ic_alert)
             }
         },
-        OriginSample("Payment", "Apple-style: Processing… → Paid ✓ (green tick + glow)") { ctx ->
+        OriginSample(
+            "Payment", "Apple-style: Processing… → Paid ✓ (green tick + glow)",
+            IslandPreview(R.drawable.ic_payment, "€42.00", IslandPreview.Right.Success),
+        ) { ctx ->
             PaymentCard.post(
                 context = ctx, id = 40002, appIcon = null,
                 amount = "€42.00", merchant = "Café de Flore", appLabel = "Google Wallet",
                 clickResp = openApp(ctx),
             )
         },
-        OriginSample("Food delivery", "TAKEOUT · base card + capsule ETA") { ctx ->
+        OriginSample(
+            "Food delivery", "TAKEOUT · base card + capsule ETA",
+            IslandPreview(R.drawable.ic_alert, "Delivery", IslandPreview.Right.Capsule("12 min")),
+        ) { ctx ->
             start(ctx, 40003) {
                 putExtra("oi_scene", "NAVIGATION")
                 putExtra("oi_template", OriginIslandConstants.TEMPLATE_BASE)
@@ -61,7 +73,10 @@ object IslandSamples {
                 putExtra("icon_res", R.drawable.ic_alert)
             }
         },
-        OriginSample("Ride hailing", "TAXI · driver arriving") { ctx ->
+        OriginSample(
+            "Ride hailing", "TAXI · driver arriving",
+            IslandPreview(R.drawable.ic_alert, "Ride", IslandPreview.Right.Capsule("3 min")),
+        ) { ctx ->
             start(ctx, 40004) {
                 putExtra("oi_scene", "NAVIGATION")
                 putExtra("oi_template", OriginIslandConstants.TEMPLATE_BASE)
@@ -73,7 +88,10 @@ object IslandSamples {
                 putExtra("icon_res", R.drawable.ic_alert)
             }
         },
-        OriginSample("Flight boarding", "FLIGHT · symmetric route card") { ctx ->
+        OriginSample(
+            "Flight boarding", "FLIGHT · symmetric route card",
+            IslandPreview(R.drawable.ic_alert, "CDG → FCO", IslandPreview.Right.Capsule("Gate K21")),
+        ) { ctx ->
             start(ctx, 40005) {
                 putExtra("oi_scene", "NAVIGATION")
                 putExtra("oi_template", OriginIslandConstants.TEMPLATE_TEXT_SYMMETRY)
@@ -87,7 +105,10 @@ object IslandSamples {
                 putExtra("icon_res", R.drawable.ic_alert)
             }
         },
-        OriginSample("Countdown timer", "TIMER · progress 40%") { ctx ->
+        OriginSample(
+            "Countdown timer", "TIMER · progress 40%",
+            IslandPreview(R.drawable.ic_timer, "Timer", IslandPreview.Right.Progress(0.4f)),
+        ) { ctx ->
             start(ctx, 40006) {
                 putExtra("oi_scene", "NAVIGATION")
                 putExtra("oi_template", OriginIslandConstants.TEMPLATE_PROGRESS_VISUAL)
@@ -102,7 +123,10 @@ object IslandSamples {
                 putExtra("icon_res", R.drawable.ic_timer)
             }
         },
-        OriginSample("Loading", "Loading-dots right island") { ctx ->
+        OriginSample(
+            "Loading", "Loading-dots right island",
+            IslandPreview(R.drawable.ic_alert, "Working", IslandPreview.Right.Loading),
+        ) { ctx ->
             start(ctx, 40007) {
                 putExtra("oi_scene", "NAVIGATION")
                 putExtra("oi_template", OriginIslandConstants.TEMPLATE_BASE)
@@ -113,7 +137,10 @@ object IslandSamples {
                 putExtra("icon_res", R.drawable.ic_alert)
             }
         },
-        OriginSample("Music player", "Wave island · media card") { ctx ->
+        OriginSample(
+            "Music player", "Wave island · media card",
+            IslandPreview(R.drawable.ic_media_play, "Midnight City", IslandPreview.Right.Wave),
+        ) { ctx ->
             start(ctx, 40008) {
                 putExtra("oi_scene", "NAVIGATION")
                 putExtra("oi_template", OriginIslandConstants.TEMPLATE_BASE)
@@ -126,21 +153,29 @@ object IslandSamples {
                 putExtra("icon_res", R.drawable.ic_media_play)
             }
         },
-        OriginSample("Incoming call", "VOIPCALL · Decline / Answer buttons") { ctx ->
+        OriginSample(
+            "Incoming call", "VOIPCALL · Decline / Answer buttons",
+            IslandPreview(R.drawable.ic_call, "", IslandPreview.Right.Text("John")),
+        ) { ctx ->
             start(ctx, 40009) {
                 putExtra("oi_scene", "NAVIGATION")
                 putExtra("oi_template", OriginIslandConstants.TEMPLATE_BUTTONS)
-                putExtra("oi_right_template", OriginIslandConstants.TEMPLATE_RIGHT_ISLAND_ICON_TEXT)
-                putExtra("title", "Caller")
+                // Same pill as a real call cast: icon on the left, the caller's name right of the camera.
+                putExtra("oi_right_template", OriginIslandConstants.TEMPLATE_RIGHT_ISLAND_TEXT_ICON)
+                putExtra("oi_show_right_icon", false)
+                putExtra("title", "John")
                 putExtra("text", "WhatsApp voice call")
-                putExtra("oi_left_content", "Alex")
-                putExtra("oi_right_content", "calling")
+                putExtra("oi_left_content", "")
+                putExtra("oi_right_content", "John")
                 putStringArrayListExtra("oi_button_titles", arrayListOf("Decline", "Answer"))
                 putExtra("click_resp", openApp(ctx))
                 putExtra("icon_res", R.drawable.ic_call)
             }
         },
-        OriginSample("Driving navigation", "Driving-navi template · maneuver + street + ETA") { ctx ->
+        OriginSample(
+            "Driving navigation", "Driving-navi template · maneuver + street + ETA",
+            IslandPreview(R.drawable.ic_navigation, "350 m", IslandPreview.Right.Capsule("12 min")),
+        ) { ctx ->
             // The template the real NavigationCard posts. Unproven on hardware: if nothing appears,
             // OriginOS rejected template 9 and the Cast tab's navigation toggle should stay off.
             start(ctx, 40011) {
@@ -156,7 +191,10 @@ object IslandSamples {
                 putExtra("icon_res", R.drawable.ic_navigation)
             }
         },
-        OriginSample("Navigation message", "Navigation template · nav icon + single message line") { ctx ->
+        OriginSample(
+            "Navigation message", "Navigation template · nav icon + single message line",
+            IslandPreview(R.drawable.ic_navigation, "Turn right", IslandPreview.Right.Capsule("2 min")),
+        ) { ctx ->
             start(ctx, 40012) {
                 putExtra("oi_scene", "NAVIGATION")
                 putExtra("oi_template", OriginIslandConstants.TEMPLATE_NAVIGATION)
@@ -169,7 +207,10 @@ object IslandSamples {
                 putExtra("icon_res", R.drawable.ic_navigation)
             }
         },
-        OriginSample("Two buttons", "Buttons template · Deny / Receive") { ctx ->
+        OriginSample(
+            "Two buttons", "Buttons template · Deny / Receive",
+            IslandPreview(R.drawable.ic_alert, "Share", IslandPreview.Right.None),
+        ) { ctx ->
             start(ctx, 40010) {
                 putExtra("oi_scene", "NAVIGATION")
                 putExtra("oi_template", OriginIslandConstants.TEMPLATE_BUTTONS)

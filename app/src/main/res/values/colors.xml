@@ -7,4 +7,7 @@
     <!-- Adaptive-icon background: sampled from logo.png's own card background, so the launcher
          mask's edges blend with the artwork instead of showing a mismatched colour. -->
     <color name="ic_launcher_background">#24282F</color>
+
+    <!-- App background, same as IsleColors.Background. -->
+    <color name="window_background">#0B0B0D</color>
 </resources>
