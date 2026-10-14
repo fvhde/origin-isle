@@ -3,6 +3,8 @@ package com.originisle.android.cards
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.drawable.Icon
 import android.service.notification.StatusBarNotification
 import androidx.core.app.NotificationCompat
@@ -64,8 +66,8 @@ object NavigationCard {
         // The maneuver arrow rides in the notification's large icon; keep it for the card's dirIcon
         // and the pill's left icon, so neither falls back to a monochrome glyph.
         val maneuverIcon: Icon? = when (val large = extras.get(NotificationCompat.EXTRA_LARGE_ICON)) {
-            is Icon -> large
-            is Bitmap -> Icon.createWithBitmap(shrinkForIcon(large))
+            is Icon -> runCatching { whiteArrow(context, large) }.getOrDefault(large)
+            is Bitmap -> Icon.createWithBitmap(shrinkForIcon(large)).setTint(Color.WHITE)
             else -> null
         }
         n.smallIcon?.let { IconCache.activeSmallIcons[id] = it }
@@ -90,6 +92,8 @@ object NavigationCard {
             putExtra("oi_right_content", chip)
             putExtra("status_chip_text", chip)
             putExtra("icon_res", R.mipmap.ic_launcher_round)
+            putExtra("oi_bg_color", "#FF262626")
+            putExtra("oi_fg_color", "#FFFFFFFF")
             putExtra("when", n.`when`)
             // vivo requires a content intent; fall back to launching the source app.
             putExtra("source_content_intent", n.contentIntent ?: fallbackClickIntent(context, sbn.packageName))
@@ -100,6 +104,16 @@ object NavigationCard {
             }
         }
         context.startService(intent)
+    }
+
+    private fun whiteArrow(context: Context, icon: Icon): Icon {
+        val drawable = icon.loadDrawable(context) ?: return icon
+        val w = drawable.intrinsicWidth.takeIf { it > 0 } ?: 192
+        val h = drawable.intrinsicHeight.takeIf { it > 0 } ?: 192
+        val bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+        drawable.setBounds(0, 0, w, h)
+        drawable.draw(Canvas(bitmap))
+        return Icon.createWithBitmap(shrinkForIcon(bitmap)).setTint(Color.WHITE)
     }
 
     /** "12 min · 4,5 km · 14:32" -> "12 min". Blank in, blank out. */
