@@ -66,10 +66,12 @@ object NavigationCard {
         // The maneuver arrow rides in the notification's large icon; keep it for the card's dirIcon
         // and the pill's left icon, so neither falls back to a monochrome glyph.
         val maneuverIcon: Icon? = when (val large = extras.get(NotificationCompat.EXTRA_LARGE_ICON)) {
-            is Icon -> runCatching { whiteArrow(context, large) }.getOrDefault(large)
-            is Bitmap -> Icon.createWithBitmap(shrinkForIcon(large)).setTint(Color.WHITE)
+            is Icon -> large
+            is Bitmap -> Icon.createWithBitmap(shrinkForIcon(large))
             else -> null
         }
+        // Maps sends a black arrow in light mode. Whiten it for the pill only, the card can be light.
+        val pillIcon: Icon? = maneuverIcon?.let { runCatching { whiteArrow(context, it) }.getOrDefault(it) }
         n.smallIcon?.let { IconCache.activeSmallIcons[id] = it }
 
         val intent = Intent(context, PlaygroundService::class.java).apply {
@@ -98,10 +100,8 @@ object NavigationCard {
             // vivo requires a content intent; fall back to launching the source app.
             putExtra("source_content_intent", n.contentIntent ?: fallbackClickIntent(context, sbn.packageName))
             n.actions?.let { putParcelableArrayListExtra("actions", ArrayList(it.toList())) }
-            maneuverIcon?.let {
-                putExtra("oi_large_icon", it)
-                putExtra("oi_left_icon", it)
-            }
+            maneuverIcon?.let { putExtra("oi_large_icon", it) }
+            pillIcon?.let { putExtra("oi_left_icon", it) }
         }
         context.startService(intent)
     }
