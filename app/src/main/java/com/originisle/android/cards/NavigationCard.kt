@@ -3,6 +3,8 @@ package com.originisle.android.cards
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.drawable.Icon
 import android.service.notification.StatusBarNotification
 import androidx.core.app.NotificationCompat
@@ -68,6 +70,8 @@ object NavigationCard {
             is Bitmap -> Icon.createWithBitmap(shrinkForIcon(large))
             else -> null
         }
+        // Maps sends a black arrow in light mode. Whiten it for the pill only, the card can be light.
+        val pillIcon: Icon? = maneuverIcon?.let { runCatching { whiteArrow(context, it) }.getOrDefault(it) }
         n.smallIcon?.let { IconCache.activeSmallIcons[id] = it }
 
         val intent = Intent(context, PlaygroundService::class.java).apply {
@@ -90,16 +94,26 @@ object NavigationCard {
             putExtra("oi_right_content", chip)
             putExtra("status_chip_text", chip)
             putExtra("icon_res", R.mipmap.ic_launcher_round)
+            putExtra("oi_bg_color", "#FF262626")
+            putExtra("oi_fg_color", "#FFFFFFFF")
             putExtra("when", n.`when`)
             // vivo requires a content intent; fall back to launching the source app.
             putExtra("source_content_intent", n.contentIntent ?: fallbackClickIntent(context, sbn.packageName))
             n.actions?.let { putParcelableArrayListExtra("actions", ArrayList(it.toList())) }
-            maneuverIcon?.let {
-                putExtra("oi_large_icon", it)
-                putExtra("oi_left_icon", it)
-            }
+            maneuverIcon?.let { putExtra("oi_large_icon", it) }
+            pillIcon?.let { putExtra("oi_left_icon", it) }
         }
         context.startService(intent)
+    }
+
+    private fun whiteArrow(context: Context, icon: Icon): Icon {
+        val drawable = icon.loadDrawable(context) ?: return icon
+        val w = drawable.intrinsicWidth.takeIf { it > 0 } ?: 192
+        val h = drawable.intrinsicHeight.takeIf { it > 0 } ?: 192
+        val bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+        drawable.setBounds(0, 0, w, h)
+        drawable.draw(Canvas(bitmap))
+        return Icon.createWithBitmap(shrinkForIcon(bitmap)).setTint(Color.WHITE)
     }
 
     /** "12 min · 4,5 km · 14:32" -> "12 min". Blank in, blank out. */
