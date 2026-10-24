@@ -81,5 +81,10 @@
             </intent-filter>
         </receiver>
 
+        <!-- Copies the code from a tapped login-code card. Only reached via our own PendingIntent. -->
+        <receiver
+            android:name=".service.CopyCodeReceiver"
+            android:exported="false" />
+
     </application>
 </manifest>

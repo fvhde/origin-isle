@@ -4,6 +4,8 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.drawable.Icon
+import androidx.core.graphics.drawable.toBitmap
 import com.originisle.android.MainActivity
 
 /**
@@ -32,6 +34,26 @@ internal fun shrinkForIcon(bitmap: Bitmap, maxDimension: Int = 200): Bitmap {
     if (w <= maxDimension && h <= maxDimension) return bitmap
     val scale = maxDimension.toFloat() / maxOf(w, h)
     return Bitmap.createScaledBitmap(bitmap, (w * scale).toInt().coerceAtLeast(1), (h * scale).toInt().coerceAtLeast(1), true)
+}
+
+/**
+ * An [Icon] that's safe to put in an Intent. Bitmap-backed icons (a contact's avatar, a chat's large
+ * icon) can be full-size and blow the parcel up exactly like [shrinkForIcon] describes, and URI-backed
+ * ones point into the source app where SystemUI may not be allowed to read them — so both are
+ * rendered once and shrunk here. Resource icons are just a package + id and pass through untouched.
+ */
+internal fun parcelSafeIcon(context: Context, icon: Icon?, maxDimension: Int = 144): Icon? {
+    if (icon == null) return null
+    if (icon.type == Icon.TYPE_RESOURCE) return icon
+    return runCatching {
+        val drawable = icon.loadDrawable(context) ?: return null
+        val w = drawable.intrinsicWidth.takeIf { it > 0 } ?: maxDimension
+        val h = drawable.intrinsicHeight.takeIf { it > 0 } ?: maxDimension
+        val scale = minOf(1f, maxDimension.toFloat() / maxOf(w, h))
+        Icon.createWithBitmap(
+            drawable.toBitmap((w * scale).toInt().coerceAtLeast(1), (h * scale).toInt().coerceAtLeast(1)),
+        )
+    }.getOrNull()
 }
 
 /** "125" -> "02:05", "3725" -> "01:02:05" — a stopwatch-style elapsed-time string. */

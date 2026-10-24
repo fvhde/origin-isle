@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Demo contact avatar for the message sample: a person on a coloured disc. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <path android:fillColor="#FF7B5CFF"
+        android:pathData="M24,0a24,24 0 1,0 0.01,0z" />
+    <path android:fillColor="#FFFFFFFF"
+        android:pathData="M24,13a7,7 0 1,0 0.01,0zM11,37c0,-6.5 6,-10 13,-10s13,3.5 13,10v1H11z" />
+</vector>

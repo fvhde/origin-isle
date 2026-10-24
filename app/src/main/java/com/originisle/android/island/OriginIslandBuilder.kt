@@ -133,6 +133,11 @@ object OriginIslandBuilder {
         forceShow: Boolean = false,
         progressState: Int = 0,
         progressMarkers: Boolean = false,
+        // Template 2: explicit milestone icons along the bar + the icon that rides it, and the bar
+        // colour. Empty/null/0 keeps the defaults above.
+        progressNodeIcons: List<Icon> = emptyList(),
+        progressIndicatorIcon: Icon? = null,
+        progressColor: Int = 0,
         showRightIcon: Boolean = true,
         showLeftIcon: Boolean = true,
         cardBgColor: Int = 0,
@@ -236,7 +241,15 @@ object OriginIslandBuilder {
             }
             2 -> {
                 val nodeIcons = ArrayList<Icon>()
-                if (progressMarkers) {
+                if (progressNodeIcons.isNotEmpty()) {
+                    // The source's own milestones (an Android 16 Live Update's start/end icons),
+                    // with its tracker icon riding the bar.
+                    nodeIcons.addAll(progressNodeIcons)
+                    progressIndicatorIcon?.let {
+                        infos.putParcelable(C.BUNDLE_KEY_INFO_INDICATOR_ICON, it)
+                        infos.putInt(C.BUNDLE_KEY_INFO_INDICATOR_LOC, 2)
+                    }
+                } else if (progressMarkers) {
                     nodeIcons.add(accentIcon)
                     nodeIcons.add(defaultIcon)
                     nodeIcons.add(accentIcon)
@@ -251,7 +264,8 @@ object OriginIslandBuilder {
                 infos.putInt(C.BUNDLE_KEY_INFO_PROGRESS, progress.coerceIn(0, 100))
                 infos.putInt(
                     C.BUNDLE_KEY_INFO_PROGRESS_COLOR,
-                    context.resources.getColor(R.color.vivo_super_x_progress_bar_default_color, null),
+                    if (!isDefaultColor(progressColor)) progressColor
+                    else context.resources.getColor(R.color.vivo_super_x_progress_bar_default_color, null),
                 )
                 infos.putInt(
                     C.BUNDLE_KEY_INFO_BG_COLOR,
@@ -340,7 +354,9 @@ object OriginIslandBuilder {
 
         // --- island (the pill) ---
         val island = Bundle()
-        island.putInt(C.BUNDLE_KEY_ISLAND_LEFT_TEMPLATE, 1)
+        // Left template 3 = icon + two stacked lines; vivo only honours it with exactly two lines
+        // (anything else falls back to icon-only), so pick it from the data rather than trusting callers.
+        island.putInt(C.BUNDLE_KEY_ISLAND_LEFT_TEMPLATE, if (leftDoubleLine.size == 2) 3 else 1)
         island.putInt(C.BUNDLE_KEY_ISLAND_RIGHT_TEMPLATE, rightTemplate)
         if (islandShowTime > 0) island.putInt(C.BUNDLE_KEY_ISLAND_SHOW_TIME, islandShowTime)
         if (forceShow) island.putBoolean(C.BUNDLE_KEY_ISLAND_FORCE_SHOW, true)
@@ -383,7 +399,10 @@ object OriginIslandBuilder {
             3 -> if (!isDefaultColor(fgColor)) right.putInt(C.BUNDLE_KEY_ISLAND_RIGHT_LOADING_COLOR, fgColor)
             4, 5 -> {
                 if (showRightIcon) right.putParcelable(C.BUNDLE_KEY_ISLAND_RIGHT_ICON, rightIcon)
-                right.putCharSequence(C.BUNDLE_KEY_ISLAND_RIGHT_CONTENT, colorSpan(rightContent, fgColor))
+                // No content at all (not even " ") = vivo's icon-only variant (103): just the icon.
+                if (rightContent.isNotEmpty()) {
+                    right.putCharSequence(C.BUNDLE_KEY_ISLAND_RIGHT_CONTENT, colorSpan(rightContent, fgColor))
+                }
                 if (clickResp != null) right.putParcelable(C.BUNDLE_KEY_ISLAND_RIGHT_CLICK_RESP, clickResp)
             }
             6 -> {

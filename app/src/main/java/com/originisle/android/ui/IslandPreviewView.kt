@@ -143,6 +143,11 @@ private fun IslandText(
 
 @Composable
 private fun LeftIcon(res: Int) {
+    // A contact avatar is a full-colour round picture, like on the real island.
+    if (res == R.drawable.ic_avatar) {
+        Icon(painterResource(res), null, Modifier.size(24.dp).clip(CircleShape), tint = Color.Unspecified)
+        return
+    }
     Box(
         Modifier.size(24.dp).clip(RoundedCornerShape(6.dp)).background(IconTileGrey),
         contentAlignment = Alignment.Center,

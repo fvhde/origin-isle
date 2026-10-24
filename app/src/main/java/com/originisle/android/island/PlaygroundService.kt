@@ -272,6 +272,9 @@ class PlaygroundService : Service() {
         val largeIcon: Icon? = intent.getParcelableExtra("oi_large_icon", Icon::class.java)
             ?: IconCache.activeLargeIcons[id]
             ?: IconCache.activeLargeBitmaps[id]?.let { Icon.createWithBitmap(it) }
+        val progressNodeIcons = intent.getParcelableArrayListExtra("oi_progress_nodes", Icon::class.java).orEmpty()
+        val progressIndicatorIcon = intent.getParcelableExtra("oi_progress_indicator", Icon::class.java)
+        val progressColor = OriginIslandBuilder.parseColor(intent.getStringExtra("oi_progress_color"), 0)
 
         // Actions -> OriginActions.
         val actions = intent.getParcelableArrayListExtra("actions", Notification.Action::class.java)
@@ -328,6 +331,9 @@ class PlaygroundService : Service() {
             showLeftIcon = showLeftIcon,
             progressState = progressState,
             progressMarkers = showProgress && progressMax > 0,
+            progressNodeIcons = progressNodeIcons,
+            progressIndicatorIcon = progressIndicatorIcon,
+            progressColor = progressColor,
             cardBgColor = cardBgColor,
             keepScreenOn = keepScreenOn,
             disableInvertColor = disableInvert,

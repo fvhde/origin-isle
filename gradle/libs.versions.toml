@@ -11,6 +11,7 @@ activityCompose = "1.9.3"
 composeBom = "2024.12.01"
 appcompat = "1.7.0"
 material = "1.12.0"
+junit = "4.13.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -24,6 +25,7 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 google-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -31,8 +31,8 @@ android {
         applicationId = "com.autonavi.minimap"
         minSdk = 34
         targetSdk = 36
-        versionCode = 20
-        versionName = "2.0.1"
+        versionCode = 21
+        versionName = "2.1.0"
     }
 
     signingConfigs {
@@ -84,5 +84,7 @@ dependencies {
     // Provides the Theme.Material3.* XML theme parents used in themes.xml (not directly imported
     // in Kotlin, but required for the manifest/activity theme resource to resolve).
     implementation(libs.google.material)
+
+    testImplementation(libs.junit)
     debugImplementation(libs.androidx.ui.tooling)
 }

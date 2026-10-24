@@ -2,9 +2,11 @@ package com.originisle.android.service
 
 import android.app.Notification
 import android.app.NotificationManager
+import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.drawable.Icon
@@ -19,14 +21,18 @@ import android.service.notification.StatusBarNotification
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.originisle.android.cards.ChargingCard
 import com.originisle.android.cards.GenericCard
 import com.originisle.android.cards.MediaCard
+import com.originisle.android.cards.MessageCard
 import com.originisle.android.cards.NavigationCard
+import com.originisle.android.cards.OtpCard
 import com.originisle.android.cards.PaymentCard
 import com.originisle.android.cards.SportsCard
 import com.originisle.android.cards.fallbackClickIntent
 import com.originisle.android.island.PlaygroundService
 import com.originisle.android.log.CastLog
+import com.originisle.android.otp.OtpDetector
 import com.originisle.android.sports.SportsFeed
 import com.originisle.android.sports.SportsParser
 import kotlinx.coroutines.CoroutineScope
@@ -302,10 +308,35 @@ class NotificationCastListener : NotificationListenerService() {
         }
         reload()
         pollHandler.post(pollRunnable)
+        registerBatteryReceiver()
+    }
+
+    /** Feeds [ChargingCard]. Registered while bound — the bound listener is what keeps us alive anyway. */
+    private val batteryReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            runCatching { ChargingCard.onBatteryChanged(context, intent) }
+                .onFailure { Log.e(TAG, "charging card failed", it) }
+        }
+    }
+    private var batteryReceiverRegistered = false
+
+    private fun registerBatteryReceiver() {
+        if (batteryReceiverRegistered) return
+        runCatching {
+            registerReceiver(batteryReceiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED), RECEIVER_NOT_EXPORTED)
+            batteryReceiverRegistered = true
+        }
+    }
+
+    private fun unregisterBatteryReceiver() {
+        if (!batteryReceiverRegistered) return
+        runCatching { unregisterReceiver(batteryReceiver) }
+        batteryReceiverRegistered = false
     }
 
     override fun onListenerDisconnected() {
         super.onListenerDisconnected()
+        unregisterBatteryReceiver()
         if (instance === this) instance = null
         connectedAt = 0L
         pollHandler.removeCallbacks(pollRunnable)
@@ -397,17 +428,44 @@ class NotificationCastListener : NotificationListenerService() {
 
         // Media sessions get the dedicated media path. If the notification has no session token
         // (some players, e.g. Firefox playing a video, omit it), fall back to matching an active
-        // MediaSessionManager session by package name.
-        if (castMedia && !isCall) {
+        // MediaSessionManager session by package name — ongoing only, so an app's ordinary
+        // notifications (e.g. an X DM while a video plays) aren't mistaken for its player.
+        // Resolved even with media casting off: otherwise the player notification falls through
+        // below and gets cast as a generic "ongoing" card anyway.
+        if (!isCall) {
+            val isOngoingNotif = (n.flags and Notification.FLAG_ONGOING_EVENT) != 0
             val controller = token?.let { MediaController(this, it) }
-                ?: findMediaControllerFallback(sbn.packageName)
+                ?: if (isOngoingNotif) findMediaControllerFallback(sbn.packageName) else null
             if (controller != null) {
+                if (!castMedia) { log(sbn, "skipped — media, media casting off", false); return }
                 log(sbn, "cast — media player", true)
                 MediaCard.post(applicationContext, sbn, controller)
                 return
             }
         }
         if (!castNotifs) { log(sbn, "skipped — media only, notifications off", false); return }
+
+        // Login / verification codes: ahead of payments (a bank's "code to confirm your €12 payment"
+        // is a code, not a receipt) and of the plain-message filter, which would otherwise drop it.
+        if (!isCall && prefs.getBoolean("cast_otp", true)) {
+            OtpDetector.find(notificationText(sbn))?.let { code ->
+                if (lastCastPostTime.put(sbn.key, sbn.postTime) == sbn.postTime) {
+                    log(sbn, "skipped — duplicate delivery, unchanged", false); return
+                }
+                OtpCard.post(applicationContext, sbn, code, appLabel(sbn.packageName))
+                log(sbn, "cast — login code", true)
+                return
+            }
+        }
+
+        // Quiet hours / Do Not Disturb: only what someone is actively waiting on gets through —
+        // calls, navigation and timers/alarms here; media and login codes were handled above.
+        val isOngoingNow = (n.flags and Notification.FLAG_ONGOING_EVENT) != 0
+        if (QuietHours.isActive(prefs, currentInterruptionFilter) &&
+            !isCall && !isNavigation(sbn, isOngoingNow) && !isTimer(sbn)
+        ) {
+            log(sbn, "skipped — quiet hours", false); return
+        }
 
         // Score apps: if the notification parses as a match, post a football card with crests.
         // If it doesn't (Google also posts news/weather/etc.), fall through to the normal path.
@@ -467,7 +525,17 @@ class NotificationCastListener : NotificationListenerService() {
             log(sbn, "skipped — duplicate delivery, unchanged", false); return
         }
         log(sbn, "cast — $kind", true)
-        GenericCard.post(applicationContext, sbn, isLive)
+        if (kind == "message") {
+            // A message card that can't be built must never take the listener down with it (a
+            // crash here repeats on every reconnect): fall back to the plain generic card.
+            runCatching { MessageCard.post(applicationContext, sbn, appLabel(sbn.packageName)) }
+                .onFailure {
+                    Log.e(TAG, "message card failed, falling back", it)
+                    GenericCard.post(applicationContext, sbn, isLive)
+                }
+        } else {
+            GenericCard.post(applicationContext, sbn, isLive)
+        }
     }
 
     /** The user-visible name of [pkg], or the package name if it can't be resolved. */
@@ -492,6 +560,24 @@ class NotificationCastListener : NotificationListenerService() {
         val text = extras.getCharSequence(NotificationCompat.EXTRA_TEXT)?.toString()?.trim().orEmpty()
         val subText = extras.getCharSequence(NotificationCompat.EXTRA_SUB_TEXT)?.toString()?.trim().orEmpty()
         return text.isNotBlank() || subText.isNotBlank()
+    }
+
+    /** A timer, stopwatch or alarm — by category, or an ongoing countdown chronometer. */
+    private fun isTimer(sbn: StatusBarNotification): Boolean {
+        val n = sbn.notification
+        if (n.category == Notification.CATEGORY_ALARM || n.category == Notification.CATEGORY_STOPWATCH) return true
+        val extras = n.extras
+        return sbn.isOngoing &&
+            extras.getBoolean(NotificationCompat.EXTRA_SHOW_CHRONOMETER, false) &&
+            extras.getBoolean(NotificationCompat.EXTRA_CHRONOMETER_COUNT_DOWN, false)
+    }
+
+    /** Title + text + big text, as one string to search. */
+    private fun notificationText(sbn: StatusBarNotification): String {
+        val extras = sbn.notification.extras
+        return listOf(
+            NotificationCompat.EXTRA_TITLE, NotificationCompat.EXTRA_TEXT, NotificationCompat.EXTRA_BIG_TEXT,
+        ).joinToString(" \n ") { extras.getCharSequence(it)?.toString().orEmpty() }
     }
 
     /**
@@ -522,6 +608,7 @@ class NotificationCastListener : NotificationListenerService() {
 
     override fun onDestroy() {
         super.onDestroy()
+        unregisterBatteryReceiver()
         if (instance === this) instance = null
         scope.cancel()
     }

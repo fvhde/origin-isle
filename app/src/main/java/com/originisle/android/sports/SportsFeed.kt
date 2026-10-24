@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap
  */
 object SportsFeed {
 
-    private const val SEARCH = "https://www.thesportsdb.com/api/v1/json/3/searchteams.php?t="
+    private const val SEARCH = "https://www.thesportsdb.com/api/v1/json/123/searchteams.php?t="
     private const val CREST_PX = 96
     private val crestCache = ConcurrentHashMap<String, Bitmap>()
 
@@ -206,7 +206,7 @@ object SportsFeed {
             val query = contextual ?: ALIASES[key] ?: team
 
             (lookupClub(team) ?: lookupClub(query))?.let { entry ->
-                val raw = URL(entry.badge).openStream().use { BitmapFactory.decodeStream(it) } ?: return@withContext null
+                val raw = URL(badgeUrl(entry.badge)).openStream().use { BitmapFactory.decodeStream(it) } ?: return@withContext null
                 return@withContext Bitmap.createScaledBitmap(raw, CREST_PX, CREST_PX, true).also { crestCache[key] = it }
             }
             var teams = fetchTeams(query)
@@ -244,13 +244,17 @@ object SportsFeed {
             // the search returns no Soccer results at all - return null (no crest) instead.
             val badge = chosen?.optString("strBadge")
             if (badge.isNullOrBlank()) return@withContext null
-            val raw = URL(badge).openStream().use { BitmapFactory.decodeStream(it) } ?: return@withContext null
+            val raw = URL(badgeUrl(badge)).openStream().use { BitmapFactory.decodeStream(it) } ?: return@withContext null
             Bitmap.createScaledBitmap(raw, CREST_PX, CREST_PX, true).also { crestCache[key] = it }
         } catch (e: Exception) {
             Log.w("SportsFeed", "crest fetch failed for '$team': ${e.message}")
             null
         }
     }
+
+    /** TheSportsDB moved its images to r2.thesportsdb.com; the old www.… image paths now 404. */
+    private fun badgeUrl(url: String): String =
+        url.replace("://www.thesportsdb.com/images/", "://r2.thesportsdb.com/images/")
 
     // TheSportsDB's free tier sits behind Cloudflare rate limiting that kicks in hard — verified live,
     // as few as ~15 requests within a short window get back a plain-text "error code: 1015" body

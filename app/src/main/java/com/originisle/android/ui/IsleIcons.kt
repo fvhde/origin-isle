@@ -41,6 +41,9 @@ object IsleIcons {
     val Heart = stroke("heart", "M19 14c1.5-1.5 3-3.2 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.8 0-3 .5-4.5 2-1.5-1.5-2.7-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4 3 5.5l7 7Z")
     val Power = stroke("power", "M12 2v10", "M18.4 6.6a9 9 0 1 1-12.8 0")
     val Download = stroke("download", "M12 3v12", "m7 10 5 5 5-5", "M5 21h14")
+    val Key = stroke("key", circle(7.5f, 15.5f, 5.5f), "m21 2-9.6 9.6", "m15.5 7.5 3 3L22 7l-3-3")
+    val Bolt = stroke("bolt", "M13 2 3 14h9l-1 8 10-12h-9l1-8z")
+    val Buttons = stroke("buttons", roundRect(2f, 8f, 9f, 8f, 2.5f), roundRect(13f, 8f, 9f, 8f, 2.5f))
 
     val More = filled("more", circle(5f, 12f, 2f), circle(12f, 12f, 2f), circle(19f, 12f, 2f))
     val Stop = filled("stop", roundRect(5f, 5f, 14f, 14f, 3f))

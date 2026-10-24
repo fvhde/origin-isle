@@ -154,6 +154,29 @@ object IslandSamples {
             }
         },
         OriginSample(
+            "Message", "Chat · avatar + sender left, message right",
+            IslandPreview(R.drawable.ic_avatar, "Sarah", IslandPreview.Right.Text("Are we still on for tonight? 🍕")),
+        ) { ctx ->
+            // The same extras MessageCard sends for a real chat notification.
+            start(ctx, 40013) {
+                putExtra("oi_scene", "NAVIGATION")
+                putExtra("oi_template", OriginIslandConstants.TEMPLATE_BASE)
+                putExtra("title", "Sarah")
+                putExtra("text", "Are we still on for tonight? 🍕")
+                putExtra("subtext", "WhatsApp · 2 new messages")
+                putExtra("oi_left_content", "Sarah")
+                Icon.createWithResource(ctx, R.drawable.ic_avatar).let {
+                    putExtra("oi_left_icon", it)
+                    putExtra("oi_large_icon", it)
+                }
+                putExtra("oi_right_template", OriginIslandConstants.TEMPLATE_RIGHT_ISLAND_TEXT_ICON)
+                putExtra("oi_show_right_icon", false)
+                putExtra("oi_right_content", "Are we still on for tonight? 🍕")
+                putExtra("status_chip_text", "Are we still on for tonight? 🍕")
+                putExtra("icon_res", R.drawable.ic_chat)
+            }
+        },
+        OriginSample(
             "Incoming call", "VOIPCALL · Decline / Answer buttons",
             IslandPreview(R.drawable.ic_call, "", IslandPreview.Right.Text("John")),
         ) { ctx ->

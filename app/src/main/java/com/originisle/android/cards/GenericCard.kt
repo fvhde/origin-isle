@@ -1,5 +1,6 @@
 package com.originisle.android.cards
 
+import android.app.Notification
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -10,6 +11,7 @@ import com.originisle.android.R
 import com.originisle.android.island.OriginIslandConstants
 import com.originisle.android.island.PlaygroundService
 import com.originisle.android.service.IconCache
+import com.originisle.android.ui.PREFS_NAME
 import kotlin.math.abs
 
 /**
@@ -60,11 +62,16 @@ object GenericCard {
         // both "2 min" and a journey progress bar — synthesising "43%" from the bar and ignoring the
         // OS's own string threw away the better text.
         val showChrono = extras.getBoolean(NotificationCompat.EXTRA_SHOW_CHRONOMETER, false)
+        // A countdown (timer, "arriving in") ticks toward `when`; once it's passed, hold at 00:00
+        // instead of counting back up.
+        val countDown = extras.getBoolean(NotificationCompat.EXTRA_CHRONOMETER_COUNT_DOWN, false)
         val percentText = if (hasProgress) "${progress * 100 / progressMax}%" else ""
         // "android.shortCriticalText" (Android 16 promoted-notification chip); read by raw key
         // so it works even when the compiled core library predates the typed constant.
         val shortCritical = extras.getCharSequence("android.shortCriticalText")?.toString()?.trim().orEmpty()
         val chip = when {
+            showChrono && n.`when` > 0 && countDown ->
+                formatElapsed((n.`when` - System.currentTimeMillis()).coerceAtLeast(0) / 1000)
             showChrono && n.`when` > 0 -> formatElapsed(abs(System.currentTimeMillis() - n.`when`) / 1000)
             shortCritical.isNotBlank() -> shortCritical
             else -> percentText
@@ -100,6 +107,16 @@ object GenericCard {
         // older one showed the distance: same APK, opposite pill, purely from progressMax > 0.
         val ringSaysItAll = finalChip.isBlank() || finalChip == percentText
 
+        val buttons = if (context.getSharedPreferences(PREFS_NAME, 0).getBoolean("cast_show_actions", true)) {
+            usableActions(n)
+        } else {
+            emptyList()
+        }
+        // Android 16 Live Update (ride/delivery/trip progress): the expanded card becomes a real
+        // progress track with the app's own start/end icons and its tracker icon riding the bar.
+        val liveUpdate = hasProgress &&
+            extras.getString(NotificationCompat.EXTRA_TEMPLATE) == "android.app.Notification\$ProgressStyle"
+
         val intent = Intent(context, PlaygroundService::class.java).apply {
             action = PlaygroundService.ACTION_START
             putExtra("id", id)
@@ -120,7 +137,7 @@ object GenericCard {
             putExtra("when", n.`when`)
             // vivo requires a content intent; fall back to launching the source app.
             putExtra("source_content_intent", n.contentIntent ?: fallbackClickIntent(context, sbn.packageName))
-            n.actions?.let { putParcelableArrayListExtra("actions", ArrayList(it.toList())) }
+            if (buttons.isNotEmpty()) putParcelableArrayListExtra("actions", ArrayList(buttons))
             style?.iconStatus?.let { putExtra("oi_icon_status_type", it) }
             pillIcon?.let {
                 putExtra("oi_left_icon", it)
@@ -168,9 +185,46 @@ object GenericCard {
                     }
                 }
             }
+            // The expanded card only — the pill chosen above stays as it is.
+            when {
+                style != null -> Unit
+                liveUpdate -> {
+                    putExtra("oi_template", OriginIslandConstants.TEMPLATE_PROGRESS_VISUAL) // 2
+                    putExtra("show_progress", true)
+                    putExtra("progress", progress)
+                    putExtra("progress_max", progressMax)
+                    val nodes = listOfNotNull(
+                        extras.getParcelable("android.progressStartIcon", Icon::class.java),
+                        extras.getParcelable("android.progressEndIcon", Icon::class.java),
+                    )
+                    if (nodes.isNotEmpty()) putParcelableArrayListExtra("oi_progress_nodes", ArrayList(nodes))
+                    extras.getParcelable("android.progressTrackerIcon", Icon::class.java)
+                        ?.let { putExtra("oi_progress_indicator", it) }
+                    segmentColor(extras)?.let { putExtra("oi_progress_color", it) }
+                }
+                // One button already shows as the capsule on the base card; two or more get a row.
+                buttons.size >= 2 -> putExtra("oi_template", OriginIslandConstants.TEMPLATE_BUTTONS) // 8
+            }
         }
         context.startService(intent)
     }
+
+    /**
+     * The source's buttons that work from a single tap: ones that need typed input (Reply) would
+     * fire with nothing in them, and contextual ones are the system's smart-reply suggestions.
+     */
+    internal fun usableActions(n: Notification): List<Notification.Action> =
+        n.actions.orEmpty().filter { a ->
+            a.actionIntent != null && a.remoteInputs.isNullOrEmpty() && !a.isContextual &&
+                a.semanticAction != Notification.Action.SEMANTIC_ACTION_REPLY && !a.title.isNullOrBlank()
+        }.take(3)
+
+    /** "#FF34C759" for the first coloured segment of a Live Update's progress bar, if it has one. */
+    private fun segmentColor(extras: android.os.Bundle): String? =
+        extras.getParcelableArrayList("android.progressSegments", android.os.Bundle::class.java)
+            ?.firstOrNull { it.containsKey("colorInt") }
+            ?.getInt("colorInt")
+            ?.let { String.format("#%08X", it) }
 
     /** A colourful icon for a call: the caller's avatar if the notification carries one, else the app icon. */
     private fun callIcon(context: Context, sbn: StatusBarNotification): Icon? {

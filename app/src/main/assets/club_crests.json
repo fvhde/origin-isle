@@ -107,7 +107,7 @@
   "aston villa": {
     "idTeam": "133601",
     "team": "Aston Villa",
-    "badge": "https://www.thesportsdb.com/images/media/team/badge/uwzw561787679026.png",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/uwzw561787679026.png",
     "league": "English Premier League",
     "country": "England"
   },
@@ -2102,7 +2102,7 @@
   "raal la louvière": {
     "idTeam": "148488",
     "team": "RAAL La Louvière",
-    "badge": "https://www.thesportsdb.com/images/media/team/badge/n64osu1787378903.png",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/n64osu1787378903.png",
     "league": "Belgian Pro League",
     "country": "Belgium"
   },
@@ -2742,5 +2742,19 @@
     "badge": "https://r2.thesportsdb.com/images/media/team/badge/npw6c41755453653.png",
     "league": "Saudi First Division League",
     "country": "Saudi Arabia"
+  },
+  "leicester city": {
+    "idTeam": "133626",
+    "team": "Leicester City",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/xtxwtu1448813356.png",
+    "league": "English League 1",
+    "country": "England"
+  },
+  "luton town": {
+    "idTeam": "133888",
+    "team": "Luton Town",
+    "badge": "https://r2.thesportsdb.com/images/media/team/badge/v977eh1681319466.png",
+    "league": "English League 1",
+    "country": "England"
   }
 }

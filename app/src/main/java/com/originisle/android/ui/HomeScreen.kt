@@ -44,8 +44,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.originisle.android.cards.ChargingCard
 import com.originisle.android.island.PlaygroundService
 import com.originisle.android.service.NotificationCastListener
+import com.originisle.android.service.QuietHours
 import com.originisle.android.ui.samples.IslandSamples
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -68,6 +70,14 @@ fun HomeScreen(
     var ignoreSilent by remember { mutableStateOf(prefs.getBoolean("cast_ignore_silent", true)) }
     var lockscreenLiveCard by remember { mutableStateOf(prefs.getBoolean("cast_lockscreen_live_card", false)) }
     var autoDismissSec by remember { mutableStateOf(prefs.getInt("cast_auto_dismiss_seconds", 0)) }
+    var otpOn by remember { mutableStateOf(prefs.getBoolean("cast_otp", true)) }
+    var actionsOn by remember { mutableStateOf(prefs.getBoolean("cast_show_actions", true)) }
+    var chargingOn by remember { mutableStateOf(prefs.getBoolean("cast_charging", true)) }
+    var chargingKeep by remember { mutableStateOf(prefs.getBoolean("cast_charging_keep", false)) }
+    var quietDnd by remember { mutableStateOf(prefs.getBoolean("cast_quiet_dnd", false)) }
+    var quietSchedule by remember { mutableStateOf(prefs.getBoolean("cast_quiet_schedule", false)) }
+    var quietStart by remember { mutableIntStateOf(prefs.getInt("cast_quiet_start", QuietHours.DEFAULT_START)) }
+    var quietEnd by remember { mutableIntStateOf(prefs.getInt("cast_quiet_end", QuietHours.DEFAULT_END)) }
     val appsOff = remember { prefs.getStringSet("cast_ignored_apps", emptySet()).orEmpty().size }
     val tick = rememberResumeTick()
     // Setup only needs attention again if something actually broke (OriginOS revoking notification
@@ -254,6 +264,115 @@ fun HomeScreen(
         }
 
         item {
+            Column(
+                Modifier.alpha(if (castOn) 1f else 0.4f),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                SectionLabel("Cards")
+                GroupCard {
+                    ToggleRow(
+                        IsleIcons.Key, IsleColors.TileBlue, "Login codes", otpOn,
+                        subtitle = "Show the code, tap to copy",
+                    ) {
+                        otpOn = it; prefs.edit().putBoolean("cast_otp", it).apply()
+                    }
+                    GroupDivider()
+                    ToggleRow(
+                        IsleIcons.Buttons, IsleColors.TileTeal, "Action buttons", actionsOn,
+                        subtitle = "The app's own buttons on the card",
+                    ) {
+                        actionsOn = it; prefs.edit().putBoolean("cast_show_actions", it).apply()
+                    }
+                    GroupDivider()
+                    ToggleRow(
+                        IsleIcons.Bolt, IsleColors.TileGreen, "Charging", chargingOn,
+                        subtitle = "Battery card when you plug in",
+                    ) {
+                        chargingOn = it; prefs.edit().putBoolean("cast_charging", it).apply()
+                        ChargingCard.onSettingsChanged(context)
+                    }
+                    if (chargingOn) {
+                        Row(
+                            Modifier.padding(start = 62.dp, end = 16.dp, bottom = 14.dp),
+                            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        ) {
+                            listOf(false to "Briefly", true to "While charging").forEach { (keep, label) ->
+                                ChoiceChip(
+                                    label,
+                                    selected = chargingKeep == keep,
+                                    onClick = {
+                                        chargingKeep = keep
+                                        prefs.edit().putBoolean("cast_charging_keep", keep).apply()
+                                        ChargingCard.onSettingsChanged(context)
+                                    },
+                                    modifier = Modifier.weight(1f),
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        item {
+            Column(
+                Modifier.alpha(if (castOn) 1f else 0.4f),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                SectionLabel("Quiet hours")
+                GroupCard {
+                    ToggleRow(
+                        IsleIcons.Moon, IsleColors.TilePurple, "Follow Do Not Disturb", quietDnd,
+                        subtitle = "Quiet while DND is on",
+                    ) {
+                        quietDnd = it; prefs.edit().putBoolean("cast_quiet_dnd", it).apply()
+                    }
+                    GroupDivider()
+                    ToggleRow(
+                        IsleIcons.Clock, IsleColors.TileGray, "Schedule", quietSchedule,
+                        subtitle = "${QuietHours.format(quietStart)} – ${QuietHours.format(quietEnd)} every day",
+                    ) {
+                        quietSchedule = it; prefs.edit().putBoolean("cast_quiet_schedule", it).apply()
+                    }
+                    if (quietSchedule) {
+                        Row(
+                            Modifier.padding(start = 62.dp, end = 16.dp, bottom = 14.dp),
+                            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        ) {
+                            ChoiceChip(
+                                "From ${QuietHours.format(quietStart)}",
+                                selected = false,
+                                onClick = {
+                                    pickTime(context, quietStart) {
+                                        quietStart = it; prefs.edit().putInt("cast_quiet_start", it).apply()
+                                    }
+                                },
+                                modifier = Modifier.weight(1f),
+                            )
+                            ChoiceChip(
+                                "To ${QuietHours.format(quietEnd)}",
+                                selected = false,
+                                onClick = {
+                                    pickTime(context, quietEnd) {
+                                        quietEnd = it; prefs.edit().putInt("cast_quiet_end", it).apply()
+                                    }
+                                },
+                                modifier = Modifier.weight(1f),
+                            )
+                        }
+                    }
+                }
+                Text(
+                    "While quiet, only calls, navigation, timers, login codes, media and charging show.",
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                    fontSize = 13.sp,
+                    lineHeight = 18.sp,
+                    color = IsleColors.TextSecondary,
+                )
+            }
+        }
+
+        item {
             GroupCard {
                 NavRow(
                     IsleIcons.Grid, IsleColors.TileAmber, "Apps",
@@ -367,6 +486,16 @@ private fun SampleTester(context: Context) {
             height = 48.dp,
         )
     }
+}
+
+/** The platform time picker, in minutes since midnight, honouring the device's 12/24h setting. */
+private fun pickTime(context: Context, initial: Int, onPicked: (Int) -> Unit) {
+    android.app.TimePickerDialog(
+        context,
+        { _, hour, minute -> onPicked(hour * 60 + minute) },
+        initial / 60, initial % 60,
+        android.text.format.DateFormat.is24HourFormat(context),
+    ).show()
 }
 
 private fun stopAll(context: Context) {
