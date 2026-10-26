@@ -109,7 +109,6 @@ object OriginIslandBuilder {
         defaultIcon: Icon,
         leftIcon: Icon,
         rightIcon: Icon,
-        accentIcon: Icon,
         progress: Int = 0,
         bgColor: Int = 0,
         fgColor: Int = 0,
@@ -132,15 +131,17 @@ object OriginIslandBuilder {
         capsuleShowTime: Int = 0,
         forceShow: Boolean = false,
         progressState: Int = 0,
-        progressMarkers: Boolean = false,
         // Template 2: explicit milestone icons along the bar + the icon that rides it, and the bar
-        // colour. Empty/null/0 keeps the defaults above.
+        // colour. Empty/null/0 = a plain bar in the default colour.
         progressNodeIcons: List<Icon> = emptyList(),
         progressIndicatorIcon: Icon? = null,
         progressColor: Int = 0,
         showRightIcon: Boolean = true,
         showLeftIcon: Boolean = true,
         cardBgColor: Int = 0,
+        // Base card (4): a small ring with "N%" beside the text, like vivo's own AirPods card.
+        // -1 = none. Coloured with fgColor / bgColor.
+        cardRing: Int = -1,
         keepScreenOn: Boolean = false,
         disableInvertColor: Boolean = true,
         lightColor: Int = 0,
@@ -214,6 +215,21 @@ object OriginIslandBuilder {
                 )
             }
             template == 2 -> base.putInt(C.BUNDLE_KEY_BASE_SUB_INFO, 0)
+            template == 4 && cardRing in 0..100 -> {
+                val color = if (!isDefaultColor(fgColor)) fgColor
+                else context.resources.getColor(R.color.vivo_super_x_progress_bar_default_color, null)
+                val label = "$cardRing%"
+                base.putInt(C.BUNDLE_KEY_BASE_SUB_INFO, C.BASE_SUB_INFO_PROGRESS)
+                base.putInt(C.BUNDLE_KEY_BASE_SUB_PROGRESS, cardRing)
+                base.putInt(C.BUNDLE_KEY_BASE_SUB_PROGRESS_COLOR, color)
+                if (!isDefaultColor(bgColor)) base.putInt(C.BUNDLE_KEY_BASE_SUB_PROGRESS_BG_COLOR, bgColor)
+                base.putCharSequence(
+                    C.BUNDLE_KEY_BASE_PROGRESS_CONTENT,
+                    SpannableString(label).apply {
+                        setSpan(ForegroundColorSpan(color), 0, label.length, 33)
+                    },
+                )
+            }
             template == 4 -> {
                 base.putInt(C.BUNDLE_KEY_BASE_SUB_INFO, 1)
                 var str = subText?.takeIf { it.isNotBlank() } ?: extra1
@@ -249,13 +265,9 @@ object OriginIslandBuilder {
                         infos.putParcelable(C.BUNDLE_KEY_INFO_INDICATOR_ICON, it)
                         infos.putInt(C.BUNDLE_KEY_INFO_INDICATOR_LOC, 2)
                     }
-                } else if (progressMarkers) {
-                    nodeIcons.add(accentIcon)
-                    nodeIcons.add(defaultIcon)
-                    nodeIcons.add(accentIcon)
-                    infos.putParcelable(C.BUNDLE_KEY_INFO_INDICATOR_ICON, accentIcon)
-                    infos.putInt(C.BUNDLE_KEY_INFO_INDICATOR_LOC, 2)
                 } else {
+                    // A plain bar, like iOS and OPPO. The card's own icon at both ends and riding
+                    // the bar read as three random logos on a download.
                     val t = transparentIcon()
                     nodeIcons.add(t)
                     nodeIcons.add(t)

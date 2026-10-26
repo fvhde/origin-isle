@@ -1,8 +1,13 @@
 package com.originisle.android.ui
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
+import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -45,6 +50,9 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.originisle.android.cards.ChargingCard
+import com.originisle.android.cards.EarbudsCard
+import com.originisle.android.cards.FlashlightCard
+import com.originisle.android.cards.PrivacyCard
 import com.originisle.android.island.PlaygroundService
 import com.originisle.android.service.NotificationCastListener
 import com.originisle.android.service.QuietHours
@@ -74,12 +82,39 @@ fun HomeScreen(
     var actionsOn by remember { mutableStateOf(prefs.getBoolean("cast_show_actions", true)) }
     var chargingOn by remember { mutableStateOf(prefs.getBoolean("cast_charging", true)) }
     var chargingKeep by remember { mutableStateOf(prefs.getBoolean("cast_charging_keep", false)) }
+    var earbudsOn by remember {
+        mutableStateOf(prefs.getBoolean("cast_earbuds", false) && EarbudsCard.hasPermission(context))
+    }
+    val bluetoothPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        earbudsOn = granted
+        if (granted) {
+            EarbudsCard.onSettingsChanged(context, NotificationCastListener.instance != null)
+        } else {
+            // Denied, or the dialog was skipped (Android stops showing it after a refusal): the
+            // app's own page is where it can still be turned on. Back here, the resume check
+            // below picks it up — the switch stays wanted in prefs.
+            runCatching {
+                context.startActivity(
+                    Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:${context.packageName}"))
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                )
+            }
+        }
+    }
     var quietDnd by remember { mutableStateOf(prefs.getBoolean("cast_quiet_dnd", false)) }
     var quietSchedule by remember { mutableStateOf(prefs.getBoolean("cast_quiet_schedule", false)) }
     var quietStart by remember { mutableIntStateOf(prefs.getInt("cast_quiet_start", QuietHours.DEFAULT_START)) }
     var quietEnd by remember { mutableIntStateOf(prefs.getInt("cast_quiet_end", QuietHours.DEFAULT_END)) }
     val appsOff = remember { prefs.getStringSet("cast_ignored_apps", emptySet()).orEmpty().size }
     val tick = rememberResumeTick()
+    // "Nearby devices" may have been turned on (or off) in Settings while we were away.
+    LaunchedEffect(tick.intValue) {
+        val now = prefs.getBoolean("cast_earbuds", false) && EarbudsCard.hasPermission(context)
+        if (now != earbudsOn) {
+            earbudsOn = now
+            EarbudsCard.onSettingsChanged(context, NotificationCastListener.instance != null)
+        }
+    }
     // Setup only needs attention again if something actually broke (OriginOS revoking notification
     // access or re-restricting battery is a known failure mode) — then Home shows a one-line banner;
     // otherwise the permissions stay behind the ⋯ menu so they're not in the way on every open.
@@ -188,6 +223,9 @@ fun HomeScreen(
                     ToggleRow(IsleIcons.Bell, IsleColors.TileBlue, "Notifications", castOn) {
                         castOn = it; prefs.edit().putBoolean("cast_notifications", it).apply()
                         if (it) PlaygroundService.keepAlive(context)
+                        PrivacyCard.refresh()
+                        FlashlightCard.refresh()
+                        EarbudsCard.onSettingsChanged(context, NotificationCastListener.instance != null)
                     }
                     GroupDivider()
                     ToggleRow(
@@ -242,6 +280,20 @@ fun HomeScreen(
                                     modifier = Modifier.weight(1f),
                                 )
                             }
+                        }
+                    }
+                    GroupDivider()
+                    ToggleRow(
+                        IsleIcons.Headphones, IsleColors.TilePurple, "Earbuds", earbudsOn,
+                        subtitle = "Battery when they connect",
+                    ) {
+                        prefs.edit().putBoolean("cast_earbuds", it).apply()
+                        if (it && !EarbudsCard.hasPermission(context)) {
+                            // "Nearby devices": asked for here, only by this switch.
+                            bluetoothPermission.launch(Manifest.permission.BLUETOOTH_CONNECT)
+                        } else {
+                            earbudsOn = it
+                            EarbudsCard.onSettingsChanged(context, NotificationCastListener.instance != null)
                         }
                     }
                     GroupDivider()

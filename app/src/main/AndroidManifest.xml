@@ -9,6 +9,8 @@
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Earbuds card only, asked for by its switch: connection broadcasts and the device name. -->
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
 
     <application
         android:name=".OriginIsleApp"
@@ -84,6 +86,9 @@
         <!-- Copies the code from a tapped login-code card. Only reached via our own PendingIntent. -->
         <receiver
             android:name=".service.CopyCodeReceiver"
+            android:exported="false" />
+        <receiver
+            android:name=".service.TorchOffReceiver"
             android:exported="false" />
 
     </application>

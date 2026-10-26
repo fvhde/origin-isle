@@ -32,7 +32,7 @@ object IslandSamples {
         },
         OriginSample(
             "App download", "Progress card + island ring · 75%",
-            IslandPreview(R.drawable.ic_alert, "Downloading", IslandPreview.Right.Progress(0.75f)),
+            IslandPreview(R.drawable.ic_download, "Downloading", IslandPreview.Right.Progress(0.75f)),
         ) { ctx ->
             start(ctx, 40001) {
                 putExtra("oi_scene", "NAVIGATION")
@@ -45,7 +45,7 @@ object IslandSamples {
                 putExtra("progress", 75)
                 putExtra("progress_max", 100)
                 putExtra("status_chip_text", "75%")
-                putExtra("icon_res", R.drawable.ic_alert)
+                putExtra("icon_res", R.drawable.ic_download)
             }
         },
         OriginSample(

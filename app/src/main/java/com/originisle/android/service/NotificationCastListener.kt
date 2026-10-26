@@ -22,12 +22,15 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.originisle.android.cards.ChargingCard
+import com.originisle.android.cards.EarbudsCard
+import com.originisle.android.cards.FlashlightCard
 import com.originisle.android.cards.GenericCard
 import com.originisle.android.cards.MediaCard
 import com.originisle.android.cards.MessageCard
 import com.originisle.android.cards.NavigationCard
 import com.originisle.android.cards.OtpCard
 import com.originisle.android.cards.PaymentCard
+import com.originisle.android.cards.PrivacyCard
 import com.originisle.android.cards.SportsCard
 import com.originisle.android.cards.fallbackClickIntent
 import com.originisle.android.island.PlaygroundService
@@ -309,6 +312,20 @@ class NotificationCastListener : NotificationListenerService() {
         reload()
         pollHandler.post(pollRunnable)
         registerBatteryReceiver()
+        startSystemCards()
+    }
+
+    /** Cards fed by the system rather than by notifications: camera/mic, flashlight, earbuds. */
+    private fun startSystemCards() {
+        runCatching { FlashlightCard.start(this) }.onFailure { Log.e(TAG, "flashlight card failed", it) }
+        runCatching { PrivacyCard.start(this) }.onFailure { Log.e(TAG, "privacy card failed", it) }
+        runCatching { EarbudsCard.start(this) }.onFailure { Log.e(TAG, "earbuds card failed", it) }
+    }
+
+    private fun stopSystemCards() {
+        runCatching { PrivacyCard.stop() }
+        runCatching { FlashlightCard.stop() }
+        runCatching { EarbudsCard.stop() }
     }
 
     /** Feeds [ChargingCard]. Registered while bound — the bound listener is what keeps us alive anyway. */
@@ -337,6 +354,7 @@ class NotificationCastListener : NotificationListenerService() {
     override fun onListenerDisconnected() {
         super.onListenerDisconnected()
         unregisterBatteryReceiver()
+        stopSystemCards()
         if (instance === this) instance = null
         connectedAt = 0L
         pollHandler.removeCallbacks(pollRunnable)
@@ -609,6 +627,7 @@ class NotificationCastListener : NotificationListenerService() {
     override fun onDestroy() {
         super.onDestroy()
         unregisterBatteryReceiver()
+        stopSystemCards()
         if (instance === this) instance = null
         scope.cancel()
     }
