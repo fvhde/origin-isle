@@ -324,8 +324,13 @@ object OriginIslandBuilder {
                     else -> emptyList()
                 }.take(3)
                 if (triples.isNotEmpty()) {
-                    val textColor = if (!isDefaultColor(fgColor)) fgColor else Color.parseColor("#FF1A1A1A")
-                    val btnColor = if (!isDefaultColor(bgColor)) bgColor else Color.parseColor("#FFEFEFEF")
+                    // Pure white fill + pure black text are vivo's "standard" pair: it swaps them for
+                    // its own palette per scene (day, night, glass, AOD). Anything else is drawn as
+                    // given, and with a system theme colour on, its button widget repaints any opaque
+                    // fill AND any text that isn't #FFFFFF/#333333/#000000 in that colour, so near-black
+                    // text on a near-white fill came out accent-on-accent and unreadable (#9).
+                    val textColor = if (!isDefaultColor(fgColor)) fgColor else Color.BLACK
+                    val btnColor = if (!isDefaultColor(bgColor)) bgColor else Color.WHITE
                     infos.putInt(C.BUNDLE_KEY_INFO_BTN_TYPE, 1)
                     infos.putStringArrayList(C.BUNDLE_KEY_INFO_BTN_TEXT_LIST, ArrayList(triples.map { it.first }))
                     infos.putParcelableArrayList(C.BUNDLE_KEY_INFO_BTN_ICON_LIST, ArrayList(triples.map { it.second }))

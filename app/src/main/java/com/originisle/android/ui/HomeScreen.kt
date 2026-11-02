@@ -82,6 +82,7 @@ fun HomeScreen(
     var actionsOn by remember { mutableStateOf(prefs.getBoolean("cast_show_actions", true)) }
     var chargingOn by remember { mutableStateOf(prefs.getBoolean("cast_charging", true)) }
     var chargingKeep by remember { mutableStateOf(prefs.getBoolean("cast_charging_keep", false)) }
+    var privacyDotOn by remember { mutableStateOf(prefs.getBoolean("cast_privacy_dot", true)) }
     var earbudsOn by remember {
         mutableStateOf(prefs.getBoolean("cast_earbuds", false) && EarbudsCard.hasPermission(context))
     }
@@ -361,6 +362,14 @@ fun HomeScreen(
                                 )
                             }
                         }
+                    }
+                    GroupDivider()
+                    ToggleRow(
+                        IsleIcons.Camera, IsleColors.TileAmber, "Camera & mic", privacyDotOn,
+                        subtitle = "Dot while they're in use",
+                    ) {
+                        privacyDotOn = it; prefs.edit().putBoolean("cast_privacy_dot", it).apply()
+                        PrivacyCard.refresh()
                     }
                 }
             }

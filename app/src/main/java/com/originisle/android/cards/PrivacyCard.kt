@@ -134,7 +134,8 @@ object PrivacyCard {
 
     private fun wanted(): Shown {
         val context = app ?: return Shown.NONE
-        val enabled = context.getSharedPreferences(PREFS_NAME, 0).getBoolean("cast_notifications", false)
+        val prefs = context.getSharedPreferences(PREFS_NAME, 0)
+        val enabled = prefs.getBoolean("cast_notifications", false) && prefs.getBoolean("cast_privacy_dot", true)
         val camera = camerasInUse.any { it !in camerasOpenedLocked && !FlashlightCard.isTorchOn(it) }
         val mode = context.getSystemService(AudioManager::class.java)?.mode ?: AudioManager.MODE_NORMAL
         val inCall = mode == AudioManager.MODE_IN_CALL || mode == AudioManager.MODE_IN_COMMUNICATION ||
@@ -172,13 +173,13 @@ object PrivacyCard {
             putExtra("oi_template", OriginIslandConstants.TEMPLATE_BASE) // 4
             putExtra("title", title)
             putExtra("text", text)
-            // Pill: the glyph left of the camera, just the coloured dot right of it (no text = vivo's
-            // icon-only variant).
+            // Pill: just the coloured dot left of the camera, nothing right of it (a transparent
+            // icon-only slot) — the iPhone's indicator. The glyph stays on the expanded card.
             putExtra("oi_left_content", "")
-            putExtra("oi_left_icon", icon)
+            putExtra("oi_left_icon", dot(color))
             putExtra("oi_large_icon", icon)
             putExtra("oi_right_template", OriginIslandConstants.TEMPLATE_RIGHT_ISLAND_TEXT_ICON) // 4
-            putExtra("oi_right_icon", dot(color))
+            putExtra("oi_right_icon", Icon.createWithResource(context, R.drawable.ic_transparent))
             putExtra("oi_show_right_icon", true)
             putExtra("oi_right_content", "")
             putExtra("icon_res", glyph)

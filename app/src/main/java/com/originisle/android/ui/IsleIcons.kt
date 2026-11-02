@@ -49,6 +49,10 @@ object IsleIcons {
         "M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z",
     )
     val Buttons = stroke("buttons", roundRect(2f, 8f, 9f, 8f, 2.5f), roundRect(13f, 8f, 9f, 8f, 2.5f))
+    val Camera = stroke(
+        "camera", "M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z",
+        circle(12f, 13f, 3f),
+    )
 
     val More = filled("more", circle(5f, 12f, 2f), circle(12f, 12f, 2f), circle(19f, 12f, 2f))
     val Stop = filled("stop", roundRect(5f, 5f, 14f, 14f, 3f))
