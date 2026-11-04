@@ -1,6 +1,8 @@
 package com.originisle.android.ui
 
 import android.content.Context
+import android.content.Intent
+import android.content.pm.ApplicationInfo
 import android.content.SharedPreferences
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -47,7 +50,7 @@ import androidx.core.graphics.drawable.toBitmap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-/** Per-app allow list: every launchable app, grouped A–Z, each with a switch. */
+/** Per-app allow list: every launchable app (optionally system apps too), grouped A–Z, each with a switch. */
 @Composable
 fun AppsScreen(context: Context, prefs: SharedPreferences, onBack: () -> Unit) {
     var apps by remember { mutableStateOf<List<AppEntry>>(emptyList()) }
@@ -58,9 +61,13 @@ fun AppsScreen(context: Context, prefs: SharedPreferences, onBack: () -> Unit) {
     val ignored = remember {
         mutableStateListOf<String>().apply { addAll(prefs.getStringSet("cast_ignored_apps", emptySet()).orEmpty()) }
     }
+    var showSystem by remember { mutableStateOf(prefs.getBoolean("apps_show_system", false)) }
+    // Icons are decoded per visible row (hundreds with system apps on), kept here while scrolling.
+    val iconCache = remember { HashMap<String, ImageBitmap?>() }
 
-    LaunchedEffect(Unit) {
-        apps = withContext(Dispatchers.IO) { loadApps(context) }
+    LaunchedEffect(showSystem) {
+        loading = true
+        apps = withContext(Dispatchers.IO) { loadApps(context, showSystem, ignored.toSet()) }
         loading = false
     }
 
@@ -99,6 +106,14 @@ fun AppsScreen(context: Context, prefs: SharedPreferences, onBack: () -> Unit) {
                     listOf("All", "On", "Off"), filter, { filter = it },
                     track = IsleColors.Surface, height = 40.dp,
                 )
+                GroupCard {
+                    ToggleRow(
+                        IsleIcons.Grid, IsleColors.TileGray, "System apps", showSystem,
+                        subtitle = "Also list apps without an icon",
+                    ) {
+                        showSystem = it; prefs.edit().putBoolean("apps_show_system", it).apply()
+                    }
+                }
                 Text(
                     "Turn OFF the apps you don't want cast. Plain chat texts are already filtered out, " +
                         "so a messenger's calls still show even while its messages don't.",
@@ -122,7 +137,7 @@ fun AppsScreen(context: Context, prefs: SharedPreferences, onBack: () -> Unit) {
             }
         }
 
-        groups.forEach { (letter, items) ->
+        if (!loading) groups.forEach { (letter, items) ->
             item(key = "letter-$letter") {
                 SectionLabel(letter.toString(), Modifier.padding(top = 12.dp, bottom = 8.dp))
             }
@@ -143,7 +158,7 @@ fun AppsScreen(context: Context, prefs: SharedPreferences, onBack: () -> Unit) {
                         horizontalArrangement = Arrangement.spacedBy(14.dp),
                     ) {
                         Box(Modifier.size(36.dp).clip(RoundedCornerShape(11.dp))) {
-                            app.icon?.let { Image(it, null, Modifier.size(36.dp)) }
+                            AppIcon(context, app, iconCache)
                         }
                         Text(
                             app.label,
@@ -193,18 +208,43 @@ private fun SearchField(query: String, onChange: (String) -> Unit) {
     }
 }
 
-private data class AppEntry(val pkg: String, val label: String, val icon: ImageBitmap?)
+private data class AppEntry(val pkg: String, val label: String, val info: ApplicationInfo)
 
-private fun loadApps(context: Context): List<AppEntry> {
+@Composable
+private fun AppIcon(context: Context, app: AppEntry, cache: HashMap<String, ImageBitmap?>) {
+    val icon by produceState(cache[app.pkg], app.pkg) {
+        if (app.pkg !in cache) {
+            cache[app.pkg] = withContext(Dispatchers.IO) {
+                runCatching { context.packageManager.getApplicationIcon(app.info).toBitmap(72, 72).asImageBitmap() }.getOrNull()
+            }
+        }
+        value = cache[app.pkg]
+    }
+    icon?.let { Image(it, null, Modifier.size(36.dp)) }
+}
+
+/**
+ * Apps with a launcher icon, plus — with [includeSystem] — the ones without (system services like
+ * vivo's Motion Prompts post notifications too). Anything in [alsoInclude] (apps already turned off)
+ * is listed either way, so a hidden system app can still be turned back on.
+ */
+private fun loadApps(context: Context, includeSystem: Boolean, alsoInclude: Set<String>): List<AppEntry> {
     val pm = context.packageManager
+    // One query instead of getLaunchIntentForPackage per package (the same two categories it checks).
+    val launchable = listOf(Intent.CATEGORY_LAUNCHER, Intent.CATEGORY_INFO).flatMapTo(HashSet()) { category ->
+        pm.queryIntentActivities(Intent(Intent.ACTION_MAIN).addCategory(category), 0).map { it.activityInfo.packageName }
+    }
     return pm.getInstalledApplications(0)
-        .filter { pm.getLaunchIntentForPackage(it.packageName) != null && it.packageName != context.packageName }
-        .map { info ->
-            AppEntry(
-                pkg = info.packageName,
-                label = pm.getApplicationLabel(info).toString(),
-                icon = runCatching { pm.getApplicationIcon(info).toBitmap(72, 72).asImageBitmap() }.getOrNull(),
-            )
+        .mapNotNull { info ->
+            val pkg = info.packageName
+            if (pkg == context.packageName) return@mapNotNull null
+            val shown = pkg in launchable || pkg in alsoInclude
+            if (!shown && !(includeSystem && info.enabled && !info.isResourceOverlay)) return@mapNotNull null
+            val label = pm.getApplicationLabel(info).toString()
+            // No label of its own (it falls back to the package name): a system component nobody
+            // would recognise in the list.
+            if (!shown && label == pkg) return@mapNotNull null
+            AppEntry(pkg = pkg, label = label, info = info)
         }
         .sortedBy { it.label.lowercase() }
 }
