@@ -107,11 +107,7 @@ object GenericCard {
         // older one showed the distance: same APK, opposite pill, purely from progressMax > 0.
         val ringSaysItAll = finalChip.isBlank() || finalChip == percentText
 
-        val buttons = if (context.getSharedPreferences(PREFS_NAME, 0).getBoolean("cast_show_actions", true)) {
-            usableActions(n)
-        } else {
-            emptyList()
-        }
+        val buttons = shownActions(context, n)
         // Android 16 Live Update (ride/delivery/trip progress): the expanded card becomes a real
         // progress track with the app's own start/end icons and its tracker icon riding the bar.
         val liveUpdate = hasProgress &&
@@ -208,6 +204,11 @@ object GenericCard {
         }
         context.startService(intent)
     }
+
+    /** [usableActions], or none while the "Action buttons" switch is off. */
+    internal fun shownActions(context: Context, n: Notification): List<Notification.Action> =
+        if (context.getSharedPreferences(PREFS_NAME, 0).getBoolean("cast_show_actions", true)) usableActions(n)
+        else emptyList()
 
     /**
      * The source's buttons that work from a single tap: ones that need typed input (Reply) would

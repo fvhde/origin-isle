@@ -14,7 +14,6 @@ import com.originisle.android.R
 import com.originisle.android.island.OriginIslandConstants
 import com.originisle.android.island.PlaygroundService
 import com.originisle.android.service.IconCache
-import com.originisle.android.ui.PREFS_NAME
 
 /**
  * A one-off message (WhatsApp, Instagram, X, Messenger, Snapchat, SMS…, and any other plain
@@ -65,11 +64,7 @@ object MessageCard {
         val top = msg.sender
         val subtext = if (msg.count > 1) "$appLabel · ${msg.count} new messages" else appLabel
 
-        val buttons = if (context.getSharedPreferences(PREFS_NAME, 0).getBoolean("cast_show_actions", true)) {
-            GenericCard.usableActions(n)
-        } else {
-            emptyList()
-        }
+        val buttons = GenericCard.shownActions(context, n)
 
         val intent = Intent(context, PlaygroundService::class.java).apply {
             action = PlaygroundService.ACTION_START

@@ -27,6 +27,7 @@ object ChargingCard {
 
     private const val BRIEF_MS = 6000L
     private const val GREEN = "#FF34C759"
+    private const val GREEN_TRACK = "#4C34C759"
 
     private val handler = Handler(Looper.getMainLooper())
 
@@ -81,7 +82,8 @@ object ChargingCard {
         val remaining = if (full) -1L
         else context.getSystemService(BatteryManager::class.java)?.computeChargeTimeRemaining() ?: -1L
         val title = if (full) "Fully charged" else "Charging"
-        val text = if (remaining > 0) "$level% · ${formatRemaining(remaining)} until full" else "$level%"
+        // The ring beside the text already says "N%".
+        val text = if (remaining > 0) "${formatRemaining(remaining)} until full" else "$level%"
         val bolt = Icon.createWithResource(context, R.drawable.ic_charging)
         val click = PendingIntent.getActivity(
             context, ID, Intent(Intent.ACTION_POWER_USAGE_SUMMARY).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
@@ -95,15 +97,21 @@ object ChargingCard {
             putExtra("is_ongoing", true)
             putExtra("oi_scene", "NAVIGATION")
             putExtra("oi_template", OriginIslandConstants.TEMPLATE_BASE) // 4
-            putExtra("oi_right_template", OriginIslandConstants.TEMPLATE_RIGHT_ISLAND_PROGRESS) // 2
-            putExtra("oi_progress", level)
             putExtra("title", title)
             putExtra("text", text)
-            putExtra("oi_left_content", "$level%")
+            // Pill: the bolt left of the camera, the level in green right of it (#12). The ring
+            // moves to the card, beside the text, like the earbuds card.
+            putExtra("oi_left_content", "")
             putExtra("oi_left_icon", bolt)
+            putExtra("oi_right_template", OriginIslandConstants.TEMPLATE_RIGHT_ISLAND_TEXT_ICON) // 4
+            putExtra("oi_show_right_icon", false)
+            putExtra("oi_right_content", "$level%")
+            putExtra("status_chip_text", "$level%")
+            putExtra("oi_card_ring", level)
             putExtra("oi_large_icon", bolt)
             putExtra("icon_res", R.drawable.ic_charging)
             putExtra("oi_fg_color", GREEN)
+            putExtra("oi_bg_color", GREEN_TRACK)
             if (glow) {
                 putExtra("oi_light_color", GREEN)
                 putExtra("oi_force_show", true)

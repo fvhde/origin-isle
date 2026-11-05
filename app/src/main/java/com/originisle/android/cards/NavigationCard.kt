@@ -99,7 +99,9 @@ object NavigationCard {
             putExtra("when", n.`when`)
             // vivo requires a content intent; fall back to launching the source app.
             putExtra("source_content_intent", n.contentIntent ?: fallbackClickIntent(context, sbn.packageName))
-            n.actions?.let { putParcelableArrayListExtra("actions", ArrayList(it.toList())) }
+            // "Exit navigation" — only with the Action buttons switch on, like every other card.
+            val buttons = GenericCard.shownActions(context, n)
+            if (buttons.isNotEmpty()) putParcelableArrayListExtra("actions", ArrayList(buttons))
             maneuverIcon?.let { putExtra("oi_large_icon", it) }
             pillIcon?.let { putExtra("oi_left_icon", it) }
         }

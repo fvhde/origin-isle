@@ -16,6 +16,7 @@ import android.util.Log
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import com.originisle.android.R
+import com.originisle.android.log.CastLog
 import com.originisle.android.service.IconCache
 import com.originisle.android.ui.PREFS_NAME
 import java.util.concurrent.ConcurrentHashMap
@@ -34,6 +35,8 @@ class PlaygroundService : Service() {
         const val ACTION_START = "ACTION_START"
         const val ACTION_STOP = "ACTION_STOP"
         const val ACTION_CANCEL = "ACTION_CANCEL"
+        // OriginOS refused a card we posted (sent by the notification listener with its "id").
+        const val ACTION_REJECTED = "ACTION_REJECTED"
         // Just brings the foreground service up (no card) so the process — and the notification
         // listener living in it — stays alive for background casts.
         const val ACTION_KEEPALIVE = "ACTION_KEEPALIVE"
@@ -57,6 +60,13 @@ class PlaygroundService : Service() {
 
         /** PendingIntent request code for the [onTaskRemoved] restart alarm. */
         private const val RESTART_REQUEST = 7001
+
+        /** Layouts a card falls back from to the plain base card when OriginOS refuses it. */
+        private val FANCY_TEMPLATES = setOf(
+            OriginIslandConstants.TEMPLATE_PROGRESS_VISUAL,
+            OriginIslandConstants.TEMPLATE_BUTTONS,
+            OriginIslandConstants.TEMPLATE_DRIVING_NAVI,
+        )
     }
 
     private lateinit var notificationManager: NotificationManager
@@ -73,6 +83,10 @@ class PlaygroundService : Service() {
     // every card shares it; vivo merges same-scene cards, so a new card must end the previous one
     // or it inherits stale fields (a ride ETA lingering under a flight card, etc.).
     private val sceneCurrentId = HashMap<String, Int>()
+    // The latest post of each card on the island, so one OriginOS refuses can go up again, simpler.
+    private val lastPosts = HashMap<Int, Intent>()
+    // Cards OriginOS refused once: plain base card, no buttons, until they end.
+    private val plainIds = HashSet<Int>()
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -96,6 +110,7 @@ class PlaygroundService : Service() {
             when (intent?.action) {
                 ACTION_START -> readAndPost(intent)
                 ACTION_CANCEL -> cancelNotification(intent)
+                ACTION_REJECTED -> onRejected(intent.getIntExtra("id", -1))
                 ACTION_STOP -> stopEverything()
                 ACTION_KEEPALIVE -> Unit // ensureForeground() above is all that's needed
             }
@@ -191,6 +206,8 @@ class PlaygroundService : Service() {
     private fun readAndPost(intent: Intent) {
         val id = intent.getIntExtra("id", -1)
         if (id == -1) return
+        lastPosts[id] = intent
+        val plain = id in plainIds
 
         val scene = intent.getStringExtra("oi_scene").orEmptyOr("NAVIGATION")
         val title = intent.getStringExtra("title").orEmpty()
@@ -200,6 +217,7 @@ class PlaygroundService : Service() {
         val statusChip = intent.getStringExtra("status_chip_text").orEmpty()
 
         val template = intent.getIntExtra("oi_template", 0)
+            .let { if (plain && it in FANCY_TEMPLATES) OriginIslandConstants.TEMPLATE_BASE else it }
         val rightTemplate = intent.getIntExtra("oi_right_template", 0)
 
         val extra1 = intent.getStringExtra("oi_extra1").orEmpty()
@@ -277,11 +295,13 @@ class PlaygroundService : Service() {
         val progressColor = OriginIslandBuilder.parseColor(intent.getStringExtra("oi_progress_color"), 0)
 
         // Actions -> OriginActions.
-        val actions = intent.getParcelableArrayListExtra("actions", Notification.Action::class.java)
+        val sourcePkg = intent.getStringExtra("source_pkg")
+        val actions = if (plain) emptyList() else intent.getParcelableArrayListExtra("actions", Notification.Action::class.java)
             ?.map { a ->
                 OriginIslandBuilder.OriginAction(
                     title = a.title?.toString().orEmpty(),
-                    icon = a.getIcon(), // getIcon() = the Icon; the bare `icon` field is a legacy int res
+                    // getIcon() = the Icon; the bare `icon` field is a legacy int res
+                    icon = a.getIcon()?.ownedBy(sourcePkg),
                     pendingIntent = a.actionIntent,
                 )
             } ?: emptyList()
@@ -292,7 +312,7 @@ class PlaygroundService : Service() {
 
         val leftDoubleLine = intent.getStringArrayListExtra("oi_left_doubleline") ?: emptyList()
         val rightDoubleLine = intent.getStringArrayListExtra("oi_right_doubleline") ?: emptyList()
-        val buttonTitles = intent.getStringArrayListExtra("oi_button_titles") ?: emptyList()
+        val buttonTitles = if (plain) emptyList() else intent.getStringArrayListExtra("oi_button_titles") ?: emptyList()
 
         // capsule / right-island chip text: prefer explicit chip, else right content.
         val chip = statusChip.ifBlank { rightContent }
@@ -366,6 +386,8 @@ class PlaygroundService : Service() {
                 activeIds.remove(prevInScene)
                 originChangeRecord.remove(prevInScene)
                 originScenes.remove(prevInScene)
+                lastPosts.remove(prevInScene)
+                plainIds.remove(prevInScene)
             }
             sceneCurrentId[scene] = id
         }
@@ -391,6 +413,38 @@ class PlaygroundService : Service() {
             autoDismissTasks[id] = task
             mainHandler.postDelayed(task, autoDismissSec * 1000L)
         }
+    }
+
+    /**
+     * OriginOS refused card [id] (see NotificationCastListener.cleanUpRejectedSuperX). Not every
+     * build takes every layout: some drop cards with buttons or the driving-navigation card (#12).
+     * Put it up once more as a plain base card without buttons, and keep it that way until it ends.
+     * A card that was already plain stays down, as before.
+     */
+    private fun onRejected(id: Int) {
+        val last = lastPosts[id] ?: return
+        val app = last.getStringExtra("source_app").orEmpty().ifBlank { "Origin Isle" }
+        val title = last.getStringExtra("title").orEmpty()
+        val simpler = last.getIntExtra("oi_template", 0) in FANCY_TEMPLATES ||
+            last.hasExtra("actions") || last.hasExtra("oi_button_titles")
+        if (id in plainIds || !simpler) {
+            CastLog.add(app, title, "refused by the island", false)
+            return
+        }
+        plainIds.add(id)
+        CastLog.add(app, title, "refused by the island — shown as a plain card", true)
+        readAndPost(last)
+    }
+
+    /**
+     * Legacy `addAction(int, …)` icons carry an empty package, meaning "the app that posted it".
+     * Reposted under our package that points at a resource we don't have, which some OriginOS
+     * builds choke on, so pin it to the source app (or drop it if we don't know which one).
+     */
+    private fun Icon.ownedBy(pkg: String?): Icon? = when {
+        type != Icon.TYPE_RESOURCE || !resPackage.isNullOrEmpty() -> this
+        pkg.isNullOrEmpty() -> null
+        else -> Icon.createWithResource(pkg, resId)
     }
 
     /**
@@ -465,6 +519,8 @@ class PlaygroundService : Service() {
         }
         activeIds.remove(id)
         originChangeRecord.remove(id)
+        lastPosts.remove(id)
+        plainIds.remove(id)
         activeCardIds = activeIds.toSet()
         // Keep the sceneCurrentId entry (now stale) so the NEXT different card clears this scene's
         // leftovers via the staleness-aware replace in readAndPost.
@@ -485,6 +541,8 @@ class PlaygroundService : Service() {
         originScenes.clear()
         originChangeRecord.clear()
         sceneCurrentId.clear()
+        lastPosts.clear()
+        plainIds.clear()
         val ids = activeIds.toList()
         activeIds.clear()
         activeCardIds = emptySet()
