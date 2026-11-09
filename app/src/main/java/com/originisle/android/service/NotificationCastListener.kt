@@ -31,6 +31,7 @@ import com.originisle.android.cards.NavigationCard
 import com.originisle.android.cards.OtpCard
 import com.originisle.android.cards.PaymentCard
 import com.originisle.android.cards.PrivacyCard
+import com.originisle.android.cards.RideCard
 import com.originisle.android.cards.SportsCard
 import com.originisle.android.cards.fallbackClickIntent
 import com.originisle.android.island.PlaygroundService
@@ -463,6 +464,14 @@ class NotificationCastListener : NotificationListenerService() {
         }
         if (!castNotifs) { log(sbn, "skipped — media only, notifications off", false); return }
 
+        // A ride or delivery on its way: ahead of login codes (a trip line can carry a postcode) and
+        // of quiet hours, since it's exactly what someone is waiting on.
+        if (!isCall && RideCard.isTrip(sbn)) {
+            log(sbn, "cast — ride", true)
+            RideCard.post(applicationContext, sbn, appLabel(sbn.packageName))
+            return
+        }
+
         // Login / verification codes: ahead of payments (a bank's "code to confirm your €12 payment"
         // is a code, not a receipt) and of the plain-message filter, which would otherwise drop it.
         if (!isCall && prefs.getBoolean("cast_otp", true)) {
@@ -525,6 +534,25 @@ class NotificationCastListener : NotificationListenerService() {
         // message", or the card is stuck showing its last progress forever with nothing to ever tell
         // it otherwise. Only apply the message/silent filters to notifications we haven't already cast.
         val wasLive = IconCache.castIdFor(sbn) in PlaygroundService.activeCardIds
+
+        // Background notices ("Checking for new messages", backups, VPN): ongoing, but on a silenced
+        // channel with nothing to follow. As live cards they never hid and sat on the pill for as
+        // long as the app kept them. WhatsApp posts its own on channels like these.
+        if (isOngoing && !isCall && !hasProgress && isSilent(sbn) &&
+            !extras.getBoolean(NotificationCompat.EXTRA_SHOW_CHRONOMETER, false) &&
+            prefs.getBoolean("cast_ignore_silent", true)
+        ) {
+            // A download or upload that just lost its bar: take its card down rather than freeze it.
+            if (wasLive) {
+                startService(
+                    Intent(this, PlaygroundService::class.java)
+                        .setAction(PlaygroundService.ACTION_CANCEL)
+                        .putExtra("id", IconCache.castIdFor(sbn)),
+                )
+            }
+            log(sbn, "skipped — silent background notice", false); return
+        }
+
         if (!isLive && !wasLive) {
             val includeMessages = prefs.getBoolean("cast_include_messages", false)
             if (!includeMessages) { log(sbn, "skipped — plain message (not a live card)", false); return }

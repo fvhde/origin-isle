@@ -144,7 +144,7 @@ object MessageCard {
      * First name only when the full name doesn't fit (Apple does the same), then ellipsized to the
      * measured width. Phone numbers ("+33 6 12…") aren't split into words.
      */
-    private fun shortName(context: Context, name: String): String {
+    internal fun shortName(context: Context, name: String): String {
         val density = context.resources.displayMetrics.density
         val paint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
             textSize = NAME_TEXT_DP * density

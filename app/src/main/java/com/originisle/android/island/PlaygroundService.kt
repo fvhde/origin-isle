@@ -61,6 +61,9 @@ class PlaygroundService : Service() {
         /** PendingIntent request code for the [onTaskRemoved] restart alarm. */
         private const val RESTART_REQUEST = 7001
 
+        /** How long after "Hide after" the system's own timeout takes a card down. */
+        private const val TIMEOUT_SLACK_MS = 2_000L
+
         /** Layouts a card falls back from to the plain base card when OriginOS refuses it. */
         private val FANCY_TEMPLATES = setOf(
             OriginIslandConstants.TEMPLATE_PROGRESS_VISUAL,
@@ -392,17 +395,23 @@ class PlaygroundService : Service() {
             sceneCurrentId[scene] = id
         }
 
-        activeIds.add(id)
-        originScenes[id] = scene
-        activeCardIds = activeIds.toSet()
-        postSuperX(id, iconRes, title, text, sourceApp, isOngoing, scene, bundle)
-
         // Auto-dismiss: only for non-live cards (isOngoing is the same live/persistent flag the
         // card posters set — media, sports and any ongoing/call/progress GenericCard all mark
         // themselves live), and only when the user opted into a duration in Cast settings.
-        autoDismissTasks.remove(id)?.let { mainHandler.removeCallbacks(it) }
         val autoDismissSec = getSharedPreferences(PREFS_NAME, 0).getInt("cast_auto_dismiss_seconds", 0)
-        if (autoDismissSec > 0 && !isOngoing) {
+        val hides = autoDismissSec > 0 && !isOngoing
+
+        activeIds.add(id)
+        originScenes[id] = scene
+        activeCardIds = activeIds.toSet()
+        // The timer below stops while the phone sleeps, so a message that landed with the screen off
+        // stayed up until it woke. The system's own timeout still runs then; a little later than
+        // ours, so the animated end wins whenever the phone is awake.
+        val timeoutMs = if (hides) autoDismissSec * 1000L + TIMEOUT_SLACK_MS else 0L
+        postSuperX(id, iconRes, title, text, sourceApp, isOngoing, scene, bundle, timeoutMs)
+
+        autoDismissTasks.remove(id)?.let { mainHandler.removeCallbacks(it) }
+        if (hides) {
             val task = Runnable {
                 cancelNotification(
                     Intent(this, PlaygroundService::class.java)
@@ -461,6 +470,7 @@ class PlaygroundService : Service() {
         isOngoing: Boolean,
         scene: String,
         bundle: android.os.Bundle,
+        timeoutMs: Long = 0L,
     ) {
         OriginIslandBuilder.grantScenes(this)
         createNotificationChannel(ORIGIN_CHANNEL_ID)
@@ -482,6 +492,7 @@ class PlaygroundService : Service() {
             .setSmallIcon(iconRes)
             .setExtras(bundle)
         if (sourceApp.isNotEmpty()) builder.setSubText(sourceApp)
+        if (timeoutMs > 0) builder.setTimeoutAfter(timeoutMs)
         notificationManager.notify(OriginIslandConstants.SUPERX_TAG, id, builder.build())
     }
 

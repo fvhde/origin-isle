@@ -221,7 +221,7 @@ object GenericCard {
         }.take(3)
 
     /** "#FF34C759" for the first coloured segment of a Live Update's progress bar, if it has one. */
-    private fun segmentColor(extras: android.os.Bundle): String? =
+    internal fun segmentColor(extras: android.os.Bundle): String? =
         extras.getParcelableArrayList("android.progressSegments", android.os.Bundle::class.java)
             ?.firstOrNull { it.containsKey("colorInt") }
             ?.getInt("colorInt")
