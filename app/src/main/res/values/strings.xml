@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Origin Isle</string>
+    <string name="share_to_island">Show on island</string>
     <string name="channel_name">OriginIsland</string>
     <string name="channel_desc">Channel for OriginIsland live updates</string>
     <string name="keepalive_accessibility_desc">Keeps Origin Isle running in the background so notifications keep casting to the island — without a status-bar icon. It reads nothing: no screen content, no text, no events are captured.</string>

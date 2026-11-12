@@ -58,7 +58,7 @@ Top-level keys (`notification.superx.*`) plus four sub-bundles:
 |---|---|---|
 | 1 | Priority info | describe + coreInfo + one image |
 | 2 | Progress visual | a progress bar with optional node markers |
-| 3 | Text symmetry | `leftMain/leftSub · midIcon+midMsg · rightMain/rightSub` — the scoreboard layout, used for live football |
+| 3 | Text symmetry | `leftMain/leftSub · midIcon+midMsg · rightMain/rightSub` — the scoreboard layout, used for live scores. Also: `midMainType` 1 = icon / 2 = text (`midMainMsg`), `midTopMsg` (a line above the middle), `rightMainExtra` (drawn as a small red dot after the right name). Every text slot is a `SuperXChronometer`: a JSON `TimerFormat` (`base`, `countDown`, `started`, `elapsedFormatS/MS/HMS`…) ticks by itself, but past an hour it switches to the H:M:S format, so it can't show a football minute like `67'` |
 | 4 | Base | title + content + sub-text/capsule/progress/loading — the general-purpose card |
 | 5 | Navigation | one icon + a nav message string |
 | 6 | Custom | (present in the protocol; not used by this app) |
@@ -76,9 +76,11 @@ Top-level keys (`notification.superx.*`) plus four sub-bundles:
 | 4 | Text + icon |
 | 5 | Icon + text |
 | 6 | Capsule text (a small pill of text, optionally coloured) |
+| 7 | Two stacked lines (`rightInfo.doublelineText`, exactly two) |
 
-The **left** island template is effectively fixed at "icon + content" — there's no meaningful
-alternative in practice.
+The **left** island template is "icon + content" (1), or "icon + two stacked lines" (3) when
+`leftInfo.doublelineText` holds exactly two lines. Live tennis uses 3 on the left and 7 on the
+right: both names stacked, their set scores stacked opposite.
 
 ### The navigation templates (5 and 9)
 

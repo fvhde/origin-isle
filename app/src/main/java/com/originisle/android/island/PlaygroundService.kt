@@ -37,6 +37,8 @@ class PlaygroundService : Service() {
         const val ACTION_CANCEL = "ACTION_CANCEL"
         // OriginOS refused a card we posted (sent by the notification listener with its "id").
         const val ACTION_REJECTED = "ACTION_REJECTED"
+        /** One of our cards left the island without us (vivo's limit on cards, or a swipe). */
+        const val ACTION_GONE = "ACTION_GONE"
         // Just brings the foreground service up (no card) so the process — and the notification
         // listener living in it — stays alive for background casts.
         const val ACTION_KEEPALIVE = "ACTION_KEEPALIVE"
@@ -60,6 +62,9 @@ class PlaygroundService : Service() {
 
         /** PendingIntent request code for the [onTaskRemoved] restart alarm. */
         private const val RESTART_REQUEST = 7001
+
+        /** After the last card goes, how long until the keep-alive is pulled out of the automatic group. */
+        private const val UNGROUP_DELAY_MS = 2_000L
 
         /** How long after "Hide after" the system's own timeout takes a card down. */
         private const val TIMEOUT_SLACK_MS = 2_000L
@@ -114,6 +119,7 @@ class PlaygroundService : Service() {
                 ACTION_START -> readAndPost(intent)
                 ACTION_CANCEL -> cancelNotification(intent)
                 ACTION_REJECTED -> onRejected(intent.getIntExtra("id", -1))
+                ACTION_GONE -> onGone(intent.getIntExtra("id", -1))
                 ACTION_STOP -> stopEverything()
                 ACTION_KEEPALIVE -> Unit // ensureForeground() above is all that's needed
             }
@@ -357,6 +363,12 @@ class PlaygroundService : Service() {
             progressColor = progressColor,
             cardBgColor = cardBgColor,
             cardRing = intent.getIntExtra("oi_card_ring", -1),
+            midTopMsg = intent.getStringExtra("oi_mid_top"),
+            // vivo puts the island whose newNode last went up in front (AtomIslandsComparator).
+            newNode = intent.getIntExtra("oi_new_node", 0),
+            rightMainExtra = intent.getStringExtra("oi_right_main_extra"),
+            midMainText = intent.getStringExtra("oi_mid_main_text"),
+            midSubText = intent.getStringExtra("oi_mid_sub"),
             keepScreenOn = keepScreenOn,
             disableInvertColor = disableInvert,
             lightColor = lightColor,
@@ -385,12 +397,13 @@ class PlaygroundService : Service() {
         if (id >= 40000) {
             val prevInScene = sceneCurrentId[scene]
             if (prevInScene != null && prevInScene != id && prevInScene >= 40000) {
-                endOrigin(prevInScene, scene)
-                activeIds.remove(prevInScene)
-                originChangeRecord.remove(prevInScene)
-                originScenes.remove(prevInScene)
-                lastPosts.remove(prevInScene)
-                plainIds.remove(prevInScene)
+                // Ending alone left the old sample's notification posted and no longer tracked,
+                // so it stayed on the island and even "Stop all" couldn't reach it.
+                cancelNotification(
+                    Intent(this, PlaygroundService::class.java)
+                        .putExtra("id", prevInScene)
+                        .putExtra("oi_scene", scene),
+                )
             }
             sceneCurrentId[scene] = id
         }
@@ -515,6 +528,53 @@ class PlaygroundService : Service() {
         }
     }
 
+    /**
+     * A card is off the island without us cancelling it: vivo only keeps so many at once and drops
+     * the oldest, or it was swiped away. Stop counting it as up, so the card that owns it (see
+     * ScoreCard.tick) waits for its next update instead of re-posting into a full island. What's
+     * needed to re-post it plainer after a refusal ([lastPosts]) stays.
+     */
+    private fun onGone(id: Int) {
+        // Already back up (re-posted after a refusal, or a newer update): nothing went.
+        val stillUp = runCatching {
+            notificationManager.activeNotifications.any { it.id == id && it.tag == OriginIslandConstants.SUPERX_TAG }
+        }.getOrDefault(false)
+        if (stillUp || !activeIds.remove(id)) return
+        autoDismissTasks.remove(id)?.let { mainHandler.removeCallbacks(it) }
+        activeCardIds = activeIds.toSet()
+        scheduleUngroup()
+    }
+
+    /**
+     * With several cards up at once, Android folds all our notifications into one automatic
+     * "Origin Isle" group, the keep-alive one included. In there vivo lists the keep-alive in the
+     * notification center ("Casting to OriginIsland") instead of under "services running", and the
+     * group only goes once every member has: never, with the keep-alive in it. So once the last
+     * card is gone, the keep-alive is taken down and put back, on its own again.
+     */
+    private fun scheduleUngroup() {
+        mainHandler.removeCallbacks(ungroupTask)
+        mainHandler.postDelayed(ungroupTask, UNGROUP_DELAY_MS)
+    }
+
+    private val ungroupTask = Runnable {
+        if (!isForegroundActive) return@Runnable
+        val active = runCatching { notificationManager.activeNotifications }.getOrNull() ?: return@Runnable
+        val keepAlive = active.firstOrNull { it.id == FGS_ID && it.tag == null } ?: return@Runnable
+        // It has no group of its own, so being in one means the automatic one.
+        if (!keepAlive.isGroup) return@Runnable
+        val cardsLeft = active.any {
+            it !== keepAlive && it.notification.flags and android.app.Notification.FLAG_GROUP_SUMMARY == 0
+        }
+        if (cardsLeft) return@Runnable
+        // Going foreground again from the background is only allowed with the battery exemption.
+        val power = getSystemService(android.os.PowerManager::class.java)
+        if (power?.isIgnoringBatteryOptimizations(packageName) != true) return@Runnable
+        isForegroundActive = false
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        ensureForeground()
+    }
+
     private fun cancelNotification(intent: Intent) {
         val id = intent.getIntExtra("id", -1)
         if (id == -1) return
@@ -533,6 +593,7 @@ class PlaygroundService : Service() {
         lastPosts.remove(id)
         plainIds.remove(id)
         activeCardIds = activeIds.toSet()
+        scheduleUngroup()
         // Keep the sceneCurrentId entry (now stale) so the NEXT different card clears this scene's
         // leftovers via the staleness-aware replace in readAndPost.
         // NOTE: we deliberately do NOT stopSelf() when idle. The notification listener runs in the

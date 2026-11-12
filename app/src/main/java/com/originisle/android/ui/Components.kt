@@ -221,8 +221,15 @@ fun ToggleRow(
 
 /** A row that opens another screen: tile, title, optional value, chevron. */
 @Composable
-fun NavRow(icon: ImageVector, tileColor: Color, title: String, value: String? = null, onClick: () -> Unit) {
-    SettingRow(icon, tileColor, title, onClick = onClick) {
+fun NavRow(
+    icon: ImageVector,
+    tileColor: Color,
+    title: String,
+    value: String? = null,
+    subtitle: String? = null,
+    onClick: () -> Unit,
+) {
+    SettingRow(icon, tileColor, title, subtitle = subtitle, onClick = onClick) {
         if (value != null) Text(value, fontSize = 14.sp, color = IsleColors.TextTertiary)
         Icon(IsleIcons.ChevronRight, null, Modifier.padding(end = 8.dp).size(18.dp), tint = IsleColors.Chevron)
     }

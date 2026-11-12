@@ -142,6 +142,13 @@ object OriginIslandBuilder {
         // Base card (4): a small ring with "N%" beside the text, like vivo's own AirPods card.
         // -1 = none. Coloured with fgColor / bgColor.
         cardRing: Int = -1,
+        // Scoreboard (3) slots beyond the two sides: a line above the middle, small text beside the
+        // right name, the middle as text instead of an icon, and the middle sub line (defaults to
+        // the content text). Null = not used.
+        midTopMsg: String? = null,
+        rightMainExtra: String? = null,
+        midMainText: String? = null,
+        midSubText: String? = null,
         keepScreenOn: Boolean = false,
         disableInvertColor: Boolean = true,
         lightColor: Int = 0,
@@ -298,12 +305,20 @@ object OriginIslandBuilder {
             3 -> {
                 infos.putString(C.BUNDLE_KEY_INFO_LEFT_MAIN, extra1)
                 infos.putString(C.BUNDLE_KEY_INFO_LEFT_SUB, extra2)
-                infos.putInt(C.BUNDLE_KEY_INFO_MID_MAIN_TYPE, 1)
-                infos.putParcelable(C.BUNDLE_KEY_INFO_MID_MAIN_ICON, largeIcon ?: defaultIcon)
+                // midMainType: 1 = icon, 2 = text (vivo's HorizontalPairSuperXTemplate).
+                if (midMainText != null) {
+                    infos.putInt(C.BUNDLE_KEY_INFO_MID_MAIN_TYPE, 2)
+                    infos.putString(C.BUNDLE_KEY_INFO_MID_MAIN_MSG, midMainText)
+                } else {
+                    infos.putInt(C.BUNDLE_KEY_INFO_MID_MAIN_TYPE, 1)
+                    infos.putParcelable(C.BUNDLE_KEY_INFO_MID_MAIN_ICON, largeIcon ?: defaultIcon)
+                }
                 infos.putInt(C.BUNDLE_KEY_INFO_MID_SUB_TYPE, 2)
-                infos.putString(C.BUNDLE_KEY_INFO_MID_SUB_MSG, content)
+                infos.putString(C.BUNDLE_KEY_INFO_MID_SUB_MSG, midSubText ?: content)
                 infos.putString(C.BUNDLE_KEY_INFO_RIGHT_MAIN, extra3)
                 infos.putString(C.BUNDLE_KEY_INFO_RIGHT_SUB, extra4)
+                midTopMsg?.takeIf { it.isNotBlank() }?.let { infos.putString(C.BUNDLE_KEY_INFO_MID_TOP_MSG, it) }
+                rightMainExtra?.takeIf { it.isNotBlank() }?.let { infos.putString(C.BUNDLE_KEY_INFO_RIGHT_MAIN_EXTRA, it) }
             }
             5 -> {
                 infos.putParcelable(C.BUNDLE_KEY_INFO_NAV_ICON, largeIcon ?: defaultIcon)

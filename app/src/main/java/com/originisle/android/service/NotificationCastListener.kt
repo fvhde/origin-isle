@@ -32,18 +32,12 @@ import com.originisle.android.cards.OtpCard
 import com.originisle.android.cards.PaymentCard
 import com.originisle.android.cards.PrivacyCard
 import com.originisle.android.cards.RideCard
-import com.originisle.android.cards.SportsCard
+import com.originisle.android.cards.ScoreCard
 import com.originisle.android.cards.fallbackClickIntent
+import com.originisle.android.island.OriginIslandConstants
 import com.originisle.android.island.PlaygroundService
 import com.originisle.android.log.CastLog
 import com.originisle.android.otp.OtpDetector
-import com.originisle.android.sports.SportsFeed
-import com.originisle.android.sports.SportsParser
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -51,7 +45,7 @@ import java.util.concurrent.ConcurrentHashMap
  *
  * This class owns only the CAST/SKIP DECISION for each notification — which kind of card (if any)
  * it becomes, and why one wasn't posted. The actual card is built and posted by the type-specific
- * object in `cards/` ([GenericCard], [MediaCard], [PaymentCard], [SportsCard]); [IconCache] is the
+ * object in `cards/` ([GenericCard], [MediaCard], [PaymentCard], [ScoreCard]); [IconCache] is the
  * state they + [MediaControlReceiver] share.
  */
 class NotificationCastListener : NotificationListenerService() {
@@ -165,16 +159,14 @@ class NotificationCastListener : NotificationListenerService() {
             "com.vivo.smartmultiwindow",
         )
 
-        /** Score apps whose live-match notifications get parsed into a football card with crests. */
-        private val SCORE_APPS = setOf(
-            "com.google.android.googlequicksearchbox", // Google (favourite-team live scores)
-            "com.sofascore.results",       // SofaScore
-            "com.mobilefootie.fotmobpro",  // FotMob
-            "com.mobilefootie.wc2010",     // FotMob (free)
-            "de.motain.iliga",             // OneFootball
-            "com.scores365",               // 365Scores
-            "com.livescore",               // LiveScore
-        )
+        /**
+         * Live scores come from Flashscore and the rest of the Livesport family (its regional apps,
+         * LiveSport.cz, Diretta…), which all post the same match notifications. See [ScoreCard].
+         */
+        private const val SCORE_PKG_PREFIX = "eu.livesport."
+
+        /** On a reconnect, a one-off notification older than this isn't shown again. */
+        private const val RELOAD_FRESH_MS = 60_000L
 
         /**
          * Turn-by-turn navigation apps. Most set [Notification.CATEGORY_NAVIGATION] and are matched
@@ -229,19 +221,9 @@ class NotificationCastListener : NotificationListenerService() {
     }
 
     private val pollHandler = Handler(Looper.getMainLooper())
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
     /** Last-logged outcome per notification key, so repeated updates don't flood the log. */
     private val lastOutcome = ConcurrentHashMap<String, String>()
-
-    /**
-     * Last successfully-resolved crest icons per match id. A goal update's notification text can
-     * name a team slightly differently than the kickoff notification did (or a lookup can just fail
-     * transiently) — refetching fresh every time then means a badge that WAS showing can vanish the
-     * moment its team scores. Keep the last good icon per side and only replace it when a fresh fetch
-     * actually finds one, instead of overwriting a known-good badge with a failed lookup's null.
-     */
-    private val lastMatchIcons = ConcurrentHashMap<Int, SportsFeed.MatchIcons>()
 
     /**
      * Last-seen [StatusBarNotification.getPostTime] per score-app notification key. onNotificationPosted
@@ -273,6 +255,10 @@ class NotificationCastListener : NotificationListenerService() {
                 val castNotifs = prefs.getBoolean("cast_notifications", false)
                 val castMedia = prefs.getBoolean("cast_media_sessions", false)
                 activeNotifications?.forEach { sbn ->
+                    // A live score still showing initials: its picture may have arrived since.
+                    if (castNotifs && sbn.packageName.startsWith(SCORE_PKG_PREFIX)) {
+                        ScoreCard.refreshPicture(applicationContext, sbn)
+                    }
                     val extras = sbn.notification.extras
                     val token = extras.getParcelable(
                         NotificationCompat.EXTRA_MEDIA_SESSION, MediaSession.Token::class.java,
@@ -288,14 +274,14 @@ class NotificationCastListener : NotificationListenerService() {
                         extras.getBoolean(NotificationCompat.EXTRA_SHOW_CHRONOMETER, false)
                     ) {
                         onNotificationPosted(sbn) // refresh ticking chronometer
-                    } else if (castNotifs && sbn.packageName in SCORE_APPS &&
+                    } else if (castNotifs && sbn.packageName.startsWith(SCORE_PKG_PREFIX) &&
                         isAppEnabled(prefs, sbn.packageName) &&
                         lastScorePostTime.put(sbn.key, sbn.postTime) != sbn.postTime
                     ) {
                         onNotificationPosted(sbn) // catch a score update onNotificationPosted was slow to deliver
                     }
                 }
-                SportsCard.refresh(applicationContext)
+                ScoreCard.tick(applicationContext)
             } catch (e: Exception) {
                 Log.e(TAG, "poll error", e)
             }
@@ -311,6 +297,8 @@ class NotificationCastListener : NotificationListenerService() {
             runCatching { PlaygroundService.keepAlive(this) }
         }
         reload()
+        // Matches shared from Flashscore that no notification brings back by itself.
+        runCatching { ScoreCard.restoreShared(applicationContext) }
         pollHandler.post(pollRunnable)
         registerBatteryReceiver()
         startSystemCards()
@@ -406,9 +394,22 @@ class NotificationCastListener : NotificationListenerService() {
         val prefs = getSharedPreferences(PREFS, 0)
         val enabled = prefs.getBoolean("cast_notifications", false)
         val apps = prefs.getStringSet("cast_enabled_apps", null)
-        activeNotifications?.forEach { sbn ->
+        val now = System.currentTimeMillis()
+        // Oldest first: the island puts the last card posted on top, and that should be the newest.
+        activeNotifications?.sortedBy { it.postTime }?.forEach { sbn ->
             val eligible = apps == null || sbn.packageName in apps
-            if (enabled && sbn.packageName != packageName && eligible) onNotificationPosted(sbn)
+            if (!enabled || sbn.packageName == packageName || !eligible) return@forEach
+            // A reconnect (app update, the system rebinding us) replays everything in the shade.
+            // Live notifications should come back; an old message shouldn't pop up again as if new,
+            // so it's only marked as already shown.
+            val n = sbn.notification
+            val live = sbn.isOngoing || n.extras.getInt(NotificationCompat.EXTRA_PROGRESS_MAX, 0) > 0 ||
+                n.category == NotificationCompat.CATEGORY_CALL
+            if (!live && !sbn.packageName.startsWith(SCORE_PKG_PREFIX) && now - sbn.postTime > RELOAD_FRESH_MS) {
+                lastCastPostTime[sbn.key] = sbn.postTime
+                return@forEach
+            }
+            onNotificationPosted(sbn)
         }
     }
 
@@ -494,17 +495,20 @@ class NotificationCastListener : NotificationListenerService() {
             log(sbn, "skipped — quiet hours", false); return
         }
 
-        // Score apps: if the notification parses as a match, post a football card with crests.
-        // If it doesn't (Google also posts news/weather/etc.), fall through to the normal path.
-        if (sbn.packageName in SCORE_APPS) {
-            // A post-match "recap"/"highlights" notification isn't a live update - it's often sent
-            // well after full time, sometimes repeatedly, and re-parsing its "<team> <score> -
-            // <score> <team>" line as a match just pops the card back up for a game that's already
-            // over. Drop it before handleScore ever sees it, unconditionally (not just when the
-            // generic message-cast setting is off), so it displays nothing rather than falling
-            // through to a plain-message card.
-            if (isRecapOrHighlights(sbn)) { log(sbn, "skipped — recap/highlights, not live", false); return }
-            if (handleScore(sbn)) { log(sbn, "cast — live score", true); return }
+        // Flashscore: a match notification becomes (or updates) its score card. Anything else it
+        // posts — news, transfers — goes the normal way.
+        if (sbn.packageName.startsWith(SCORE_PKG_PREFIX)) {
+            when (ScoreCard.onNotification(applicationContext, sbn)) {
+                ScoreCard.Result.CAST -> {
+                    // With the event in it, so a goal and its scorer arriving after are two lines,
+                    // while Flashscore posting the same text again stays one.
+                    val what = n.extras.getCharSequence(NotificationCompat.EXTRA_TEXT)?.toString()?.trim().orEmpty()
+                    log(sbn, "cast — live score · $what".trimEnd(' ', '·'), true); return
+                }
+                // Already handled (redelivered, or left over from earlier): not news, not logged.
+                ScoreCard.Result.OLD -> return
+                ScoreCard.Result.NOT_A_MATCH -> Unit
+            }
         }
 
         // Payments (Wallet, Revolut, PayPal, banks, …) -> Apple-Pay-style success card. This runs
@@ -657,10 +661,8 @@ class NotificationCastListener : NotificationListenerService() {
         unregisterBatteryReceiver()
         stopSystemCards()
         if (instance === this) instance = null
-        scope.cancel()
     }
 
-    /** Whether [sbn] (from a [SCORE_APPS] package) is a post-match recap/highlights notification. */
     /**
      * vivo's OriginOS validates every SuperX card we post (e.g. it can only stack so many live
      * cards on the island at once — confirmed live via `dumpsys notification` while several Play
@@ -687,64 +689,6 @@ class NotificationCastListener : NotificationListenerService() {
             )
         }
     }
-
-    private fun isRecapOrHighlights(sbn: StatusBarNotification): Boolean {
-        val extras = sbn.notification.extras
-        val hay = listOf(
-            NotificationCompat.EXTRA_TITLE, NotificationCompat.EXTRA_TEXT,
-            NotificationCompat.EXTRA_BIG_TEXT, NotificationCompat.EXTRA_SUB_TEXT,
-        ).joinToString(" ") { extras.getCharSequence(it)?.toString().orEmpty() }.lowercase()
-        return hay.contains("recap") || hay.contains("highlight") || hay.contains("position")
-    }
-
-    /**
-     * A score app's live-match notification -> parse it, fetch both club crests, and post/refresh
-     * the football card. The same cast id is reused so score updates refresh one card, and the card
-     * is cancelled when the notification is dismissed. Falls back to a generic cast if unparseable.
-     */
-    private fun handleScore(sbn: StatusBarNotification): Boolean {
-        val extras = sbn.notification.extras
-        val title = extras.getCharSequence(NotificationCompat.EXTRA_TITLE)?.toString().orEmpty()
-        val text = extras.getCharSequence(NotificationCompat.EXTRA_TEXT)?.toString().orEmpty()
-        val big = extras.getCharSequence(NotificationCompat.EXTRA_BIG_TEXT)?.toString().orEmpty()
-        val sub = extras.getCharSequence(NotificationCompat.EXTRA_SUB_TEXT)?.toString().orEmpty()
-
-        val match = SportsParser.parse(title, text, big, sub) ?: return false
-        // Identity-based on the teams, NOT IconCache.castIdFor(sbn) — a post-match "recap" notification
-        // (sent after the user dismisses the live one, or just later) is a genuinely different
-        // notification object with a different key, so a notification-identity id would treat it as a
-        // brand new match and pop the pill back up. Keying off the teams instead means it always lands
-        // on the same card, so an already-cleared match's recap just re-triggers that card's own
-        // (short) auto-clear instead of resurrecting it as new.
-        val id = matchCastId(match.home, match.away)
-        val competition = sub.ifBlank { "Live" }
-        val clickResp = sbn.notification.contentIntent ?: fallbackClickIntent(applicationContext, sbn.packageName)
-        scope.launch {
-            val fresh = SportsFeed.iconsFor(match.home, match.away, competition)
-            val prev = lastMatchIcons[id]
-            val icons = SportsFeed.MatchIcons(
-                home = fresh.home ?: prev?.home,
-                away = fresh.away ?: prev?.away,
-                center = fresh.center ?: prev?.center,
-            )
-            lastMatchIcons[id] = icons
-            SportsCard.post(
-                context = applicationContext,
-                home = match.home, homeScore = match.homeScore,
-                away = match.away, awayScore = match.awayScore,
-                clock = match.minute,
-                competition = competition,
-                id = id,
-                homeLogo = icons.home, awayLogo = icons.away, centerLogo = icons.center,
-                clickResp = clickResp,
-            )
-        }
-        return true
-    }
-
-    /** Stable per-match cast id (band 30000-34999), independent of which notification reported it. */
-    private fun matchCastId(home: String, away: String): Int =
-        ("$home|$away".lowercase().hashCode() and Int.MAX_VALUE) % 5000 + 30000
 
     // --- payments -----------------------------------------------------------------
 
@@ -786,33 +730,30 @@ class NotificationCastListener : NotificationListenerService() {
     }
 
     override fun onNotificationRemoved(sbn: StatusBarNotification) {
+        // One of our own island cards went away. The generic cleanup below would cancel the card
+        // whose id our notification's key happens to hash to — someone else's. Just tell the service.
+        if (sbn.packageName == packageName) {
+            if (sbn.tag == OriginIslandConstants.SUPERX_TAG) {
+                runCatching {
+                    startService(
+                        Intent(this, PlaygroundService::class.java)
+                            .setAction(PlaygroundService.ACTION_GONE)
+                            .putExtra("id", sbn.id),
+                    )
+                }
+            }
+            return
+        }
         lastEventAt = System.currentTimeMillis()
         lastOutcome.remove(sbn.key)
         lastScorePostTime.remove(sbn.key)
         lastCastPostTime.remove(sbn.key)
 
-        // Score cards are keyed by team names (matchCastId), not by this notification's own identity
-        // (see handleScore) — cancelling by IconCache.castIdFor(sbn) here would target the wrong id and
-        // leave the actual card stuck up. Route through SportsCard.clear() too, so its own auto-clear
-        // timer/state gets torn down, not just the island post.
-        if (sbn.packageName in SCORE_APPS) {
-            val extras = sbn.notification.extras
-            val title = extras.getCharSequence(NotificationCompat.EXTRA_TITLE)?.toString().orEmpty()
-            val text = extras.getCharSequence(NotificationCompat.EXTRA_TEXT)?.toString().orEmpty()
-            val big = extras.getCharSequence(NotificationCompat.EXTRA_BIG_TEXT)?.toString().orEmpty()
-            val sub = extras.getCharSequence(NotificationCompat.EXTRA_SUB_TEXT)?.toString().orEmpty()
-            val match = SportsParser.parse(title, text, big, sub)
-            if (match != null) {
-                val id = matchCastId(match.home, match.away)
-                lastMatchIcons.remove(id)
-                SportsCard.clear(applicationContext, id)
-                return
-            }
-        }
+        // Score cards are keyed by the match (the notification's tag), not by IconCache.castIdFor.
+        if (sbn.packageName.startsWith(SCORE_PKG_PREFIX)) ScoreCard.onRemoved(applicationContext, sbn)
 
         val id = IconCache.castIdFor(sbn)
         IconCache.clear(id)
-        lastMatchIcons.remove(id)
         startService(
             Intent(this, PlaygroundService::class.java)
                 .setAction(PlaygroundService.ACTION_CANCEL)

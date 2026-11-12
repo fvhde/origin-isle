@@ -64,6 +64,9 @@ import kotlinx.coroutines.launch
  * The main screen: listener status, the sample-card tester, casting settings, and links to the Apps
  * and Activity screens. Setup/permissions and the update check live in the ⋯ menu.
  */
+/** Flashscore, where live scores come from (see ScoreCard). */
+private const val FLASHSCORE_PKG = "eu.livesport.FlashScore_com"
+
 @Composable
 fun HomeScreen(
     context: Context,
@@ -370,6 +373,21 @@ fun HomeScreen(
                     ) {
                         privacyDotOn = it; prefs.edit().putBoolean("cast_privacy_dot", it).apply()
                         PrivacyCard.refresh()
+                    }
+                    GroupDivider()
+                    // Scores only reach the island through Flashscore's own alerts, so point there.
+                    val flashscore = remember { context.packageManager.getLaunchIntentForPackage(FLASHSCORE_PKG) }
+                    NavRow(
+                        IsleIcons.Trophy, IsleColors.TileOrange, "Live scores",
+                        subtitle = if (flashscore != null) "From Flashscore. Turn on its match alerts: start, goals, sets…"
+                        else "Install Flashscore to get them",
+                    ) {
+                        runCatching {
+                            context.startActivity(
+                                flashscore ?: Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$FLASHSCORE_PKG"))
+                                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                            )
+                        }
                     }
                 }
             }

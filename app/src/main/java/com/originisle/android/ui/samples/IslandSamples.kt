@@ -7,9 +7,10 @@ import android.graphics.drawable.Icon
 import com.originisle.android.MainActivity
 import com.originisle.android.R
 import com.originisle.android.cards.PaymentCard
-import com.originisle.android.cards.SportsCard
+import com.originisle.android.cards.ScoreCard
 import com.originisle.android.island.OriginIslandConstants
 import com.originisle.android.island.PlaygroundService
+import com.originisle.android.sports.FlashscoreImages
 
 /**
  * The in-app tester catalog: one ready-made card per supported OriginIsland type, plus the new
@@ -20,14 +21,27 @@ object IslandSamples {
 
     val all: List<OriginSample> = listOf(
         OriginSample(
-            "Football score", "Scoreboard · ARS 1 – 1 MAN · 65' (generic badges)",
-            IslandPreview(R.drawable.ic_soccer, "", IslandPreview.Right.Score(1, 1)),
+            "Football score", "Goal moment, then the scoreboard · 63'",
+            IslandPreview(R.drawable.ic_soccer, "", IslandPreview.Right.Score(1, 0)),
+        ) { ctx -> footballDemo(ctx) },
+        OriginSample(
+            "Tennis score", "Names and sets stacked, like Apple Sports",
+            IslandPreview(R.drawable.ic_avatar, "", IslandPreview.Right.Score(2, 0)),
         ) { ctx ->
-            // Sample uses a generic ball on both sides instead of fetching real crests.
-            val ball = Icon.createWithResource(ctx, R.drawable.ic_soccer)
-            SportsCard.post(
-                ctx, home = "ARS", homeScore = 1, away = "MAN", awayScore = 1, clock = "65'",
-                homeLogo = ball, awayLogo = ball,
+            ScoreCard.demo(
+                ctx, "demo-tennis", 40021, "Alcaraz C. - Djokovic N.",
+                listOf("Match started.", "End of 1st set. [6] - 4", "End of 2nd set. [6] - 2", "Start of 3rd set. [2] - 0"),
+                FlashscoreImages.Images(badge("A", 0xFFE8743B.toInt()), badge("D", 0xFF3B6BE8.toInt()), badge("AD", 0xFF6B4BC8.toInt())),
+            )
+        },
+        OriginSample(
+            "Basketball score", "Quarter by quarter · Q3",
+            IslandPreview(R.drawable.ic_alert, "", IslandPreview.Right.Score(52, 55)),
+        ) { ctx ->
+            ScoreCard.demo(
+                ctx, "demo-basketball", 40022, "Lakers - Celtics",
+                listOf("End of 1st quarter. 28 - 24", "End of 2nd quarter. 52 - 55", "Start of 3rd quarter. 52 - 55"),
+                FlashscoreImages.Images(badge("L", 0xFF552583.toInt()), badge("C", 0xFF007A33.toInt()), badge("LC", 0xFF333333.toInt())),
             )
         },
         OriginSample(
@@ -246,6 +260,32 @@ object IslandSamples {
             }
         },
     )
+
+    /** Arsenal - Chelsea through the real Flashscore path: kick-off, a goal, then the scorer. */
+    fun footballDemo(ctx: Context) {
+        val ball = Icon.createWithResource(ctx, R.drawable.ic_soccer)
+        ScoreCard.demo(
+            ctx, "demo-football", 40020, "Arsenal - Chelsea",
+            listOf("⚽ Match started. 0 - 0", "⚽ Goal! [1] - 0", "⚽ Goalscorer: Gabriel Magalhães (63') [1] - 0"),
+            FlashscoreImages.Images(badge("A", 0xFFDB0007.toInt()), badge("C", 0xFF034694.toInt()), ball),
+        )
+    }
+
+    /** A round badge with initials, standing in for a crest or a player photo in the samples. */
+    private fun badge(text: String, color: Int): Icon {
+        val size = 96
+        val b = android.graphics.Bitmap.createBitmap(size, size, android.graphics.Bitmap.Config.ARGB_8888)
+        val c = android.graphics.Canvas(b)
+        val p = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG)
+        p.color = color
+        c.drawCircle(size / 2f, size / 2f, size / 2f, p)
+        p.color = android.graphics.Color.WHITE
+        p.textAlign = android.graphics.Paint.Align.CENTER
+        p.textSize = if (text.length > 1) 36f else 48f
+        p.typeface = android.graphics.Typeface.DEFAULT_BOLD
+        c.drawText(text, size / 2f, size / 2f - (p.descent() + p.ascent()) / 2, p)
+        return Icon.createWithBitmap(b)
+    }
 
     private fun start(context: Context, id: Int, configure: Intent.() -> Unit) {
         val intent = Intent(context, PlaygroundService::class.java).apply {

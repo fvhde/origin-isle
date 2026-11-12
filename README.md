@@ -5,7 +5,7 @@
 [![Downloads](https://img.shields.io/github/downloads/fvhde/origin-isle/total)](https://github.com/fvhde/origin-isle/releases)
 
 Brings the OriginOS **island** to *every* app: downloads, navigation, calls, payments, media and
-live football scores, including from European and international apps.
+live scores for any sport from Flashscore.
 
 **Credits** · OriginIsland api by [@theVakhovskeIsTaken](https://github.com/theVakhovskeIsTaken)
 · Navigation card by [@Martimborgss](https://github.com/Martimborgss)
@@ -35,8 +35,9 @@ live football scores, including from European and international apps.
       <sub><b>Media</b></sub>
     </td>
     <td align="center" valign="middle" colspan="2">
-      <img src="docs/screenshots/island-football.jpg" width="520"><br>
-      <sub><b>Live football</b></sub>
+      <img src="docs/screenshots/sports-pill-football.jpg" width="520"><br>
+      <img src="docs/screenshots/sports-pill-tennis.jpg" width="520"><br>
+      <sub><b>Live scores, any sport</b></sub>
     </td>
   </tr>
 </table>
@@ -45,7 +46,10 @@ live football scores, including from European and international apps.
 
 - 🏝️ **Any notification** → island, with an allow/deny list per app
 - 👆 **Tap a card** to open the original notification
-- ⚽ **Live football scores** with team crests
+- ⚽ **Live scores from Flashscore**: football, tennis, basketball, hockey and more, with
+  Flashscore's own crests and player photos. Turn on the match alerts you want in Flashscore
+  (start, goals, goalscorer, half-time, end of set or quarter…): each one updates the card.
+  To put a match up before anything happens, share it from Flashscore and pick **Show on island**
 - 💳 **Apple Pay–style payment animation** (Google Wallet, Revolut, PayPal, N26, Monzo…)
 - 🎵 **Media controls** wired to the real app
 - 📋 **Log tab** showing what was cast or skipped, and why

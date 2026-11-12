@@ -43,6 +43,10 @@ object IsleIcons {
     val Download = stroke("download", "M12 3v12", "m7 10 5 5 5-5", "M5 21h14")
     val Key = stroke("key", circle(7.5f, 15.5f, 5.5f), "m21 2-9.6 9.6", "m15.5 7.5 3 3L22 7l-3-3")
     val Bolt = stroke("bolt", "M13 2 3 14h9l-1 8 10-12h-9l1-8z")
+    val Trophy = stroke(
+        "trophy", "M7 4h10v5a5 5 0 0 1-10 0z", "M7 6H4.5a2.5 2.5 0 0 0 3 3.9", "M17 6h2.5a2.5 2.5 0 0 1-3 3.9",
+        "M12 14v4", "M8 21h8", "M9 18h6",
+    )
     val Headphones = stroke(
         "headphones", "M3 18v-6a9 9 0 0 1 18 0v6",
         "M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z",

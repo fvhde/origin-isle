@@ -30,6 +30,24 @@
             </intent-filter>
         </activity>
 
+        <!-- "Show on island" in the share sheet: a match shared from Flashscore goes straight on
+             the island. Flashscore shares its match line and link with a picture (image/*). -->
+        <activity
+            android:name=".share.ShareToIslandActivity"
+            android:exported="true"
+            android:label="@string/share_to_island"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:taskAffinity="">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+
         <!-- Posts / updates / ends OriginIsland SuperX cards. Special-use FGS so it can
              keep re-posting a live card (e.g. a ticking football score). -->
         <!-- stopWithTask=false + START_STICKY get casting back after a swipe-away: OriginOS kills

@@ -17,7 +17,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import com.originisle.android.cards.SportsCard
 import com.originisle.android.island.OriginIslandBuilder
 import com.originisle.android.island.PlaygroundService
 import com.originisle.android.service.NotificationCastListener
@@ -39,7 +38,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         when (intent?.getStringExtra("autofire")) {
-            "football" -> SportsCard.post(this, "ARS", 1, "MAN", 1, "65'")
+            "football" -> IslandSamples.footballDemo(this)
         }
         intent?.getIntExtra("autofire_sample", -1)?.takeIf { it >= 0 }?.let {
             IslandSamples.all.getOrNull(it)?.post(this)
