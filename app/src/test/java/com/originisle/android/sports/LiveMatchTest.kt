@@ -1,5 +1,6 @@
 package com.originisle.android.sports
 
+import com.originisle.android.sports.FlashscoreParser.Format
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -72,6 +73,30 @@ class LiveMatchTest {
         assertEquals("Q3", m.status(4))
         m.on("Virtus Bologna - Verona 81 - 75", "Finished. 81 - 75", 5)
         assertEquals("Final", m.status(6))
+    }
+
+    @Test fun cricketShare() {
+        val m = LiveMatch("x")
+        m.seed("Adelaide W", "Melbourne Renegades W", null, null, "37/2 (6.2)", "165/4 (20)")
+        assertEquals(Format.RUNS, m.format)
+        assertEquals("37/2 (6.2)" to "165/4 (20)", m.scoreTexts())
+        assertEquals("37/2" to "165/4", m.pillScores())
+        m.on("Adelaide W - Melbourne Renegades W", "Melbourne Renegades W - Wicket! Adelaide W 127/3", 1)
+        assertEquals("127/3" to "165/4 (20)", m.scoreTexts())
+        assertEquals("Wicket! 127/3", m.topLine())
+        m.on("Adelaide W - Melbourne Renegades W", "Melbourne Renegades W - Wicket! Adelaide W 131/4", 2)
+        assertEquals(false, m.isRepeat)
+        assertEquals("131/4", m.scoreTexts().first)
+    }
+
+    @Test fun restoredShareFillsOnlyWhatAlertsDidNotSay() {
+        val m = LiveMatch("x")
+        m.on("Adelaide W - Melbourne Renegades W", "Melbourne Renegades W - Wicket! Adelaide W 127/3", 1)
+        m.seed("Adelaide W", "Melbourne Renegades W", null, null, "74/2 (10.3)", "165/4 (20)", fresh = false)
+        assertEquals("127/3" to "165/4 (20)", m.scoreTexts())
+        // Shared again just now: that's the newest score.
+        m.seed("Adelaide W", "Melbourne Renegades W", null, null, "140/3 (15)", "165/4 (20)")
+        assertEquals("140/3 (15)", m.scoreTexts().first)
     }
 
     @Test fun tennisSets() {

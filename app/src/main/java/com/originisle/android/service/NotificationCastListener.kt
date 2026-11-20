@@ -507,6 +507,7 @@ class NotificationCastListener : NotificationListenerService() {
                 }
                 // Already handled (redelivered, or left over from earlier): not news, not logged.
                 ScoreCard.Result.OLD -> return
+                ScoreCard.Result.NOT_STARTED -> { log(sbn, "skipped — live score, not started yet", false); return }
                 ScoreCard.Result.NOT_A_MATCH -> Unit
             }
         }

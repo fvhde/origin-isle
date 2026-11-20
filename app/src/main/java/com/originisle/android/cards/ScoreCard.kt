@@ -124,6 +124,8 @@ object ScoreCard {
         OLD,
         /** Not a match (news, transfers…): handle it like any other app's notification. */
         NOT_A_MATCH,
+        /** Lineups or a reminder before kick-off: the match goes up when it starts, not now. */
+        NOT_STARTED,
     }
 
     fun onNotification(context: Context, sbn: StatusBarNotification): Result {
@@ -133,6 +135,7 @@ object ScoreCard {
         val text = (extras.getCharSequence(NotificationCompat.EXTRA_TEXT)
             ?: extras.getCharSequence(NotificationCompat.EXTRA_BIG_TEXT))?.toString().orEmpty()
         val event = FlashscoreParser.parse(title, text) ?: return Result.NOT_A_MATCH
+        if (event.kind == Kind.PRE_MATCH) return Result.NOT_STARTED
 
         val now = System.currentTimeMillis()
         val age = now - sbn.postTime
@@ -348,7 +351,9 @@ object ScoreCard {
         card.postedAt = now
 
         val sets = match.format == Format.SETS
-        val (hs, aws) = if (sets) match.sets() else match.homeScore to match.awayScore
+        // The pill gets the short score (cricket without its overs), the card the full one.
+        val (hs, aws) = match.pillScores()
+        val (hsCard, awsCard) = match.scoreTexts()
         val homeName = FlashscoreParser.shortName(match.home)
         val awayName = FlashscoreParser.shortName(match.away)
         val images = card.images
@@ -364,9 +369,9 @@ object ScoreCard {
             putExtra("title", sportName(match))
             putExtra("text", status.ifBlank { "Live" })
             putExtra("oi_extra1", homeName)
-            putExtra("oi_extra2", hs.toString())
+            putExtra("oi_extra2", hsCard)
             putExtra("oi_extra3", awayName)
-            putExtra("oi_extra4", aws.toString())
+            putExtra("oi_extra4", awsCard)
             match.topLine()?.let { putExtra("oi_mid_top", it) }
             images.both?.let { putExtra("oi_large_icon", it) }
             putExtra(
@@ -477,10 +482,10 @@ object ScoreCard {
         remember(context, shared)
     }
 
-    private fun show(context: Context, shared: FlashscoreShare.Shared) {
+    private fun show(context: Context, shared: FlashscoreShare.Shared, fresh: Boolean = true) {
         val tag = shared.matchId
         val match = matches.getOrPut(tag) { LiveMatch(tag) }
-        match.seed(shared.home, shared.away, shared.homeScore, shared.awayScore)
+        match.seed(shared.home, shared.away, shared.homeScore, shared.awayScore, shared.homeText, shared.awayText, fresh)
         val card = cards.getOrPut(tag) {
             Card(FlashscoreImages.from(context, null, match.home, match.away), null, castId(tag))
         }
@@ -510,15 +515,22 @@ object ScoreCard {
             if (now - o.optLong("at") > STALE_MS) continue
             kept.put(o)
             val id = o.optString("id")
-            if (cards.containsKey(id) || matches[id]?.finished == true) continue
-            show(
-                context,
-                FlashscoreShare.Shared(
-                    id, o.optString("home"), o.optString("away"),
-                    o.optInt("hs", -1).takeIf { it >= 0 }, o.optInt("as", -1).takeIf { it >= 0 },
-                    o.optString("link"),
-                ),
+            if (matches[id]?.finished == true) continue
+            val shared = FlashscoreShare.Shared(
+                id, o.optString("home"), o.optString("away"),
+                o.optInt("hs", -1).takeIf { it >= 0 }, o.optInt("as", -1).takeIf { it >= 0 },
+                o.optString("link"),
+                o.optString("hsText").ifEmpty { null }, o.optString("asText").ifEmpty { null },
             )
+            val match = matches[id]
+            if (cards.containsKey(id) && match != null) {
+                // Already back from an alert: the share still knows what that alert didn't say
+                // (the other side's runs, in cricket).
+                match.seed(shared.home, shared.away, shared.homeScore, shared.awayScore, shared.homeText, shared.awayText, fresh = false)
+                post(context, id, force = false)
+                continue
+            }
+            show(context, shared, fresh = false)
         }
         context.getSharedPreferences(PREFS_NAME, 0).edit().putString(SHARED_KEY, kept.toString()).apply()
     }
@@ -529,6 +541,8 @@ object ScoreCard {
             list += JSONObject()
                 .put("id", shared.matchId).put("home", shared.home).put("away", shared.away)
                 .put("hs", shared.homeScore ?: -1).put("as", shared.awayScore ?: -1)
+                // ("at" is when it was shared.)
+                .put("hsText", shared.homeText.orEmpty()).put("asText", shared.awayText.orEmpty())
                 .put("link", shared.link).put("at", System.currentTimeMillis())
         }
     }
@@ -600,6 +614,8 @@ object ScoreCard {
         m.emoji == "🏀" || m.periodWord == "quarter" -> "Basketball"
         m.emoji == "🎾" -> "Tennis"
         m.emoji == "🏐" -> "Volleyball"
+        // Before baseball: cricket alerts talk about innings too.
+        m.emoji == "🏏" || m.format == Format.RUNS -> "Cricket"
         m.emoji == "⚾" || m.periodWord == "inning" -> "Baseball"
         m.emoji == "🏈" -> "American football"
         m.emoji == "🤾" -> "Handball"

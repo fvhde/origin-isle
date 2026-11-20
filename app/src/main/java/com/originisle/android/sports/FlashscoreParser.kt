@@ -17,10 +17,14 @@ object FlashscoreParser {
 
     enum class Side { HOME, AWAY }
 
-    enum class Kind { START, GOAL, GOALSCORER, RED_CARD, HALF_TIME, PERIOD_START, PERIOD_END, FINISHED, SCORE }
+    /** PRE_MATCH: lineups or a reminder, sent before kick-off; the match isn't on yet. */
+    enum class Kind { PRE_MATCH, START, WICKET, GOAL, GOALSCORER, RED_CARD, HALF_TIME, PERIOD_START, PERIOD_END, FINISHED, SCORE }
 
-    /** How the sport keeps score — that, not the sport itself, decides the card. */
-    enum class Format { GOALS, POINTS, SETS }
+    /**
+     * How the sport keeps score — that, not the sport itself, decides the card. RUNS is cricket,
+     * where a side's score is runs and wickets ("165/4"), not a single number.
+     */
+    enum class Format { GOALS, POINTS, SETS, RUNS }
 
     data class Event(
         val home: String,
@@ -42,7 +46,13 @@ object FlashscoreParser {
         val player: String?,
         /** "67'" or "90+2'". */
         val minute: String?,
+        /** Cricket: a side's runs as Flashscore wrote them ("127/3"), when this alert gives them. */
+        val homeText: String? = null,
+        val awayText: String? = null,
     )
+
+    /** A cricket score: "165/4", "434/9d & 57/1", with the overs after it: "37/2 (6.2)". */
+    const val RUNS = """\d{1,4}(?:/\d{1,2})?d?(?:\s*&\s*\d{1,4}(?:/\d{1,2})?d?)?(?:\s*\(\d{1,3}(?:\.\d)?\))?"""
 
     private val TITLE = Regex("""^(.+?) - (.+?)(?: (\d{1,3}) - (\d{1,3}))?$""")
     private val SCORE = Regex("""(\[)?(\d{1,3})(])?\s*-\s*(\[)?(\d{1,3})(])?""")
@@ -55,7 +65,7 @@ object FlashscoreParser {
 
     private val EMOJI_FORMAT = linkedMapOf(
         "⚽" to Format.GOALS, "🏒" to Format.GOALS, "🤾" to Format.GOALS, "🏑" to Format.GOALS, "🤽" to Format.GOALS,
-        "🏀" to Format.POINTS, "🏈" to Format.POINTS, "⚾" to Format.POINTS, "🏉" to Format.POINTS, "🏏" to Format.POINTS,
+        "🏀" to Format.POINTS, "🏈" to Format.POINTS, "⚾" to Format.POINTS, "🏉" to Format.POINTS, "🏏" to Format.RUNS,
         "🎾" to Format.SETS, "🏐" to Format.SETS, "🏓" to Format.SETS, "🏸" to Format.SETS, "🎯" to Format.SETS,
     )
 
@@ -64,12 +74,16 @@ object FlashscoreParser {
 
     fun parse(title: String, text: String): Event? {
         val t = TITLE.find(title.trim()) ?: return null
-        val home = t.groupValues[1].trim()
-        val away = t.groupValues[2].trim()
-        if (home.isEmpty() || away.isEmpty()) return null
-
         val body = text.trim()
         val lower = body.lowercase()
+        // Cricket: "Melbourne Renegades W - Wicket! Adelaide W 127/3" — runs and wickets, not goals.
+        val cricket = body.contains("🏏") || WICKETS.containsMatchIn(body) ||
+            listOf("wicket", "innings", "overs").any { lower.contains(it) }
+        val home = t.groupValues[1].trim()
+        // A final can end the title with both sides' runs ("… 160/7 - 165/4"): not part of the name.
+        val away = t.groupValues[2].trim().let { if (cricket) it.replace(TRAILING_RUNS, "") else it }
+        if (home.isEmpty() || away.isEmpty()) return null
+
         // The last "a - b" in the text is the score; the title carries it too once it's over.
         val s = SCORE.findAll(body).lastOrNull()
         val homeScore = s?.groupValues?.get(2)?.toIntOrNull() ?: t.groupValues[3].toIntOrNull()
@@ -91,8 +105,11 @@ object FlashscoreParser {
         val emoji = EMOJI_FORMAT.keys.firstOrNull { body.contains(it) }
 
         val kind = when {
+            // Before "kick-off" below: "Lineups are out, kick-off at 20:45" hasn't started.
+            PRE_MATCH.any { lower.contains(it) } -> Kind.PRE_MATCH
             listOf("finished", "final result", "terminé", "termine", "fin du match", "after penalties", "after extra time")
                 .any { lower.contains(it) } -> Kind.FINISHED
+            cricket && lower.contains("wicket") -> Kind.WICKET
             lower.contains("red card") || lower.contains("carton rouge") || body.contains("🟥") -> Kind.RED_CARD
             listOf("goalscorer", "goal scorer", "buteur", "scorer").any { lower.contains(it) } -> Kind.GOALSCORER
             listOf("half-time", "half time", "halftime", "mi-temps").any { lower.contains(it) } &&
@@ -120,15 +137,34 @@ object FlashscoreParser {
 
         // "Half-time. 1 - 0" names no half, but only sports played in halves have one.
         val word = periodWord ?: if (kind == Kind.HALF_TIME) "half" else null
-        val format = emoji?.let { EMOJI_FORMAT[it] } ?: when (word) {
+        val format = (if (cricket) Format.RUNS else null) ?: emoji?.let { EMOJI_FORMAT[it] } ?: when (word) {
             "quarter", "inning" -> Format.POINTS
             "set" -> Format.SETS
             "period", "half" -> Format.GOALS
             else -> null
         } ?: if (PLAYER_NAME.matches(home) && PLAYER_NAME.matches(away)) Format.SETS else null
 
-        return Event(home, away, homeScore, awayScore, side, kind, period, word, format, emoji, player, minute)
+        return Event(
+            home, away, homeScore, awayScore, side, kind, period, word, format, emoji, player, minute,
+            homeText = if (cricket) runsAfter(body, home) else null,
+            awayText = if (cricket) runsAfter(body, away) else null,
+        )
     }
+
+    private val WICKETS = Regex("""\b\d{1,4}/\d{1,2}\b""")
+    private val TRAILING_RUNS = Regex("""\s+\d{1,4}/\d{1,2}.*$""")
+
+    /** The runs written right after a side's name in a cricket alert: "Adelaide W 127/3". */
+    private fun runsAfter(body: String, name: String): String? =
+        Regex(Regex.escape(name) + """\s+(""" + RUNS + ")").find(body)?.groupValues?.get(1)
+
+    /** Lineups (about an hour before) and reminders: words that only come before a match. */
+    private val PRE_MATCH = listOf(
+        "lineup", "line-up", "line up", "starting xi", "starting eleven", "composition", "aufstellung",
+        "formazion", "alineaci", "escalaç", "reminder", "rappel", "starts in", "starts at", "begins in",
+        "will start", "about to start", "kick-off in", "kick-off at", "kick off in", "kick off at",
+        "commence dans", "débute dans", "coup d'envoi dans", "coup d'envoi à",
+    )
 
     private val BARE_SET = Regex("""\b(set|manche)\b""", RegexOption.IGNORE_CASE)
 

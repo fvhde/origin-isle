@@ -18,6 +18,9 @@ class LiveMatch(val id: String) {
     var away = ""
     var homeScore = 0
     var awayScore = 0
+    /** Cricket: each side's score as Flashscore writes it ("165/4 (20)"), null until it has batted. */
+    var homeText: String? = null
+    var awayText: String? = null
     var format: Format? = null
     /** The sport emoji Flashscore used on goals (⚽ 🏒 …), once seen. */
     var emoji: String? = null
@@ -58,16 +61,27 @@ class LiveMatch(val id: String) {
         get() = emoji == "⚽" || (format == Format.GOALS && periodWord in setOf(null, "half") && emoji == null)
 
     /**
-     * A match shared from Flashscore, before (or without) any of its alerts: names and, if the
-     * share had it, the score. Alerts that have already come in win over the share.
+     * A match shared from Flashscore: names and, if the share had it, the score. A [fresh] share
+     * (just made) is the newest score there is; one saved earlier and restored after a restart is
+     * older than any alert since, so it only fills in what no alert has given.
      */
-    fun seed(home: String, away: String, homeScore: Int?, awayScore: Int?) {
+    fun seed(
+        home: String, away: String, homeScore: Int?, awayScore: Int?,
+        homeText: String? = null, awayText: String? = null,
+        fresh: Boolean = true,
+    ) {
         if (this.home.isEmpty()) this.home = home
         if (this.away.isEmpty()) this.away = away
         started = true
-        if (lastPost == 0L && homeScore != null && awayScore != null) {
+        val newest = fresh || lastPost == 0L
+        if (newest && homeScore != null && awayScore != null) {
             this.homeScore = homeScore
             this.awayScore = awayScore
+        }
+        if (homeText != null || awayText != null) {
+            format = format ?: Format.RUNS
+            if (homeText != null && (newest || this.homeText == null)) this.homeText = homeText
+            if (awayText != null && (newest || this.awayText == null)) this.awayText = awayText
         }
         if (format == null && FlashscoreParser.looksLikePlayers(home, away)) format = Format.SETS
     }
@@ -83,8 +97,10 @@ class LiveMatch(val id: String) {
             homeScore = e.homeScore
             awayScore = e.awayScore
         }
+        e.homeText?.let { homeText = it }
+        e.awayText?.let { awayText = it }
         lastPost = at
-        val key = "${e.kind}|${e.homeScore}|${e.awayScore}|${e.period}"
+        val key = "${e.kind}|${e.homeScore}|${e.awayScore}|${e.period}|${e.homeText}|${e.awayText}"
         isRepeat = key == lastEventKey
         lastEventKey = key
         var moment: Moment? = null
@@ -92,6 +108,12 @@ class LiveMatch(val id: String) {
         // itself, or on the copy it posts a little later with the name.
         var scorerLearned = false
         when (e.kind) {
+            Kind.PRE_MATCH -> Unit
+            Kind.WICKET -> {
+                started = true; inBreak = false
+                // "Wicket! 127/3": the batting side's new score is the one the alert gave.
+                highlight = listOfNotNull("Wicket!", e.homeText ?: e.awayText).joinToString(" ")
+            }
             Kind.START -> {
                 started = true; inBreak = false; period = maxOf(period, 1)
                 setClock(at, 1, 1)
@@ -183,6 +205,18 @@ class LiveMatch(val id: String) {
             periodScores.count { it.first > it.second } to periodScores.count { it.second > it.first }
         } else homeScore to awayScore
 
+    /** Each side's score as the card shows it: runs and overs for cricket, sets, or the score. */
+    fun scoreTexts(): Pair<String, String> = when (format) {
+        Format.RUNS -> (homeText ?: NOT_BATTED) to (awayText ?: NOT_BATTED)
+        Format.SETS -> sets().let { "${it.first}" to "${it.second}" }
+        else -> "$homeScore" to "$awayScore"
+    }
+
+    /** The same, short enough for the pill: cricket without the overs ("165/4"). */
+    fun pillScores(): Pair<String, String> = scoreTexts().let { (h, a) ->
+        if (format == Format.RUNS) h.substringBefore(" (") to a.substringBefore(" (") else h to a
+    }
+
     /** Short status for the card's middle line and the pill. */
     fun status(now: Long): String {
         if (finished) return if (isFootball) "FT" else "Final"
@@ -219,6 +253,9 @@ class LiveMatch(val id: String) {
     }
 
     companion object {
+        /** A cricket side that hasn't batted yet. */
+        const val NOT_BATTED = "–"
+
         /** A scorer named later than this after the goal updates the card without popping it. */
         private const val SCORER_WAIT_MS = 3 * 60_000L
 

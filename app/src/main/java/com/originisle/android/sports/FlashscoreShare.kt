@@ -20,6 +20,9 @@ object FlashscoreShare {
         val homeScore: Int?,
         val awayScore: Int?,
         val link: String,
+        /** Cricket: each side's score as Flashscore wrote it ("165/4 (20)"), null if it hasn't batted. */
+        val homeText: String? = null,
+        val awayText: String? = null,
     )
 
     private val LINK = Regex(
@@ -28,9 +31,15 @@ object FlashscoreShare {
     )
     /** `?id=W6twRmA4` / `&mid=…` in a short link, or `/match/W6twRmA4/` in a full one. */
     private val ID = Regex("""[?&](?:id|mid)=([A-Za-z0-9]{8})(?![A-Za-z0-9])|/match/([A-Za-z0-9]{8})(?:[/?#]|$)""")
-    /** "More info:", "Plus d'infos :"… — a label ending in a colon, after the match line. */
-    private val LEAD_IN = Regex("""\s+[^\d\s][^:\n]*:\s*$|^[^\d\s][^:\n-]*:\s*$""")
+    /**
+     * "More info:", "Plus d'infos :"… — a label of a word or two ending in a colon, after the match
+     * line or on its own line. Kept short, or it would eat the match line back to its first space.
+     */
+    private val LEAD_IN = Regex("""(?:^|\s+)(?:[^\s\d:]+\s+)?[^\s\d:]+\s*:\s*$""")
     private val TITLE = Regex("""^(.+?) - (.+?)(?: (\d{1,3}):(\d{1,3}))?$""")
+    private const val RUNS = FlashscoreParser.RUNS
+    /** Cricket shares each side with its own score: "Adelaide W 37/2 (6.2), Melbourne Renegades W 165/4 (20)". */
+    private val PAIR = Regex("""^(.+?)(?: ($RUNS))?, (.+?)(?: ($RUNS))?$""")
 
     fun parse(text: String): Shared? {
         val link = LINK.find(text)?.value?.trimEnd('.', ',', ')') ?: return null
@@ -40,12 +49,27 @@ object FlashscoreShare {
         // pass the share on as one line).
         val line = text.substringBefore(link).lineSequence()
             .map { it.replace(LEAD_IN, "").trim() }
-            .firstOrNull { it.isNotEmpty() && TITLE.matches(it) }
+            .firstOrNull { it.isNotEmpty() && (TITLE.matches(it) || PAIR.matches(it)) }
             ?: return null
+        if (!TITLE.matches(line)) return pair(id, line, link)
         val t = TITLE.find(line) ?: return null
         val home = t.groupValues[1].trim()
         val away = t.groupValues[2].trim()
         if (home.isEmpty() || away.isEmpty()) return null
         return Shared(id, home, away, t.groupValues[3].toIntOrNull(), t.groupValues[4].toIntOrNull(), link)
+    }
+
+    private fun pair(id: String, line: String, link: String): Shared? {
+        val m = PAIR.find(line) ?: return null
+        val home = m.groupValues[1].trim()
+        val away = m.groupValues[3].trim()
+        if (home.isEmpty() || away.isEmpty()) return null
+        val hs = m.groupValues[2].ifEmpty { null }
+        val aws = m.groupValues[4].ifEmpty { null }
+        // Plain numbers on both sides are an ordinary score, written the cricket way.
+        val h = hs?.toIntOrNull()
+        val a = aws?.toIntOrNull()
+        if (h != null && a != null) return Shared(id, home, away, h, a, link)
+        return Shared(id, home, away, null, null, link, hs, aws)
     }
 }

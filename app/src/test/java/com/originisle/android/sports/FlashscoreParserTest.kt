@@ -103,6 +103,30 @@ class FlashscoreParserTest {
         assertEquals(Kind.PERIOD_END, set.kind); assertEquals("set", set.periodWord); assertEquals(Format.SETS, set.format)
     }
 
+    @Test fun cricketWicket() {
+        // Big Bash League Women, 20.11.2026 (issue #14).
+        val e = p("Adelaide W - Melbourne Renegades W", "Melbourne Renegades W - Wicket! Adelaide W 127/3")
+        assertEquals(Kind.WICKET, e.kind); assertEquals(Format.RUNS, e.format)
+        assertEquals("Adelaide W", e.home); assertEquals("Melbourne Renegades W", e.away)
+        assertEquals("127/3", e.homeText); assertNull(e.awayText)
+    }
+
+    @Test fun cricketFinalTitle() {
+        val e = p("Adelaide W - Melbourne Renegades W 160/7 - 165/4", "Finished. Adelaide W 160/7 (20), Melbourne Renegades W 165/4 (20)")
+        assertEquals(Kind.FINISHED, e.kind); assertEquals("Melbourne Renegades W", e.away)
+        assertEquals("160/7 (20)", e.homeText); assertEquals("165/4 (20)", e.awayText)
+    }
+
+    @Test fun beforeKickOff() {
+        for (text in listOf(
+            "Lineups are available.", "⚽ Starting line-ups are out!", "Confirmed lineups. Kick-off at 20:45",
+            "Reminder: the match starts in 15 minutes", "Compositions officielles disponibles",
+        )) assertEquals(text, Kind.PRE_MATCH, p("Belgium U17 - Vietnam U17", text).kind)
+        // Kick-off itself still starts the match.
+        assertEquals(Kind.START, p("Belgium U17 - Vietnam U17", "Match started. 0 - 0").kind)
+        assertEquals(Kind.START, p("Belgium U17 - Vietnam U17", "Kick-off! 0 - 0").kind)
+    }
+
     @Test fun halfTimeWithoutEmoji() {
         val e = p("England - Croatia", "Half-time. 1 - 0")
         assertEquals(Kind.HALF_TIME, e.kind); assertEquals("half", e.periodWord); assertEquals(Format.GOALS, e.format)
